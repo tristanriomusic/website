@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tristan Rio — Dreams</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    canvas#bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+
+    #ui {
+      position: relative; z-index: 10;
+      width: clamp(300px, 72vw, 820px);
+      display: flex; flex-direction: column; align-items: center; gap: 2.2vh;
+    }
+
+    #question {
+      color: rgba(255,255,255,0.7);
+      font-size: clamp(15px, 2.2vw, 28px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(180,100,255,0.7), 0 0 50px rgba(100,150,255,0.4);
+      animation: questionPulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes questionPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+
+    /* ── WRITE mode ── */
+    #journal {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      color: rgba(255,255,255,0.88);
+      font-family: 'Georgia', serif;
+      font-size: clamp(14px, 1.8vw, 22px);
+      line-height: 1.9;
+      padding: 3vh 3vw;
+      resize: none;
+      outline: none;
+      min-height: 36vh;
+      caret-color: rgba(180,100,255,0.9);
+      backdrop-filter: blur(4px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    #journal:focus {
+      border-color: rgba(180,100,255,0.4);
+      box-shadow: 0 0 30px rgba(160,80,255,0.12), inset 0 0 20px rgba(100,60,200,0.05);
+    }
+    #journal::placeholder { color: rgba(255,255,255,0.2); font-style: italic; }
+
+    /* ── PLAYBACK mode ── */
+    #playback-view {
+      display: none;
+      width: 100%;
+      min-height: 36vh;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(180,100,255,0.2);
+      border-radius: 4px;
+      padding: 3vh 3vw;
+      font-size: clamp(14px, 1.8vw, 22px);
+      line-height: 1.9;
+      color: rgba(255,255,255,0.3);
+      overflow-y: auto;
+      backdrop-filter: blur(4px);
+      flex-wrap: wrap;
+      word-break: break-word;
+    }
+
+    /* individual letter spans */
+    .pl-letter {
+      display: inline-block;
+      transition: none;
+      position: relative;
+    }
+    .pl-space { display: inline-block; width: 0.45em; }
+    .pl-newline { display: block; height: 1.9em; }
+
+    /* beat hit states */
+    .pl-letter.hit {
+      color: #fff;
+      text-shadow:
+        0 0 8px rgba(180,100,255,1),
+        0 0 22px rgba(120,80,255,0.9),
+        0 0 45px rgba(80,60,200,0.5);
+      transform: scale(1.35) translateY(-3px);
+      transition: transform 0.06s ease-out, color 0.06s, text-shadow 0.06s;
+    }
+    .pl-letter.decay {
+      color: rgba(180,100,255,0.65);
+      text-shadow: 0 0 10px rgba(180,100,255,0.4);
+      transform: scale(1) translateY(0);
+      transition: transform 0.45s ease-out, color 0.45s, text-shadow 0.45s;
+    }
+
+    /* word bar highlight — current bar glows */
+    .pl-word { display: inline; }
+    .pl-word.bar-active .pl-letter:not(.hit):not(.decay) {
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* controls row */
+    #controls {
+      display: flex; gap: 1.8vw; align-items: center; justify-content: center;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 3px;
+      color: rgba(255,255,255,0.6);
+      font-family: 'Georgia', serif;
+      font-size: clamp(10px, 1.1vw, 15px);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 0.6em 1.4em;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+    }
+    .ctrl-btn:hover, .ctrl-btn.active {
+      border-color: rgba(180,100,255,0.7);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(160,80,255,0.25);
+    }
+
+    /* BPM indicator */
+    #bpm-label {
+      color: rgba(255,255,255,0.3);
+      font-size: clamp(10px, 1vw, 13px);
+      letter-spacing: 0.2em;
+    }
+
+    /* note particle */
+    .note-particle {
+      position: fixed; pointer-events: none; z-index: 50;
+      font-size: clamp(11px, 1.4vw, 17px);
+      animation: floatUp 1.3s ease-out forwards;
+      user-select: none;
+    }
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-70px) scale(0.5); }
+    }
+
+    /* bar progress bar */
+    #bar-progress {
+      width: 100%; height: 2px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    #bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(180,100,255,0.7), rgba(80,160,255,0.7));
+      width: 0%;
+      transition: none;
+    }
+
+    #back {
+      color: rgba(255,255,255,0.35);
+      font-size: clamp(10px, 1.1vw, 15px);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      cursor: pointer; user-select: none;
+      text-shadow: 0 0 12px rgba(180,100,255,0.4);
+      transition: color 0.3s;
+    }
+    #back:hover { color: rgba(255,255,255,0.8); }
+  </style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<div id="ui">
+  <div id="question">Who are you? &nbsp;·&nbsp; Where do we go?</div>
+
+  <textarea id="journal" placeholder="Write here… every letter sings."></textarea>
+  <div id="playback-view"></div>
+
+  <div id="bar-progress"><div id="bar-fill"></div></div>
+
+  <div id="controls">
+    <button class="ctrl-btn" id="btn-play">&#9654; Play</button>
+    <button class="ctrl-btn" id="btn-stop" style="display:none">&#9632; Stop</button>
+    <span id="bpm-label">90 BPM · 1 word = 1 beat</span>
+  </div>
+
+  <div id="back" onclick="window.location.href='../'">&#8592; Return</div>
+</div>
+
+<script>
+/* ═══ BACKGROUND ═══ */
+const bgCanvas = document.getElementById('bg');
+const bgCtx = bgCanvas.getContext('2d');
+let W, H;
+function resize() { W = bgCanvas.width = window.innerWidth; H = bgCanvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+const bgStars = Array.from({length: 300}, () => ({
+  x: Math.random(), y: Math.random(),
+  r: Math.random() * 1.0 + 0.2,
+  phase: Math.random() * Math.PI * 2,
+  speed: 0.006 + Math.random() * 0.012,
+  color: Math.random() < 0.06 ? 'rgba(180,100,255,0.8)' : '#ffffff',
+}));
+const wisps = Array.from({length: 5}, () => ({
+  x: Math.random(), y: Math.random(),
+  rx: 0.1 + Math.random() * 0.18, ry: 0.06 + Math.random() * 0.1,
+  rot: Math.random() * Math.PI,
+  c: `rgba(${ ['120,40,200','80,40,180','160,60,220','40,80,200','100,20,180'][Math.floor(Math.random()*5)] },0.07)`,
+  phase: Math.random() * Math.PI * 2,
+}));
+
+function drawBg() {
+  bgCtx.fillStyle = '#000'; bgCtx.fillRect(0, 0, W, H);
+  for (const w of wisps) {
+    w.phase += 0.002;
+    bgCtx.save();
+    bgCtx.translate(w.x*W, w.y*H); bgCtx.rotate(w.rot + w.phase*0.1); bgCtx.scale(1, w.ry/w.rx);
+    const g = bgCtx.createRadialGradient(0,0,0,0,0,w.rx*W);
+    g.addColorStop(0, w.c); g.addColorStop(1,'transparent');
+    bgCtx.beginPath(); bgCtx.arc(0,0,w.rx*W,0,Math.PI*2);
+    bgCtx.fillStyle = g; bgCtx.fill(); bgCtx.restore();
+  }
+  for (const s of bgStars) {
+    s.phase += s.speed;
+    bgCtx.globalAlpha = 0.2 + 0.7 * Math.abs(Math.sin(s.phase));
+    bgCtx.fillStyle = s.color;
+    bgCtx.beginPath(); bgCtx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2); bgCtx.fill();
+  }
+  bgCtx.globalAlpha = 1;
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+/* ═══ E LYDIAN AUDIO ═══ */
+const E_LYDIAN = [0, 2, 4, 6, 7, 9, 11];
+const ROOT_E = 82.41; // E2
+
+function lydianHz(degree) {
+  const oct = Math.floor(degree / 7);
+  const step = degree % 7;
+  return ROOT_E * Math.pow(2, oct) * Math.pow(2, E_LYDIAN[step] / 12);
+}
+
+// Map a letter (a-z) to a stable E Lydian degree
+function charToDegree(ch) {
+  const c = ch.toLowerCase().charCodeAt(0);
+  if (c < 97 || c > 122) return 0;
+  // Map a-z (26) across 2 octaves of 14 Lydian pitches
+  return Math.round((c - 97) / 25 * 13);
+}
+
+let ac = null, masterGain, masterComp, masterClip, revNode, revWet;
+
+function buildIR(sec) {
+  const sr = ac.sampleRate;
+  const buf = ac.createBuffer(2, Math.floor(sr * sec), sr);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    let lp = 0;
+    for (let i = 0; i < d.length; i++) {
+      const t = i / d.length;
+      const n = Math.random()*2-1;
+      lp = lp*0.82 + n*0.18;
+      d[i] = lp * Math.pow(1-t, 2.2);
+    }
+  }
+  return buf;
+}
+
+function initAudio() {
+  if (ac) return;
+  ac = new (window.AudioContext || window.webkitAudioContext)();
+  masterComp = ac.createDynamicsCompressor();
+  masterComp.threshold.value = -6; masterComp.ratio.value = 12;
+  masterComp.attack.value = 0.003; masterComp.release.value = 0.15;
+  masterClip = ac.createWaveShaper();
+  const cc = new Float32Array(65536);
+  for (let i = 0; i < 65536; i++) { const x=(i/65536)*2-1; cc[i]=Math.max(-0.95,Math.min(0.95,x)); }
+  masterClip.curve = cc;
+  masterGain = ac.createGain(); masterGain.gain.value = 0.48;
+  masterGain.connect(masterComp); masterComp.connect(masterClip); masterClip.connect(ac.destination);
+  revNode = ac.createConvolver(); revNode.buffer = buildIR(3.0);
+  revWet = ac.createGain(); revWet.gain.value = 0.5;
+  revNode.connect(revWet); revWet.connect(masterGain);
+}
+
+/* ═══ DRUM SYNTHESIS ═══ */
+function scheduleKick(startT) {
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0.28, startT);
+  env.gain.exponentialRampToValueAtTime(0.0001, startT + 0.9);
+  const osc = ac.createOscillator();
+  osc.frequency.setValueAtTime(80, startT);
+  osc.frequency.exponentialRampToValueAtTime(42, startT + 0.25);
+  osc.connect(env); env.connect(masterGain);
+  osc.start(startT); osc.stop(startT + 1.0);
+}
+
+function scheduleHihat(startT) {
+  const bufSz = Math.floor(ac.sampleRate * 0.08);
+  const buf = ac.createBuffer(1, bufSz, ac.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufSz; i++) d[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource(); src.buffer = buf;
+  const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 9000;
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0.22, startT);
+  env.gain.exponentialRampToValueAtTime(0.0001, startT + 0.07);
+  src.connect(hp); hp.connect(env); env.connect(masterGain);
+  src.start(startT); src.stop(startT + 0.09);
+}
+
+function scheduleSnare(startT) {
+  // Noise body
+  const bufSz = Math.floor(ac.sampleRate * 0.18);
+  const buf = ac.createBuffer(1, bufSz, ac.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < bufSz; i++) d[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource(); src.buffer = buf;
+  const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 0.7;
+  const nEnv = ac.createGain();
+  nEnv.gain.setValueAtTime(0.38, startT);
+  nEnv.gain.exponentialRampToValueAtTime(0.0001, startT + 0.16);
+  src.connect(bp); bp.connect(nEnv); nEnv.connect(masterGain);
+  src.start(startT); src.stop(startT + 0.18);
+  // Tone crack
+  const osc = ac.createOscillator(); osc.frequency.value = 200;
+  const oEnv = ac.createGain();
+  oEnv.gain.setValueAtTime(0.28, startT);
+  oEnv.gain.exponentialRampToValueAtTime(0.0001, startT + 0.07);
+  osc.connect(oEnv); oEnv.connect(masterGain);
+  osc.start(startT); osc.stop(startT + 0.09);
+}
+
+/* Schedule a note at a precise AudioContext time */
+function scheduleNote(hz, startT, durS, vol = 0.18) {
+  const env = ac.createGain();
+  const atkT = Math.min(0.05, durS * 0.2);
+  const relT = Math.min(0.5, durS * 0.7);
+  env.gain.setValueAtTime(0, startT);
+  env.gain.linearRampToValueAtTime(vol, startT + atkT);
+  env.gain.exponentialRampToValueAtTime(0.0001, startT + atkT + relT);
+  env.connect(masterGain); env.connect(revNode);
+
+  const detunes = [-4, 0, 5];
+  for (const d of detunes) {
+    const osc = ac.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = hz;
+    osc.detune.value = d;
+    const g = ac.createGain(); g.gain.value = d===0 ? 0.6 : 0.2;
+    osc.connect(g); g.connect(env);
+    osc.start(startT); osc.stop(startT + atkT + relT + 0.05);
+  }
+}
+
+/* ═══ LIVE TYPING ═══ */
+const journal = document.getElementById('journal');
+const NOTE_SYMS = ['♩','♪','♫','♬'];
+
+journal.addEventListener('keydown', e => {
+  if (e.key.length !== 1 && e.key !== 'Enter') return;
+  initAudio(); if (ac.state==='suspended') ac.resume();
+  const pos = journal.selectionStart;
+  const text = journal.value;
+  const lineStart = text.lastIndexOf('\n', pos-1)+1;
+  const col = pos - lineStart;
+  const line = text.substring(0, pos).split('\n').length;
+  const degree = col % 14;
+  const octShift = Math.min(line-1, 2);
+  const hz = lydianHz(degree) * Math.pow(2, octShift);
+  scheduleNote(hz, ac.currentTime, 1.2);
+  spawnParticle(null);
+});
+
+function spawnParticle(el) {
+  const ref = el || journal;
+  const rect = ref.getBoundingClientRect();
+  const div = document.createElement('div');
+  div.className = 'note-particle';
+  div.textContent = NOTE_SYMS[Math.floor(Math.random()*NOTE_SYMS.length)];
+  div.style.left = (rect.left + Math.random()*rect.width) + 'px';
+  div.style.top  = (rect.top  + Math.random()*rect.height*0.8) + 'px';
+  div.style.color = `hsl(${240+Math.random()*80},80%,75%)`;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 1400);
+}
+
+/* ═══ PLAYBACK ENGINE ═══ */
+const BPM = 65;
+const BAR_SEC = 60 / BPM; // 1 word = 1 beat at 65 BPM
+
+const playView = document.getElementById('playback-view');
+const barFill  = document.getElementById('bar-fill');
+const btnPlay  = document.getElementById('btn-play');
+const btnStop  = document.getElementById('btn-stop');
+
+let playTimers = [];
+let rafId = null;
+let playStartAC = null;
+let playStartWall = null;
+let totalBars = 0;
+let playing = false;
+
+/* Build the playback DOM — spans per letter, grouped by word */
+function buildPlayDOM(text) {
+  playView.innerHTML = '';
+  // Tokenise into words, spaces, newlines
+  const tokens = [];
+  let buf = '';
+  for (const ch of text) {
+    if (ch === ' ' || ch === '\n') {
+      if (buf) { tokens.push({type:'word', text:buf}); buf=''; }
+      tokens.push({type: ch==='\n' ? 'newline' : 'space'});
+    } else {
+      buf += ch;
+    }
+  }
+  if (buf) tokens.push({type:'word', text:buf});
+
+  const allLetterSpans = []; // flat list of {span, wordIdx, letterIdx}
+  const wordWrappers = [];   // per-word wrapper divs
+
+  let wordIdx = 0;
+  for (const tok of tokens) {
+    if (tok.type === 'space') {
+      const sp = document.createElement('span');
+      sp.className = 'pl-space';
+      playView.appendChild(sp);
+    } else if (tok.type === 'newline') {
+      const br = document.createElement('div');
+      br.className = 'pl-newline';
+      playView.appendChild(br);
+    } else {
+      const wrap = document.createElement('span');
+      wrap.className = 'pl-word';
+      wrap.dataset.wordIdx = wordIdx;
+      wordWrappers.push(wrap);
+      for (let li = 0; li < tok.text.length; li++) {
+        const sp = document.createElement('span');
+        sp.className = 'pl-letter';
+        sp.textContent = tok.text[li];
+        wrap.appendChild(sp);
+        allLetterSpans.push({ span: sp, wordIdx, letterIdx: li, char: tok.text[li] });
+      }
+      playView.appendChild(wrap);
+      wordIdx++;
+    }
+  }
+  return { allLetterSpans, wordWrappers, wordCount: wordIdx };
+}
+
+function startPlayback() {
+  const text = journal.value.trim();
+  if (!text) return;
+  initAudio(); if (ac.state==='suspended') ac.resume();
+
+  playing = true;
+  journal.style.display = 'none';
+  playView.style.display = 'block';
+  btnPlay.style.display = 'none';
+  btnStop.style.display = '';
+  btnStop.classList.add('active');
+  barFill.style.width = '0%';
+
+  const { allLetterSpans, wordWrappers, wordCount } = buildPlayDOM(text);
+  totalBars = wordCount;
+  playStartAC   = ac.currentTime + 0.1;
+  playStartWall = performance.now() + 100;
+
+  // ── Schedule 4-on-the-floor drums ──
+  for (let beat = 0; beat < totalBars; beat++) {
+    const beatT = playStartAC + beat * BAR_SEC;
+    scheduleKick(beatT);                        // kick every beat
+    scheduleHihat(beatT);                       // hihat on beat
+    scheduleHihat(beatT + BAR_SEC * 0.5);       // hihat on off-beat (8th)
+    if (beat % 2 === 1) scheduleSnare(beatT);   // snare on beats 2, 4, 6…
+  }
+
+  // ── Schedule audio & visual timers per letter ──
+  for (let wi = 0; wi < wordCount; wi++) {
+    const barStart = wi * BAR_SEC;
+    const letters = allLetterSpans.filter(l => l.wordIdx === wi);
+    const n = letters.length;
+    const noteInterval = BAR_SEC / n;
+
+    // Highlight current bar wrapper
+    const barT = barStart * 1000;
+    const barEndT = (barStart + BAR_SEC) * 1000;
+    playTimers.push(setTimeout(() => {
+      wordWrappers.forEach(w => w.classList.remove('bar-active'));
+      if (wordWrappers[wi]) wordWrappers[wi].classList.add('bar-active');
+    }, barT));
+
+    for (let li = 0; li < n; li++) {
+      const { span, char } = letters[li];
+      const noteOffset = barStart + li * noteInterval;
+      const acT = playStartAC + noteOffset;
+      const wallDelay = noteOffset * 1000;
+
+      // Map letter to E Lydian pitch
+      const degree = charToDegree(char);
+      // Higher letters in longer words = higher octave register
+      const octShift = Math.floor(li / 7) % 3;
+      const hz = lydianHz(degree) * Math.pow(2, octShift);
+      const vol = 0.12 + (degree / 13) * 0.1;
+
+      // Audio — precisely scheduled
+      scheduleNote(hz, acT, noteInterval * 0.85, vol);
+
+      // Visual — setTimeout aligned to wall clock
+      const tid = setTimeout(() => {
+        span.classList.remove('decay');
+        span.classList.add('hit');
+        spawnParticle(span);
+        setTimeout(() => {
+          span.classList.remove('hit');
+          span.classList.add('decay');
+        }, 120);
+      }, wallDelay);
+      playTimers.push(tid);
+    }
+  }
+
+  // ── Progress bar animation via rAF ──
+  const totalDur = totalBars * BAR_SEC * 1000;
+  function animBar() {
+    if (!playing) return;
+    const elapsed = performance.now() - playStartWall;
+    const pct = Math.min(elapsed / totalDur * 100, 100);
+    barFill.style.width = pct + '%';
+    if (pct < 100) { rafId = requestAnimationFrame(animBar); }
+    else { setTimeout(stopPlayback, 800); }
+  }
+  rafId = requestAnimationFrame(animBar);
+}
+
+function stopPlayback() {
+  playing = false;
+  playTimers.forEach(clearTimeout); playTimers = [];
+  if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  document.querySelectorAll('.pl-word').forEach(w => w.classList.remove('bar-active'));
+  barFill.style.width = '0%';
+  playView.style.display = 'none';
+  journal.style.display = '';
+  btnStop.style.display = 'none';
+  btnStop.classList.remove('active');
+  btnPlay.style.display = '';
+  journal.focus();
+}
+
+btnPlay.addEventListener('click', startPlayback);
+btnStop.addEventListener('click', stopPlayback);
+
+window.addEventListener('load', () => journal.focus());
+</script>
+<script src="../miniplayer.js"></script>
+</body>
+</html>
