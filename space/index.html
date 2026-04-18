@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Tristan Rio — Space</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000 url('album-cover.jpeg') center/cover no-repeat; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Georgia', serif;
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath d='M10 4 L10 22 Q10 26 6 28 Q2 30 2 26 Q2 22 6 22 Q8 22 10 23 L10 8 L20 5 L20 4Z' fill='white' stroke='rgba(0,200,255,0.5)' stroke-width='0.8'/%3E%3C/svg%3E") 6 4, crosshair; }
-    canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+    body.edit-mode * { cursor: default !important; }
+    body.edit-mode .zone-handle { cursor: grab !important; }
+    body.edit-mode .zone-handle:active { cursor: grabbing !important; }
+    body.edit-mode .zone-size-handle { cursor: crosshair !important; }
+    body { background: #000; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Georgia', serif; }
+    canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; }
     #main { z-index: 1; }
 
     #tip {
@@ -37,6 +40,21 @@
       text-shadow: 0 0 12px rgba(0,200,255,0.4); transition: color 0.3s;
     }
     #back:hover { color: #fff; }
+
+    /* ── Mobile panel dots ── */
+    #panel-dots {
+      display: none;
+      position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+      z-index: 30; gap: 10px; align-items: center;
+    }
+    @media (max-width: 768px) { #panel-dots { display: flex; } }
+    .panel-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: background 0.25s;
+      cursor: pointer;
+    }
+    .panel-dot.active { background: rgba(0,220,255,0.9); }
 
     /* ── Edit mode ── */
     #edit-bar {
@@ -71,6 +89,17 @@
       padding: 1px 5px; border-radius: 2px;
       pointer-events: none;
     }
+    /* Size/shape handles — square, smaller */
+    .zone-size-handle {
+      position: fixed; z-index: 75;
+      width: 8px; height: 8px;
+      border: 2px solid #fff;
+      transform: translate(-50%, -50%);
+      cursor: crosshair;
+      pointer-events: auto;
+      box-shadow: 0 0 6px currentColor;
+    }
+    .zone-size-handle:active { cursor: grabbing; }
     #handle-layer { display: none; position: fixed; inset: 0; z-index: 74; pointer-events: none; }
     #handle-layer.visible { display: block; pointer-events: none; }
 
@@ -78,7 +107,7 @@
     #modal {
       display: none;
       position: fixed; inset: 0; z-index: 60;
-      background: rgba(0,0,0,0.92);
+      background: transparent;
       align-items: center; justify-content: center; flex-direction: column;
       gap: 24px;
     }
@@ -88,8 +117,9 @@
     #modal-frame {
       width: min(85vw, 900px);
       height: min(75vh, 560px);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 0 80px rgba(0,180,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 0 80px rgba(0,180,255,0.25), 0 8px 60px rgba(0,0,0,0.7);
+      border-radius: 4px;
     }
 
     #modal-placeholder {
@@ -115,6 +145,11 @@
 <canvas id="main"></canvas>
 <div id="tip"><span id="tip-name"></span><span id="tip-desc"></span></div>
 <div id="back">&#8592; Return</div>
+<div id="panel-dots">
+  <div class="panel-dot active" data-panel="0"></div>
+  <div class="panel-dot" data-panel="1"></div>
+  <div class="panel-dot" data-panel="2"></div>
+</div>
 <div id="handle-layer"></div>
 <div id="edit-bar">
   <span id="edit-hint">EDIT MODE — drag handles · press E to exit</span>
@@ -144,6 +179,47 @@ let W, H;
 function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize();
 window.addEventListener('resize', resize);
+
+/* ═══ MOBILE DETECT ═══ */
+const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+
+/* ═══ MOBILE PANEL SWIPE ═══ */
+let panelIndex = 0;
+let panelOffsetX = 0;
+let touchStartX = 0;
+let touchDeltaX = 0;
+let isSwiping = false;
+
+const panelDots = document.querySelectorAll('.panel-dot');
+
+function setPanel(idx) {
+  panelIndex = Math.max(0, Math.min(2, idx));
+  panelDots.forEach((d, i) => d.classList.toggle('active', i === panelIndex));
+}
+
+panelDots.forEach(d => {
+  d.addEventListener('click', () => setPanel(parseInt(d.dataset.panel)));
+});
+
+canvas.addEventListener('touchstart', e => {
+  if (!isMobile()) return;
+  touchStartX = e.touches[0].clientX;
+  touchDeltaX = 0;
+  isSwiping = true;
+}, { passive: true });
+
+canvas.addEventListener('touchmove', e => {
+  if (!isMobile() || !isSwiping) return;
+  touchDeltaX = e.touches[0].clientX - touchStartX;
+}, { passive: true });
+
+canvas.addEventListener('touchend', e => {
+  if (!isMobile() || !isSwiping) return;
+  isSwiping = false;
+  if (touchDeltaX < -50) setPanel(panelIndex + 1);
+  else if (touchDeltaX > 50) setPanel(panelIndex - 1);
+  touchDeltaX = 0;
+});
 
 /* ═══ IMAGE ═══ */
 const img = new Image();
@@ -235,13 +311,13 @@ function drawWarpStars() {
     const px = cx + Math.cos(s.angle) * s.dist;
     const py = cy + Math.sin(s.angle) * s.dist;
     const trailLen = Math.min(s.dist * 0.12, 22) * (s.speed / 0.45);
-    const tx = px - Math.cos(s.angle) * trailLen;
-    const ty = py - Math.sin(s.angle) * trailLen;
+    const tx2 = px - Math.cos(s.angle) * trailLen;
+    const ty2 = py - Math.sin(s.angle) * trailLen;
     const bright = Math.min(s.dist / (maxDist * 0.08), 1);
     if (trailLen > 1) {
-      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(px, py);
+      ctx.beginPath(); ctx.moveTo(tx2, ty2); ctx.lineTo(px, py);
       ctx.strokeStyle = s.color;
-      ctx.globalAlpha = bright * 0.8;
+      ctx.globalAlpha = bright * 1.0;
       ctx.lineWidth   = s.size;
       ctx.stroke();
     }
@@ -253,10 +329,6 @@ function drawWarpStars() {
   ctx.lineWidth   = 1;
   ctx.globalCompositeOperation = 'source-over';
 }
-
-/* ═══ SCANLINES ═══ */
-const slc = document.createElement('canvas'); slc.width=2; slc.height=2;
-const slx = slc.getContext('2d'); slx.fillStyle='rgba(0,0,0,0.35)'; slx.fillRect(0,0,2,1);
 
 /* ═══ MOUSE ═══ */
 let mx = 0, my = 0, hoveredZone = null;
@@ -300,11 +372,18 @@ function imgLayout() {
 /* ═══ MAIN DRAW ═══ */
 function draw() {
   t++;
-  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
 
   if (!img.complete || !img.naturalWidth) { requestAnimationFrame(draw); return; }
 
   const { needsRot, drawW, drawH, ox, oy } = imgLayout();
+
+  /* Mobile panel offset */
+  let mobileOffsetX = 0;
+  if (isMobile()) {
+    mobileOffsetX = panelIndex * (drawW / 3);
+  }
 
   /* ── Apply zoom transform ── */
   ctx.save();
@@ -313,11 +392,13 @@ function draw() {
     ctx.translate(W/2, H/2);
     ctx.scale(z.scale, z.scale);
     ctx.translate(-W/2 + z.tx, -H/2 + z.ty);
+  } else if (isMobile() && mobileOffsetX !== 0) {
+    ctx.translate(-mobileOffsetX, 0);
   }
 
   /* ── Draw artwork with high contrast to crush paper → pure white (inverts to pure black) ── */
   ctx.save();
-  ctx.filter = 'contrast(6) brightness(1.1)';
+  ctx.filter = 'contrast(12) brightness(1.4)';
   if (needsRot) {
     ctx.translate(ox + drawW/2, oy + drawH/2);
     ctx.rotate(-Math.PI / 2);
@@ -328,22 +409,16 @@ function draw() {
   ctx.filter = 'none';
   ctx.restore();
 
-  /* ── Invert full canvas → paper becomes black seamlessly ── */
+  /* ── Invert only the image rect → paper becomes black, transparent edges untouched ── */
   ctx.globalCompositeOperation = 'difference';
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(ox, oy, drawW, drawH);
   ctx.globalCompositeOperation = 'source-over';
 
-  /* ── Re-mask outside-image area back to pure black (removes inversion artifact) ── */
-  ctx.fillStyle = '#000';
-  if (ox > 0) {
-    ctx.fillRect(0, 0, ox, H);
-    ctx.fillRect(ox + drawW, 0, W - ox - drawW, H);
-  }
-  if (oy > 0) {
-    ctx.fillRect(0, 0, W, oy);
-    ctx.fillRect(0, oy + drawH, W, H - oy - drawH);
-  }
+  /* ── Cover JPEG edge artifacts with a thin black border ── */
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(ox, oy, drawW, drawH);
 
   /* ── Nebula overlays: slow, smooth, psychedelic ── */
   ctx.globalCompositeOperation = 'screen';
@@ -355,8 +430,8 @@ function draw() {
     const hShift = (t * 0.45 + i * 37) % 360;
     const hue    = (z.baseH + hShift) % 360;
     const sat    = 92 + 8 * Math.sin(t * 0.008 + i);
-    const alpha1 = 0.52 + 0.18 * Math.sin(t * 0.010 + i * 1.3);
-    const alpha2 = 0.22 + 0.10 * Math.sin(t * 0.013 + i * 0.7);
+    const alpha1 = 0.72 + 0.22 * Math.abs(Math.sin(t * 0.010 + i * 1.3));
+    const alpha2 = 0.32 + 0.14 * Math.abs(Math.sin(t * 0.013 + i * 0.7));
 
     const zx  = ox + z.nx * drawW;
     const zy  = oy + z.ny * drawH;
@@ -364,7 +439,7 @@ function draw() {
     const zry = z.nry * drawH * pulse * 1.5;
 
     const isHovered = !zoomed &&
-      Math.pow((mx - zx) / zrx, 2) + Math.pow((my - zy) / zry, 2) < 1;
+      Math.pow((mx + mobileOffsetX - zx) / zrx, 2) + Math.pow((my - zy) / zry, 2) < 1;
     if (isHovered) hoveredZone = z;
     const boost = isHovered ? 1.7 : 1;
 
@@ -372,8 +447,8 @@ function draw() {
     ctx.translate(zx, zy);
     ctx.scale(1, zry / zrx);
     const g = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
-    g.addColorStop(0,   `hsla(${hue},${sat}%,72%,${alpha1 * boost})`);
-    g.addColorStop(0.45,`hsla(${(hue+60)%360},${sat}%,56%,${alpha2 * boost})`);
+    g.addColorStop(0,   `hsla(${hue},${sat}%,80%,${alpha1 * boost})`);
+    g.addColorStop(0.45,`hsla(${(hue+60)%360},${sat}%,60%,${alpha2 * boost})`);
     g.addColorStop(1,   'transparent');
     ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
     ctx.fillStyle = g; ctx.fill();
@@ -391,10 +466,6 @@ function draw() {
   }
   ctx.globalCompositeOperation = 'source-over';
 
-  /* ── Scanlines ── */
-  ctx.fillStyle = ctx.createPattern(slc, 'repeat');
-  ctx.fillRect(0, 0, W, H);
-
   /* ── Warp starfield ── */
   drawWarpStars();
 
@@ -404,7 +475,7 @@ function draw() {
   for (let i = 0; i < 180; i++) {
     const sx = (Math.sin(i * 127.1) * 0.5 + 0.5) * W;
     const sy = (Math.cos(i * 311.7) * 0.5 + 0.5) * H;
-    const sa = 0.08 + 0.55 * Math.abs(Math.sin(t * 0.013 + i * 0.7));
+    const sa = 0.2 + 0.8 * Math.abs(Math.sin(t * 0.013 + i * 0.7));
     const sr = 0.4 + 0.8 * Math.abs(Math.sin(i * 43.3));
     ctx.globalAlpha = sa;
     ctx.fillStyle = palette[i % palette.length];
@@ -431,7 +502,7 @@ function draw() {
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
 
-  ctx.restore(); // pop zoom
+  ctx.restore(); // pop zoom / mobile offset
 
   /* ── Tooltip ── */
   if (hoveredZone && !zoomed) {
@@ -458,9 +529,9 @@ function zoomIn(zone) {
   const { drawW, drawH, ox, oy } = imgLayout();
   const zx = ox + zone.nx * drawW;
   const zy = oy + zone.ny * drawH;
-  const targetScale = 3.0;
-  const tx = -(zx - W/2) * targetScale;
-  const ty = -(zy - H/2) * targetScale;
+  const targetScale = 4.0;
+  const tx = W/2 - zx;
+  const ty = H/2 - zy;
   animateZoom(zoomFrom, { tx, ty, scale: targetScale }, 650, () => {
     openZoneContent(zone);
   });
@@ -503,8 +574,7 @@ function openZoneContent(zone) {
     return;
   }
   if (zone.type === 'bandcamp') {
-    if (window.miniPlayerShow) window.miniPlayerShow();
-    zoomOut();
+    showFrame(zone.bcUrl + 'autoplay=1/');
     return;
   }
   if (zone.type === 'youtube') {
@@ -660,6 +730,7 @@ function buildHandles() {
   handleLayer.innerHTML = '';
   handles.length = 0;
   ZONES.forEach((z, i) => {
+    /* ── Center drag handle ── */
     const el = document.createElement('div');
     el.className = 'zone-handle';
     el.style.color = z.label;
@@ -673,7 +744,6 @@ function buildHandles() {
     handles.push(el);
     positionHandle(el, z);
 
-    // Drag
     el.style.pointerEvents = 'auto';
     let dragging = false;
     el.addEventListener('mousedown', e => {
@@ -684,16 +754,63 @@ function buildHandles() {
     document.addEventListener('mousemove', e => {
       if (!dragging) return;
       const { drawW, drawH, ox: imgOx, oy: imgOy } = imgLayout();
-      const newX = (e.clientX - imgOx) / drawW;
-      const newY = (e.clientY - imgOy) / drawH;
-      z.nx = Math.max(0, Math.min(1, newX));
-      z.ny = Math.max(0, Math.min(1, newY));
+      z.nx = Math.max(0, Math.min(1, (e.clientX - imgOx) / drawW));
+      z.ny = Math.max(0, Math.min(1, (e.clientY - imgOy) / drawH));
       positionHandle(el, z);
+      positionSizeHandles(i, z);
       updateCoordReadout();
     });
     document.addEventListener('mouseup', () => {
       if (dragging) { dragging = false; el.style.cursor = 'grab'; }
     });
+
+    /* ── East handle (controls nrx) ── */
+    const eH = document.createElement('div');
+    eH.className = 'zone-size-handle';
+    eH.style.color = z.label;
+    eH.style.borderColor = z.label;
+    eH.style.background = z.label + '88';
+    eH.dataset.zoneIdx = i;
+    eH.dataset.axis = 'E';
+    handleLayer.appendChild(eH);
+    positionSizeHandle(eH, z, 'E');
+
+    eH.style.pointerEvents = 'auto';
+    let eDragging = false;
+    eH.addEventListener('mousedown', e => { eDragging = true; e.stopPropagation(); });
+    document.addEventListener('mousemove', e => {
+      if (!eDragging) return;
+      const { drawW, drawH, ox: imgOx, oy: imgOy } = imgLayout();
+      const zx = imgOx + z.nx * drawW;
+      z.nrx = Math.max(0.01, Math.abs(e.clientX - zx) / (drawW * 1.5));
+      positionSizeHandle(eH, z, 'E');
+      updateCoordReadout();
+    });
+    document.addEventListener('mouseup', () => { eDragging = false; });
+
+    /* ── North handle (controls nry) ── */
+    const nH = document.createElement('div');
+    nH.className = 'zone-size-handle';
+    nH.style.color = z.label;
+    nH.style.borderColor = z.label;
+    nH.style.background = z.label + '88';
+    nH.dataset.zoneIdx = i;
+    nH.dataset.axis = 'N';
+    handleLayer.appendChild(nH);
+    positionSizeHandle(nH, z, 'N');
+
+    nH.style.pointerEvents = 'auto';
+    let nDragging = false;
+    nH.addEventListener('mousedown', e => { nDragging = true; e.stopPropagation(); });
+    document.addEventListener('mousemove', e => {
+      if (!nDragging) return;
+      const { drawW, drawH, ox: imgOx, oy: imgOy } = imgLayout();
+      const zy = imgOy + z.ny * drawH;
+      z.nry = Math.max(0.01, Math.abs(e.clientY - zy) / (drawH * 1.5));
+      positionSizeHandle(nH, z, 'N');
+      updateCoordReadout();
+    });
+    document.addEventListener('mouseup', () => { nDragging = false; });
   });
 }
 
@@ -703,14 +820,38 @@ function positionHandle(el, z) {
   el.style.top  = (oy + z.ny * drawH) + 'px';
 }
 
+function positionSizeHandle(el, z, axis) {
+  const { drawW, drawH, ox, oy } = imgLayout();
+  if (axis === 'E') {
+    el.style.left = (ox + z.nx * drawW + z.nrx * drawW * 1.5) + 'px';
+    el.style.top  = (oy + z.ny * drawH) + 'px';
+  } else { // N
+    el.style.left = (ox + z.nx * drawW) + 'px';
+    el.style.top  = (oy + z.ny * drawH - z.nry * drawH * 1.5) + 'px';
+  }
+}
+
+function positionSizeHandles(idx, z) {
+  // Re-position size handles after center drag
+  const sizeHandles = handleLayer.querySelectorAll('.zone-size-handle');
+  // They are appended in pairs: [E0, N0, E1, N1, ...]
+  const eH = sizeHandles[idx * 2];
+  const nH = sizeHandles[idx * 2 + 1];
+  if (eH) positionSizeHandle(eH, z, 'E');
+  if (nH) positionSizeHandle(nH, z, 'N');
+}
+
 function updateCoordReadout() {
   editCoords.textContent = ZONES.map((z, i) =>
-    `[${i}] nx:${z.nx.toFixed(3)} ny:${z.ny.toFixed(3)}`
+    `[${i}] nx:${z.nx.toFixed(3)} ny:${z.ny.toFixed(3)} nrx:${z.nrx.toFixed(3)} nry:${z.nry.toFixed(3)}`
   ).join('  |  ');
 }
 
 function refreshHandlePositions() {
-  ZONES.forEach((z, i) => positionHandle(handles[i], z));
+  ZONES.forEach((z, i) => {
+    positionHandle(handles[i], z);
+    positionSizeHandles(i, z);
+  });
 }
 
 function enterEditMode() {
@@ -720,12 +861,14 @@ function enterEditMode() {
   editBar.classList.add('visible');
   handleLayer.style.pointerEvents = 'none'; // handles are auto
   updateCoordReadout();
+  document.body.classList.add('edit-mode');
 }
 
 function exitEditMode() {
   editMode = false;
   handleLayer.classList.remove('visible');
   editBar.classList.remove('visible');
+  document.body.classList.remove('edit-mode');
 }
 
 document.addEventListener('keydown', e => {
@@ -753,6 +896,188 @@ function toggleSynth() {
   if (!synthStarted) { startSynth(); return; }
   if (synthOn) stopSynth(); else startSynth();
 }
+
+/* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
+(function() {
+  const cc_canvas = document.createElement('canvas');
+  cc_canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;';
+  document.body.appendChild(cc_canvas);
+  const cc = cc_canvas.getContext('2d');
+
+  function resize() { cc_canvas.width = window.innerWidth; cc_canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let prevMx = mx, prevMy = my;
+  let shipAngle = 0, smoothAngle = 0, speed = 0, frame = 0;
+  const WARP = [], RIPPLES = [];
+
+  document.addEventListener('mousemove', e => {
+    prevMx = mx; prevMy = my;
+    mx = e.clientX; my = e.clientY;
+    const dx = mx - prevMx, dy = my - prevMy;
+    speed = Math.sqrt(dx*dx + dy*dy);
+    if (speed > 1.5) shipAngle = Math.atan2(dy, dx);
+
+    const sternX = mx - Math.cos(shipAngle) * 20;
+    const sternY = my - Math.sin(shipAngle) * 20;
+    const count = Math.min(Math.floor(speed / 3) + 1, 9);
+    const COLORS = ['#00ffff','#8844ff','#ffffff','#4488ff','#00aaff'];
+    for (let i = 0; i < count; i++) {
+      const spread = (Math.random() - 0.5) * 9;
+      const spd = 1.2 + Math.random() * speed * 0.28;
+      WARP.push({
+        x: sternX - Math.sin(shipAngle) * spread,
+        y: sternY + Math.cos(shipAngle) * spread,
+        vx: -Math.cos(shipAngle) * spd * (0.6 + Math.random() * 0.8),
+        vy: -Math.sin(shipAngle) * spd * (0.6 + Math.random() * 0.8),
+        life: 1.0, decay: 0.035 + Math.random() * 0.045,
+        size: 1.5 + Math.random() * 2.8,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      });
+    }
+
+    if (Math.random() < 0.12)
+      RIPPLES.push({x: mx, y: my, r: 2, alpha: 0.3, maxR: 28, expand: 2.2, lw: 1});
+  });
+
+  document.addEventListener('click', e => {
+    for (let i = 0; i < 5; i++)
+      RIPPLES.push({x: e.clientX, y: e.clientY, r: 3 + i*7, alpha: 0.75 - i*0.1,
+                    maxR: 55 + i*28, expand: 3 + i*0.5, lw: 2 - i*0.25});
+    for (let i = 0; i < 20; i++) {
+      const a = Math.random() * Math.PI * 2;
+      WARP.push({x: e.clientX, y: e.clientY,
+                 vx: Math.cos(a) * (2 + Math.random() * 5),
+                 vy: Math.sin(a) * (2 + Math.random() * 5),
+                 life: 1.0, decay: 0.03 + Math.random() * 0.04,
+                 size: 2 + Math.random() * 3,
+                 color: ['#00ffff','#ff44aa','#8844ff','#ffffff'][Math.floor(Math.random()*4)]});
+    }
+  });
+
+  function drawShip(x, y, angle, bob) {
+    cc.save();
+    cc.translate(x, y);
+    cc.rotate(angle + Math.sin(frame * 0.035) * 0.04);
+    cc.translate(0, bob);
+
+    const eg = cc.createRadialGradient(-20, 0, 0, -20, 0, 16);
+    eg.addColorStop(0,   'rgba(0,200,255,0.95)');
+    eg.addColorStop(0.3, 'rgba(80,40,255,0.6)');
+    eg.addColorStop(1,   'rgba(0,0,80,0)');
+    cc.beginPath(); cc.arc(-20, 0, 16, 0, Math.PI*2);
+    cc.fillStyle = eg; cc.fill();
+
+    cc.shadowColor = '#00aaff'; cc.shadowBlur = 12;
+    cc.beginPath();
+    cc.moveTo(22, 0);
+    cc.quadraticCurveTo(16, -9, -12, -8);
+    cc.lineTo(-20, 0);
+    cc.lineTo(-12, 8);
+    cc.quadraticCurveTo(16, 9, 22, 0);
+    cc.fillStyle = '#1c0900'; cc.fill();
+    cc.strokeStyle = '#8B4513'; cc.lineWidth = 1.5; cc.stroke();
+    cc.shadowBlur = 0;
+
+    cc.beginPath();
+    cc.moveTo(18, -1);
+    cc.quadraticCurveTo(2, -8, -12, -7);
+    cc.strokeStyle = 'rgba(200,40,40,0.75)'; cc.lineWidth = 1; cc.stroke();
+
+    cc.beginPath();
+    cc.moveTo(-3, -8); cc.lineTo(10, -8); cc.lineTo(14, -21); cc.lineTo(-1, -19);
+    cc.closePath();
+    cc.fillStyle = 'rgba(238,218,148,0.9)'; cc.fill();
+    cc.strokeStyle = 'rgba(100,80,30,0.55)'; cc.lineWidth = 0.5; cc.stroke();
+    cc.font = '7px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
+    cc.fillStyle = 'rgba(0,0,0,0.85)'; cc.fillText('☠', 6, -14);
+
+    cc.beginPath();
+    cc.moveTo(-3, 8); cc.lineTo(10, 8); cc.lineTo(14, 21); cc.lineTo(-1, 19);
+    cc.closePath();
+    cc.fillStyle = 'rgba(238,218,148,0.9)'; cc.fill();
+    cc.strokeStyle = 'rgba(100,80,30,0.55)'; cc.lineWidth = 0.5; cc.stroke();
+    cc.fillStyle = 'rgba(0,0,0,0.85)'; cc.fillText('☠', 6, 14);
+
+    cc.beginPath(); cc.arc(3, 0, 2.5, 0, Math.PI*2);
+    cc.fillStyle = '#555'; cc.fill();
+    cc.strokeStyle = '#999'; cc.lineWidth = 0.8; cc.stroke();
+
+    cc.font = '9px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
+    cc.fillStyle = 'rgba(255,255,255,0.72)'; cc.fillText('☠', -8, 0);
+
+    cc.fillStyle = '#2a2a2a';
+    for (let i = -1; i <= 1; i++) {
+      cc.beginPath(); cc.arc(i*7, -8, 1.3, 0, Math.PI*2); cc.fill();
+      cc.beginPath(); cc.arc(i*7, 8,  1.3, 0, Math.PI*2); cc.fill();
+    }
+
+    cc.beginPath();
+    cc.moveTo(-18, -3); cc.lineTo(-25, -2); cc.lineTo(-25, 2); cc.lineTo(-18, 3);
+    cc.closePath();
+    cc.fillStyle = '#1a1a1a'; cc.fill();
+    cc.strokeStyle = '#00aaff'; cc.lineWidth = 0.8; cc.stroke();
+    cc.beginPath();
+    cc.moveTo(-18, -2); cc.lineTo(-23, 0); cc.lineTo(-18, 2); cc.closePath();
+    cc.fillStyle = `rgba(0,${180+Math.floor(Math.sin(frame*0.15)*50)},255,0.95)`;
+    cc.fill();
+
+    cc.restore();
+  }
+
+  function drawFrame() {
+    const inEditMode = document.body.classList.contains('edit-mode');
+    cc_canvas.style.display = inEditMode ? 'none' : 'block';
+    if (inEditMode) { requestAnimationFrame(drawFrame); return; }
+    cc.clearRect(0, 0, cc_canvas.width, cc_canvas.height);
+    frame++;
+
+    let diff = shipAngle - smoothAngle;
+    while (diff > Math.PI) diff -= Math.PI*2;
+    while (diff < -Math.PI) diff += Math.PI*2;
+    smoothAngle += diff * 0.18;
+
+    const bob = Math.sin(frame * 0.038) * 1.8;
+
+    for (let i = WARP.length - 1; i >= 0; i--) {
+      const p = WARP[i];
+      const len = Math.sqrt(p.vx*p.vx + p.vy*p.vy + 0.001);
+      cc.beginPath();
+      cc.moveTo(p.x, p.y);
+      cc.lineTo(p.x - (p.vx/len) * len * 2.5, p.y - (p.vy/len) * len * 2.5);
+      cc.strokeStyle = p.color; cc.globalAlpha = p.life * 0.55;
+      cc.lineWidth = p.size * 0.55; cc.stroke();
+      cc.beginPath(); cc.arc(p.x, p.y, p.size * p.life * 0.8, 0, Math.PI*2);
+      cc.fillStyle = p.color; cc.globalAlpha = p.life * 0.85; cc.fill();
+      cc.globalAlpha = 1;
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.92; p.vy *= 0.92;
+      p.life -= p.decay;
+      if (p.life <= 0) WARP.splice(i, 1);
+    }
+    cc.globalAlpha = 1;
+
+    for (let i = RIPPLES.length - 1; i >= 0; i--) {
+      const r = RIPPLES[i];
+      cc.beginPath(); cc.arc(r.x, r.y, r.r, 0, Math.PI*2);
+      cc.strokeStyle = `rgba(0,220,255,${r.alpha})`;
+      cc.lineWidth = r.lw; cc.stroke();
+      if (r.r > 18) {
+        cc.beginPath(); cc.arc(r.x, r.y, r.r * 0.52, 0, Math.PI*2);
+        cc.strokeStyle = `rgba(140,70,255,${r.alpha * 0.45})`;
+        cc.lineWidth = r.lw * 0.55; cc.stroke();
+      }
+      r.r += r.expand; r.alpha *= 0.905;
+      if (r.r > r.maxR || r.alpha < 0.01) RIPPLES.splice(i, 1);
+    }
+
+    drawShip(mx, my, smoothAngle, bob);
+    requestAnimationFrame(drawFrame);
+  }
+  drawFrame();
+})();
 </script>
 <script src="../miniplayer.js"></script>
 </body>
