@@ -1,79 +1,44 @@
-/* ═══ PERSISTENT BANDCAMP PLAYER ═══
-   One iframe, never removed from DOM — audio never stops.
-   CSS-only toggle between mini bar (top-left) and expanded modal.
+/* ═══ PERSISTENT MINI BANDCAMP PLAYER ═══
+   Mini bar: size=small (42px, track name + play/pause/skip built-in).
+   Lives in top-left corner. Shown after the full modal player is dismissed.
 */
 (function() {
   const ALBUM_ID = '2211761745';
 
   const css = `
-    #bc-backdrop {
-      display: none;
-      position: fixed; inset: 0; z-index: 498;
-      background: rgba(0,0,0,0.65);
-    }
-    #bc-backdrop.on { display: block; }
-
-    /* Wrapper — clips the iframe */
     #bc-player {
       display: none;
-      position: fixed;
-      overflow: hidden;
-      background: #000;
+      position: fixed; top: 16px; left: 16px; z-index: 1000;
+      align-items: center;
+      background: rgba(0,0,0,0.82);
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 3px;
       box-shadow: 0 0 24px rgba(0,0,0,0.8), 0 0 30px rgba(0,200,255,0.07);
+      overflow: hidden;
       backdrop-filter: blur(10px);
-      z-index: 499;
-      /* mini defaults */
-      top: 16px; left: 16px;
-      width: 350px; height: 42px;
     }
-    #bc-player.on { display: block; }
-
-    /* iframe always same size inside wrapper; bottom-anchored so
-       the controls row is visible when wrapper is 42px tall */
-    #bc-player iframe {
-      position: absolute;
-      bottom: 0; left: 0;
+    #bc-player.on { display: flex; }
+    #bc-frame {
       width: 350px;
-      height: 388px;
+      height: 42px;
       border: 0;
+      display: block;
+      flex-shrink: 0;
     }
-
-    /* X button — only shown when expanded */
     #bc-close {
-      display: none;
-      position: absolute; top: 8px; right: 10px; z-index: 2;
-      color: rgba(255,255,255,0.5); font-size: 16px;
-      background: none; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.3);
+      font-size: 13px; cursor: pointer; line-height: 1;
       transition: color 0.2s;
+      background: none; border: none;
+      padding: 0 10px;
+      flex-shrink: 0;
     }
     #bc-close:hover { color: #fff; }
-
-    /* ── Expanded ── */
-    #bc-player.expanded {
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(85vw, 720px);
-      height: min(75vh, 460px);
-      border-radius: 4px;
-      z-index: 500;
-    }
-    #bc-player.expanded iframe {
-      position: absolute;
-      top: 0; left: 0; bottom: auto;
-      width: 100%; height: 100%;
-    }
-    #bc-player.expanded #bc-close { display: block; }
   `;
 
   const style = document.createElement('style');
   style.textContent = css;
   document.head.appendChild(style);
-
-  const backdrop = document.createElement('div');
-  backdrop.id = 'bc-backdrop';
-  document.body.appendChild(backdrop);
 
   const player = document.createElement('div');
   player.id = 'bc-player';
@@ -86,43 +51,21 @@
   const frame   = player.querySelector('#bc-frame');
   const closeBtn = player.querySelector('#bc-close');
 
-  function ensureLoaded() {
+  function show() {
     if (!frame.src || frame.src === window.location.href) {
-      frame.src = `https://bandcamp.com/EmbeddedPlayer/album=${ALBUM_ID}/size=large/bgcol=000000/linkcol=aaffee/artwork=small/transparent=true/autoplay=1/`;
+      frame.src = `https://bandcamp.com/EmbeddedPlayer/album=${ALBUM_ID}/size=small/bgcol=000000/linkcol=aaffee/transparent=true/autoplay=1/`;
     }
-  }
-
-  function expand() {
-    ensureLoaded();
-    player.classList.add('on', 'expanded');
-    backdrop.classList.add('on');
-  }
-
-  function minimize() {
-    // just remove expanded — iframe stays alive, audio continues
-    player.classList.remove('expanded');
-    backdrop.classList.remove('on');
     player.classList.add('on');
   }
 
   function hide() {
-    player.classList.remove('on', 'expanded');
-    backdrop.classList.remove('on');
+    player.classList.remove('on');
+    frame.src = '';
   }
 
-  closeBtn.addEventListener('click', minimize);
-  backdrop.addEventListener('click', minimize);
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && player.classList.contains('expanded')) minimize();
-  });
+  closeBtn.addEventListener('click', hide);
 
-  window.bcExpand   = expand;
-  window.bcMinimize = minimize;
-  window.bcHide     = hide;
-  window.bcVisible  = () => player.classList.contains('on');
-  window.bcExpanded = () => player.classList.contains('expanded');
-
-  // Legacy aliases
-  window.miniPlayerShow = expand;
-  window.miniPlayerVisible = window.bcVisible;
+  window.miniPlayerShow    = show;
+  window.miniPlayerHide    = hide;
+  window.miniPlayerVisible = () => player.classList.contains('on');
 })();

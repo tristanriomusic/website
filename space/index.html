@@ -577,9 +577,7 @@ function openZoneContent(zone) {
     return;
   }
   if (zone.type === 'bandcamp') {
-    if (window.bcExpand) window.bcExpand();
-    // stay zoomed in — user exits manually
-    back.textContent = `↑ ${zone.name} — click or ESC to return`;
+    showFrame(zone.bcUrl + 'autoplay=1/');
     return;
   }
   if (zone.type === 'youtube') {
@@ -615,10 +613,12 @@ function showPlaceholder(msg, color) {
 }
 
 function closeModal() {
+  const wasBandcamp = mFrame.style.display === 'block' && mFrame.src.includes('bandcamp');
   modal.classList.remove('visible');
   mFrame.src = '';
   mFrame.style.display = 'none';
   mPlace.style.display = 'none';
+  if (wasBandcamp && window.miniPlayerShow) window.miniPlayerShow();
 }
 
 /* ═══ XY GRANULAR SYNTH (NEBULA) ═══ */
