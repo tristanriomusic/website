@@ -490,11 +490,26 @@ let t = 0;
 
 /* ═══ COSMIC STORM ═══ */
 let cosmicStorm = false;
+let stormManual = false;   // true when user explicitly clicked the button
+let prevDarknessActive = false;
 const stormBtn = document.getElementById('storm-btn');
 stormBtn.addEventListener('click', () => {
-  cosmicStorm = !cosmicStorm;
+  stormManual = !stormManual;
+  cosmicStorm = stormManual;
   stormBtn.classList.toggle('active', cosmicStorm);
 });
+
+function updateDarknessStorm(darknessActive) {
+  if (darknessActive === prevDarknessActive) return;
+  prevDarknessActive = darknessActive;
+  if (darknessActive) {
+    cosmicStorm = true;
+    stormBtn.classList.add('active');
+  } else if (!stormManual) {
+    cosmicStorm = false;
+    stormBtn.classList.remove('active');
+  }
+}
 
 /* ═══ WARP STARFIELD ═══ */
 const STAR_COLORS = ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff',
@@ -618,6 +633,12 @@ function draw() {
       hoveredZone = z;
   }
 
+  // Auto-trigger storm when in Darkness zone (hover or navigated to)
+  updateDarknessStorm(
+    !!(hoveredZone && hoveredZone.dark) ||
+    !!(zoomed && zoomTarget && zoomTarget.dark)
+  );
+
   /* ── Draw artwork: orb-gravity deformation makes lines warp and breathe ── */
   ctx.save();
   ctx.filter = 'contrast(12) brightness(1.4)';
@@ -677,8 +698,6 @@ function draw() {
         ox + wx, oy + si * (drawH/NS), (drawW + 3) * wMod, drawH/NS + 2);
     }
   }
-  ctx.restore();
-  ctx.filter = 'none';
   ctx.restore(); // clip
   ctx.filter = 'none';
   ctx.restore(); // filter
