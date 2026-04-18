@@ -339,12 +339,14 @@ canvas.addEventListener('mousemove', e => {
 
 canvas.addEventListener('click', e => {
   if (modal.classList.contains('visible')) return;
+  if (window.miniPlayerExpanded && window.miniPlayerExpanded()) { window.miniPlayerCollapse(); return; }
   if (zoomed) { zoomOut(); return; }
   if (hoveredZone) zoomIn(hoveredZone);
   // XY synth disabled: toggleSynth();
 });
 
 back.addEventListener('click', () => {
+  if (window.miniPlayerExpanded && window.miniPlayerExpanded()) { window.miniPlayerCollapse(); return; }
   if (modal.classList.contains('visible')) { closeModal(); return; }
   if (zoomed) zoomOut();
   else window.location.href = '../';
@@ -353,6 +355,7 @@ mClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
+    if (window.miniPlayerExpanded && window.miniPlayerExpanded()) { window.miniPlayerCollapse(); return; }
     if (modal.classList.contains('visible')) { closeModal(); return; }
     if (zoomed) zoomOut(); else window.location.href='../';
   }
@@ -574,7 +577,8 @@ function openZoneContent(zone) {
     return;
   }
   if (zone.type === 'bandcamp') {
-    showFrame(zone.bcUrl + 'autoplay=1/');
+    if (window.miniPlayerExpand) window.miniPlayerExpand();
+    zoomOut();
     return;
   }
   if (zone.type === 'youtube') {
@@ -610,12 +614,10 @@ function showPlaceholder(msg, color) {
 }
 
 function closeModal() {
-  const wasBandcamp = mFrame.style.display === 'block' && mFrame.src.includes('bandcamp');
   modal.classList.remove('visible');
   mFrame.src = '';
   mFrame.style.display = 'none';
   mPlace.style.display = 'none';
-  if (wasBandcamp && window.miniPlayerShow) window.miniPlayerShow();
 }
 
 /* ═══ XY GRANULAR SYNTH (NEBULA) ═══ */
