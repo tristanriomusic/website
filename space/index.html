@@ -139,6 +139,126 @@
       cursor: pointer; user-select: none; transition: color 0.3s;
     }
     #modal-close:hover { color: #fff; }
+
+    /* ── Truth overlay ── */
+    #truth-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 60;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(2px);
+    }
+    #truth-overlay.visible { display: flex; animation: fadeM 0.5s ease; }
+    #truth-ui {
+      width: clamp(300px, 72vw, 820px);
+      display: flex; flex-direction: column; align-items: center; gap: 2vh;
+    }
+    #truth-question {
+      color: rgba(255,255,255,0.7);
+      font-size: clamp(15px, 2.2vw, 28px);
+      letter-spacing: 0.18em; text-transform: uppercase;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(180,100,255,0.7), 0 0 50px rgba(100,150,255,0.4);
+      animation: questionPulse 4s ease-in-out infinite;
+    }
+    @keyframes questionPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+    #truth-journal {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      color: rgba(255,255,255,0.88);
+      font-family: 'Georgia', serif;
+      font-size: clamp(14px, 1.8vw, 22px);
+      line-height: 1.9;
+      padding: 3vh 3vw;
+      resize: none; outline: none;
+      min-height: 30vh;
+      caret-color: rgba(180,100,255,0.9);
+      backdrop-filter: blur(4px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    #truth-journal:focus {
+      border-color: rgba(180,100,255,0.4);
+      box-shadow: 0 0 30px rgba(160,80,255,0.12), inset 0 0 20px rgba(100,60,200,0.05);
+    }
+    #truth-journal::placeholder { color: rgba(255,255,255,0.2); font-style: italic; }
+    #truth-playback-view {
+      display: none; width: 100%; min-height: 30vh;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(180,100,255,0.2); border-radius: 4px;
+      padding: 3vh 3vw;
+      font-family: 'Georgia', serif;
+      font-size: clamp(14px, 1.8vw, 22px); line-height: 1.9;
+      color: rgba(255,255,255,0.3);
+      overflow-y: auto; backdrop-filter: blur(4px); word-break: break-word;
+    }
+    .tpl-letter { display: inline-block; }
+    .tpl-space  { display: inline-block; width: 0.45em; }
+    .tpl-newline{ display: block; height: 1.9em; }
+    .tpl-letter.hit {
+      color: #fff;
+      text-shadow: 0 0 8px rgba(180,100,255,1), 0 0 22px rgba(120,80,255,0.9);
+      transform: scale(1.35) translateY(-3px);
+      transition: transform 0.06s, color 0.06s, text-shadow 0.06s;
+    }
+    .tpl-letter.decay {
+      color: rgba(180,100,255,0.65);
+      text-shadow: 0 0 10px rgba(180,100,255,0.4);
+      transform: scale(1) translateY(0);
+      transition: transform 0.45s, color 0.45s, text-shadow 0.45s;
+    }
+    #truth-bar-progress {
+      width: 100%; height: 2px;
+      background: rgba(255,255,255,0.06); border-radius: 1px; overflow: hidden;
+    }
+    #truth-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(180,100,255,0.7), rgba(80,160,255,0.7));
+      width: 0%;
+    }
+    #truth-controls {
+      display: flex; gap: 1.8vw; align-items: center; justify-content: center;
+    }
+    #truth-bpm-label { color: rgba(255,255,255,0.3); font-size: clamp(10px,1vw,13px); letter-spacing:0.2em; }
+    #truth-back {
+      color: rgba(255,255,255,0.35); font-size: clamp(10px,1.1vw,15px);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      cursor: pointer; user-select: none;
+      text-shadow: 0 0 12px rgba(180,100,255,0.4); transition: color 0.3s;
+    }
+    #truth-back:hover { color: rgba(255,255,255,0.8); }
+    .truth-note-particle {
+      position: fixed; pointer-events: none; z-index: 70;
+      font-size: clamp(11px,1.4vw,17px);
+      animation: floatUp 1.3s ease-out forwards; user-select: none;
+    }
+    @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-70px) scale(0.5)} }
+    /* bar-active for truth playback */
+    .tpl-word { display: inline; }
+    .tpl-word.bar-active .tpl-letter:not(.hit):not(.decay) { color: rgba(255,255,255,0.2); }
+
+    /* ── Navigation arrows (shown when zoomed in) ── */
+    .nav-arrow {
+      display: none;
+      position: fixed; top: 50%; z-index: 66;
+      color: rgba(255,255,255,0.28);
+      font-size: clamp(9px, 1vw, 13px);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      cursor: pointer; user-select: none;
+      padding: 14px 7px;
+      text-shadow: 0 0 12px rgba(0,200,255,0.3);
+      transition: color 0.3s, text-shadow 0.3s;
+      writing-mode: vertical-rl;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 3px;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(6px);
+    }
+    #nav-prev { left: 8px; transform: translateY(-50%) rotate(180deg); }
+    #nav-next { right: 8px; transform: translateY(-50%); }
+    .nav-arrow.visible { display: block; }
+    .nav-arrow:hover { color: rgba(255,255,255,0.85); text-shadow: 0 0 20px rgba(0,220,255,0.75); border-color: rgba(0,220,255,0.3); }
   </style>
 </head>
 <body>
@@ -161,6 +281,26 @@
     style="display:none"></iframe>
   <div id="modal-placeholder" style="display:none"></div>
   <div id="modal-close">&#x2715; Close</div>
+</div>
+
+<!-- Navigation arrows -->
+<div id="nav-prev" class="nav-arrow">← Further</div>
+<div id="nav-next" class="nav-arrow">Further →</div>
+
+<!-- Truth writing overlay -->
+<div id="truth-overlay">
+  <div id="truth-ui">
+    <div id="truth-question">What does Trūth mean to You?</div>
+    <textarea id="truth-journal" placeholder="Write here… every letter sings."></textarea>
+    <div id="truth-playback-view"></div>
+    <div id="truth-bar-progress"><div id="truth-bar-fill"></div></div>
+    <div id="truth-controls">
+      <button class="ctrl-btn" id="truth-btn-play">&#9654; Play</button>
+      <button class="ctrl-btn" id="truth-btn-stop" style="display:none">&#9632; Stop</button>
+      <span id="truth-bpm-label">65 BPM · 1 word = 1 beat</span>
+    </div>
+    <div id="truth-back">&#8592; Return</div>
+  </div>
 </div>
 
 <script>
@@ -257,17 +397,22 @@ const ZONES = [
     name:'Exploration of Ideas', hoverText:'Collection of ideas',
     baseH:55,  label:'#aaff00', type:'placeholder', msg:'Exploration of Ideas\n— Coming Soon —' },
 
-  { nx:0.2029, ny:0.6201, nrx:0.09, nry:0.12,
-    name:'Dreams', hoverText:'Creative writing tool',
-    baseH:280, label:'#cc44ff', type:'internal', url:'../dreams/' },
+  { nx:0.2413, ny:0.8839, nrx:0.09, nry:0.12,
+    name:'Truth', hoverText:'Every letter is a sound — write your truth!',
+    baseH:280, label:'#cc44ff', type:'truth' },
 
   { nx:0.8735, ny:0.4145, nrx:0.1293, nry:0.1586,
     name:'Desert Dream', hoverText:'Is there life on Mars? How we turned a pirate ship to a spaceship',
     baseH:90,  label:'#ff8844', type:'placeholder', msg:'Desert Dream\n— Coming Soon —' },
 
-  { nx:0.2413, ny:0.8839, nrx:0.0588, nry:0.1340,
+  { nx:0.2029, ny:0.6201, nrx:0.0588, nry:0.1340,
     name:'Vuur!', hoverText:'I make music for fireshows',
     baseH:15,  label:'#ff3300', type:'placeholder', msg:'Vuur!\n— Coming Soon —' },
+
+  { nx:0.755, ny:0.345, nrx:0.072, nry:0.095,
+    name:'Darkness — Here we face our Demons', hoverText:'Enter the darkness',
+    baseH:240, label:'#3322aa', type:'placeholder', msg:'Darkness\n— Here we face our Demons —',
+    dark:true },
 
   { nx:0.6949, ny:0.6728, nrx:0.1293, nry:0.2261, cnrx:0.06, cnry:0.08,
     name:'Love', hoverText:'Street Art: Ode to the art of Busking',
@@ -339,6 +484,7 @@ canvas.addEventListener('mousemove', e => {
 
 canvas.addEventListener('click', e => {
   if (modal.classList.contains('visible')) return;
+  if (document.getElementById('truth-overlay').classList.contains('visible')) return;
   if (zoomed) { zoomOut(); return; }
   if (hoveredZone) zoomIn(hoveredZone);
 });
@@ -353,6 +499,7 @@ modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (modal.classList.contains('visible')) { closeModal(); return; }
+    if (document.getElementById('truth-overlay').classList.contains('visible')) { closeTruthOverlay(); return; }
     if (zoomed) zoomOut(); else window.location.href='../';
   }
 });
@@ -395,15 +542,29 @@ function draw() {
     ctx.translate(-mobileOffsetX, 0);
   }
 
-  /* ── Draw artwork with high contrast to crush paper → pure white (inverts to pure black) ── */
+  /* ── Draw artwork with wave animation ── */
   ctx.save();
   ctx.filter = 'contrast(12) brightness(1.4)';
   if (needsRot) {
     ctx.translate(ox + drawW/2, oy + drawH/2);
     ctx.rotate(-Math.PI / 2);
-    ctx.drawImage(img, -drawH/2, -drawW/2, drawH, drawW);
+    const NS = 45;
+    for (let si = 0; si < NS; si++) {
+      const sy = si / NS, ey = (si + 1) / NS;
+      const wx = Math.sin(t * 0.006 + si * 0.21) * 2.5;
+      const wy = Math.sin(t * 0.004 + si * 0.27) * 1.5;
+      ctx.drawImage(img, sy*img.naturalWidth, 0, (ey-sy)*img.naturalWidth, img.naturalHeight,
+        -drawH/2 + sy*drawH + wy, -drawW/2 + wx, drawH/NS + 1, drawW);
+    }
   } else {
-    ctx.drawImage(img, ox, oy, drawW, drawH);
+    const NS = 45;
+    for (let si = 0; si < NS; si++) {
+      const sy = si / NS, ey = (si + 1) / NS;
+      const wx = Math.sin(t * 0.006 + si * 0.21) * 2.5;
+      const wy = Math.sin(t * 0.004 + si * 0.27) * 1.5;
+      ctx.drawImage(img, 0, sy*img.naturalHeight, img.naturalWidth, (ey-sy)*img.naturalHeight,
+        ox + wx, oy + sy*drawH + wy, drawW + 3, drawH/NS + 1);
+    }
   }
   ctx.filter = 'none';
   ctx.restore();
@@ -419,52 +580,129 @@ function draw() {
   ctx.lineWidth = 4;
   ctx.strokeRect(ox, oy, drawW, drawH);
 
-  /* ── Nebula overlays: slow, smooth, psychedelic ── */
+  /* ── Nebula overlays + gravity tendrils ── */
   ctx.globalCompositeOperation = 'screen';
   hoveredZone = null;
 
   for (let i = 0; i < ZONES.length; i++) {
     const z = ZONES[i];
-    const pulse  = 1 + 0.14 * Math.sin(t * 0.012 + i * 0.9);
-    const hShift = (t * 0.45 + i * 37) % 360;
-    const hue    = (z.baseH + hShift) % 360;
-    const sat    = 92 + 8 * Math.sin(t * 0.008 + i);
-    const alpha1 = 0.72 + 0.22 * Math.abs(Math.sin(t * 0.010 + i * 1.3));
-    const alpha2 = 0.32 + 0.14 * Math.abs(Math.sin(t * 0.013 + i * 0.7));
 
-    const zx  = ox + z.nx * drawW;
-    const zy  = oy + z.ny * drawH;
+    // Orb-center drifts slowly — gravity breathing
+    const driftPhase = t * 0.007 + i * 1.3;
+    const driftX = Math.sin(driftPhase)        * drawW * 0.006;
+    const driftY = Math.cos(driftPhase * 0.73) * drawH * 0.005;
+
+    const pulse  = 1 + 0.22 * Math.sin(t * 0.013 + i * 0.9);
+    const hShift = (t * 0.45 + i * 37) % 360;
+    const sat    = 92 + 8 * Math.sin(t * 0.008 + i);
+    const alpha1 = 0.78 + 0.28 * Math.abs(Math.sin(t * 0.010 + i * 1.3));
+    const alpha2 = 0.35 + 0.18 * Math.abs(Math.sin(t * 0.013 + i * 0.7));
+
+    const zx  = ox + z.nx * drawW + driftX;
+    const zy  = oy + z.ny * drawH + driftY;
     const zrx = z.nrx * drawW * pulse * 1.5;
     const zry = z.nry * drawH * pulse * 1.5;
-    // Optional separate click radii (cnrx/cnry) — falls back to visual radii
     const czrx = (z.cnrx !== undefined ? z.cnrx : z.nrx) * drawW * 1.5;
     const czry = (z.cnry !== undefined ? z.cnry : z.nry) * drawH * 1.5;
 
     const isHovered = !zoomed &&
       Math.pow((mx + mobileOffsetX - zx) / czrx, 2) + Math.pow((my - zy) / czry, 2) < 1;
     if (isHovered) hoveredZone = z;
-    const boost = isHovered ? 1.7 : 1;
+    const boost = isHovered ? 1.8 : 1;
 
-    ctx.save();
-    ctx.translate(zx, zy);
-    ctx.scale(1, zry / zrx);
-    const g = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
-    g.addColorStop(0,   `hsla(${hue},${sat}%,80%,${alpha1 * boost})`);
-    g.addColorStop(0.45,`hsla(${(hue+60)%360},${sat}%,60%,${alpha2 * boost})`);
-    g.addColorStop(1,   'transparent');
-    ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
-    ctx.fillStyle = g; ctx.fill();
-    ctx.restore();
+    if (z.dark) {
+      /* ── Darkness orb: dark blue/purple/black evil glow ── */
+      const flicker = 0.5 + 0.5 * Math.abs(Math.sin(t * 0.031 + i * 7.3));
+      const evilHue = 235 + 20 * Math.sin(t * 0.009 + i);
 
-    ctx.save();
-    ctx.translate(zx, zy);
-    ctx.scale(1, zry / zrx * 0.65);
-    const g2 = ctx.createRadialGradient(0, 0, zrx*0.25, 0, 0, zrx*0.92);
-    g2.addColorStop(0,   `hsla(${(hue+180)%360},${sat}%,78%,${alpha1*0.5*boost})`);
-    g2.addColorStop(1,   'transparent');
-    ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
-    ctx.fillStyle = g2; ctx.fill();
-    ctx.restore();
+      // Void core (subtract light)
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.save();
+      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
+      const gDark = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx * 0.6);
+      gDark.addColorStop(0,   `rgba(0,0,8,0.55)`);
+      gDark.addColorStop(0.5, `rgba(0,0,20,0.25)`);
+      gDark.addColorStop(1,   'transparent');
+      ctx.beginPath(); ctx.arc(0, 0, zrx * 0.6, 0, Math.PI * 2);
+      ctx.fillStyle = gDark; ctx.fill();
+      ctx.restore();
+      ctx.globalCompositeOperation = 'screen';
+
+      // Dark blue outer shroud
+      ctx.save();
+      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
+      const gEvil = ctx.createRadialGradient(0, 0, zrx * 0.25, 0, 0, zrx);
+      gEvil.addColorStop(0,   `hsla(${evilHue},70%,8%,${0.4 * boost})`);
+      gEvil.addColorStop(0.4, `hsla(${evilHue},90%,16%,${(0.45 + 0.2*flicker) * boost})`);
+      gEvil.addColorStop(0.75,`hsla(${(evilHue+30)%360},80%,10%,${0.2 * boost})`);
+      gEvil.addColorStop(1,   'transparent');
+      ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
+      ctx.fillStyle = gEvil; ctx.fill();
+      ctx.restore();
+
+      // Evil tendrils — dark purple arms writhing outward
+      for (let arm = 0; arm < 4; arm++) {
+        const aAngle = t * 0.004 + arm * (Math.PI / 2) + i * 0.5 + Math.sin(t*0.009+arm)*0.4;
+        const aLen = zrx * (1.4 + 0.6 * Math.sin(t * 0.011 + arm * 2.1));
+        const ax = zx + Math.cos(aAngle) * aLen;
+        const ay = zy + Math.sin(aAngle) * aLen * (zry / zrx);
+        const tg = ctx.createLinearGradient(zx, zy, ax, ay);
+        tg.addColorStop(0, `hsla(${evilHue},80%,12%,${0.35 * boost})`);
+        tg.addColorStop(1, 'transparent');
+        ctx.beginPath(); ctx.moveTo(zx, zy); ctx.lineTo(ax, ay);
+        ctx.strokeStyle = tg;
+        ctx.lineWidth = 2 + 2 * flicker;
+        ctx.stroke();
+      }
+    } else {
+      const hue = (z.baseH + hShift) % 360;
+
+      // Main orb glow
+      ctx.save();
+      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
+      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
+      g.addColorStop(0,   `hsla(${hue},${sat}%,80%,${alpha1 * boost})`);
+      g.addColorStop(0.45,`hsla(${(hue+60)%360},${sat}%,60%,${alpha2 * boost})`);
+      g.addColorStop(1,   'transparent');
+      ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
+      ctx.fillStyle = g; ctx.fill();
+      ctx.restore();
+
+      // Inner counter-glow
+      ctx.save();
+      ctx.translate(zx, zy); ctx.scale(1, zry / zrx * 0.65);
+      const g2 = ctx.createRadialGradient(0, 0, zrx*0.25, 0, 0, zrx*0.92);
+      g2.addColorStop(0,   `hsla(${(hue+180)%360},${sat}%,78%,${alpha1*0.5*boost})`);
+      g2.addColorStop(1,   'transparent');
+      ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
+      ctx.fillStyle = g2; ctx.fill();
+      ctx.restore();
+
+      // Gravity tendrils — 3 rotating arms pulling space inward
+      for (let arm = 0; arm < 3; arm++) {
+        const aAngle = t * 0.005 + arm * (Math.PI * 2 / 3) + i * 0.8 + Math.sin(t*0.008+arm*1.7)*0.5;
+        const aLen = zrx * (1.6 + 0.5 * Math.sin(t * 0.012 + arm * 2.3 + i));
+        const ax = zx + Math.cos(aAngle) * aLen;
+        const ay = zy + Math.sin(aAngle) * aLen * (zry / zrx);
+        const tg = ctx.createLinearGradient(zx, zy, ax, ay);
+        tg.addColorStop(0, `hsla(${hue},${sat}%,70%,${0.22 * boost})`);
+        tg.addColorStop(1, 'transparent');
+        ctx.beginPath(); ctx.moveTo(zx, zy); ctx.lineTo(ax, ay);
+        ctx.strokeStyle = tg;
+        ctx.lineWidth = 1.5 + 1.5 * Math.abs(Math.sin(t * 0.01 + arm));
+        ctx.stroke();
+      }
+
+      // Orbiting satellite glow
+      const satAngle = t * 0.018 + i * 2.1;
+      const satX = zx + Math.cos(satAngle) * zrx * 0.65;
+      const satY = zy + Math.sin(satAngle) * zry * 0.65;
+      const sg = ctx.createRadialGradient(satX, satY, 0, satX, satY, zrx * 0.22);
+      sg.addColorStop(0, `hsla(${(hue+90)%360},${sat}%,90%,${0.4 * boost})`);
+      sg.addColorStop(1, 'transparent');
+      ctx.beginPath(); ctx.arc(satX, satY, zrx * 0.22, 0, Math.PI * 2);
+      ctx.fillStyle = sg; ctx.fill();
+    }
   }
   ctx.globalCompositeOperation = 'source-over';
 
@@ -536,12 +774,15 @@ function zoomIn(zone) {
   const ty = H/2 - zy;
   animateZoom(zoomFrom, { tx, ty, scale: targetScale }, 650, () => {
     openZoneContent(zone);
+    showNavArrows(true);
   });
   back.textContent = `↑ ${zone.name} — click or ESC to return`;
 }
 
 function zoomOut() {
   closeModal();
+  closeTruthOverlay();
+  showNavArrows(false);
   animateZoom(zoomCurrent, { tx:0, ty:0, scale:1 }, 500, () => {
     zoomed = false;
     zoomTarget = null;
@@ -587,6 +828,11 @@ function openZoneContent(zone) {
   }
   if (zone.type === 'vimeo') {
     showFrame(`https://player.vimeo.com/video/${zone.videoId}?autoplay=1`);
+    return;
+  }
+  if (zone.type === 'truth') {
+    document.getElementById('truth-overlay').classList.add('visible');
+    setTimeout(() => document.getElementById('truth-journal').focus(), 300);
     return;
   }
   if (zone.type === 'placeholder') {
@@ -901,6 +1147,230 @@ function toggleSynth() {
   if (!synthStarted) { startSynth(); return; }
   if (synthOn) stopSynth(); else startSynth();
 }
+
+/* ═══ TRUTH OVERLAY ═══ */
+const TRUTH_LYDIAN = [0, 2, 4, 6, 7, 9, 11];
+const TRUTH_ROOT   = 82.41; // E2
+const TRUTH_BPM    = 65;
+const TRUTH_BAR    = 60 / TRUTH_BPM;
+const TRUTH_SYMS   = ['♩','♪','♫','♬'];
+
+let truth_mGain = null, truth_revNode = null, truth_revWet = null;
+let truth_playing = false, truth_timers = [], truth_rafId = null;
+let truth_startAC = null, truth_startWall = null, truth_totalBars = 0;
+
+function truth_hz(degree) {
+  const oct = Math.floor(degree / 7), step = degree % 7;
+  return TRUTH_ROOT * Math.pow(2, oct) * Math.pow(2, TRUTH_LYDIAN[step] / 12);
+}
+function truth_charDeg(ch) {
+  const c = ch.toLowerCase().charCodeAt(0);
+  return (c < 97 || c > 122) ? 0 : Math.round((c - 97) / 25 * 13);
+}
+function truth_buildIR(sec) {
+  const sr = ac.sampleRate, len = Math.floor(sr * sec);
+  const buf = ac.createBuffer(2, len, sr);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch); let lp = 0;
+    for (let i = 0; i < len; i++) {
+      const n = Math.random()*2-1; lp = lp*0.82 + n*0.18;
+      d[i] = lp * Math.pow(1 - i/len, 2.2);
+    }
+  }
+  return buf;
+}
+function truth_initAudio() {
+  initAudio();
+  if (truth_mGain) return;
+  if (ac.state === 'suspended') ac.resume();
+  truth_mGain = ac.createGain(); truth_mGain.gain.value = 0.40;
+  truth_mGain.connect(masterEQ);
+  truth_revNode = ac.createConvolver(); truth_revNode.buffer = truth_buildIR(2.8);
+  truth_revWet  = ac.createGain(); truth_revWet.gain.value = 0.42;
+  truth_revNode.connect(truth_revWet); truth_revWet.connect(truth_mGain);
+}
+function truth_kick(t) {
+  const env = ac.createGain(); env.gain.setValueAtTime(0.22, t); env.gain.exponentialRampToValueAtTime(0.0001, t+0.9);
+  const osc = ac.createOscillator(); osc.frequency.setValueAtTime(80, t); osc.frequency.exponentialRampToValueAtTime(42, t+0.25);
+  osc.connect(env); env.connect(truth_mGain); osc.start(t); osc.stop(t+1.0);
+}
+function truth_hihat(t) {
+  const bufSz = Math.floor(ac.sampleRate * 0.08), buf = ac.createBuffer(1, bufSz, ac.sampleRate);
+  const d = buf.getChannelData(0); for (let i=0; i<bufSz; i++) d[i]=Math.random()*2-1;
+  const src = ac.createBufferSource(); src.buffer = buf;
+  const hp = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=9000;
+  const env = ac.createGain(); env.gain.setValueAtTime(0.16, t); env.gain.exponentialRampToValueAtTime(0.0001, t+0.07);
+  src.connect(hp); hp.connect(env); env.connect(truth_mGain); src.start(t); src.stop(t+0.09);
+}
+function truth_snare(t) {
+  const bufSz = Math.floor(ac.sampleRate*0.18), buf=ac.createBuffer(1,bufSz,ac.sampleRate);
+  const d=buf.getChannelData(0); for(let i=0;i<bufSz;i++) d[i]=Math.random()*2-1;
+  const src=ac.createBufferSource(); src.buffer=buf;
+  const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2200; bp.Q.value=0.7;
+  const nEnv=ac.createGain(); nEnv.gain.setValueAtTime(0.24,t); nEnv.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+  src.connect(bp); bp.connect(nEnv); nEnv.connect(truth_mGain); src.start(t); src.stop(t+0.18);
+  const osc=ac.createOscillator(); osc.frequency.value=200;
+  const oEnv=ac.createGain(); oEnv.gain.setValueAtTime(0.18,t); oEnv.gain.exponentialRampToValueAtTime(0.0001,t+0.07);
+  osc.connect(oEnv); oEnv.connect(truth_mGain); osc.start(t); osc.stop(t+0.09);
+}
+function truth_note(hz, t, durS, vol=0.15) {
+  const env=ac.createGain(), atk=Math.min(0.05,durS*0.2), rel=Math.min(0.5,durS*0.7);
+  env.gain.setValueAtTime(0,t); env.gain.linearRampToValueAtTime(vol,t+atk);
+  env.gain.exponentialRampToValueAtTime(0.0001,t+atk+rel);
+  env.connect(truth_mGain); env.connect(truth_revNode);
+  for (const det of [-4,0,5]) {
+    const osc=ac.createOscillator(); osc.type='sine'; osc.frequency.value=hz; osc.detune.value=det;
+    const g=ac.createGain(); g.gain.value=det===0?0.6:0.2;
+    osc.connect(g); g.connect(env); osc.start(t); osc.stop(t+atk+rel+0.05);
+  }
+}
+function truth_particle(el) {
+  const ref = el || document.getElementById('truth-journal');
+  const rect = ref.getBoundingClientRect();
+  const div = document.createElement('div');
+  div.className = 'truth-note-particle';
+  div.textContent = TRUTH_SYMS[Math.floor(Math.random()*TRUTH_SYMS.length)];
+  div.style.left  = (rect.left + Math.random()*rect.width) + 'px';
+  div.style.top   = (rect.top  + Math.random()*rect.height*0.8) + 'px';
+  div.style.color = `hsl(${240+Math.random()*80},80%,75%)`;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 1400);
+}
+
+document.getElementById('truth-journal').addEventListener('keydown', e => {
+  if (e.key.length !== 1 && e.key !== 'Enter') return;
+  truth_initAudio();
+  const jrnl = document.getElementById('truth-journal');
+  const pos = jrnl.selectionStart, text = jrnl.value;
+  const lineStart = text.lastIndexOf('\n', pos-1)+1;
+  const col = pos - lineStart;
+  const line = text.substring(0,pos).split('\n').length;
+  const hz = truth_hz(col % 14) * Math.pow(2, Math.min(line-1,2));
+  truth_note(hz, ac.currentTime, 1.2);
+  truth_particle(null);
+});
+
+function truth_buildDOM(text) {
+  const pv = document.getElementById('truth-playback-view');
+  pv.innerHTML = '';
+  const tokens = []; let buf = '';
+  for (const ch of text) {
+    if (ch===' '||ch==='\n') { if (buf) { tokens.push({type:'word',text:buf}); buf=''; } tokens.push({type:ch==='\n'?'newline':'space'}); }
+    else buf += ch;
+  }
+  if (buf) tokens.push({type:'word',text:buf});
+  const spans=[], wraps=[]; let wi=0;
+  for (const tok of tokens) {
+    if (tok.type==='space') { const s=document.createElement('span'); s.className='tpl-space'; pv.appendChild(s); }
+    else if (tok.type==='newline') { const b=document.createElement('div'); b.className='tpl-newline'; pv.appendChild(b); }
+    else {
+      const w=document.createElement('span'); w.className='tpl-word'; w.dataset.wordIdx=wi; wraps.push(w);
+      for (let li=0;li<tok.text.length;li++) {
+        const s=document.createElement('span'); s.className='tpl-letter'; s.textContent=tok.text[li];
+        w.appendChild(s); spans.push({span:s,wordIdx:wi,letterIdx:li,char:tok.text[li]});
+      }
+      pv.appendChild(w); wi++;
+    }
+  }
+  return {spans, wraps, wordCount:wi};
+}
+
+function startTruthPlayback() {
+  const text = document.getElementById('truth-journal').value.trim();
+  if (!text) return;
+  truth_initAudio();
+  truth_playing = true;
+  const jrnl=document.getElementById('truth-journal'), pv=document.getElementById('truth-playback-view');
+  const bf=document.getElementById('truth-bar-fill'), bp=document.getElementById('truth-btn-play'), bs=document.getElementById('truth-btn-stop');
+  jrnl.style.display='none'; pv.style.display='block';
+  bp.style.display='none'; bs.style.display=''; bs.classList.add('active');
+  bf.style.width='0%';
+  const {spans,wraps,wordCount}=truth_buildDOM(text);
+  truth_totalBars=wordCount; truth_startAC=ac.currentTime+0.1; truth_startWall=performance.now()+100;
+  for (let b=0;b<wordCount;b++) {
+    const bT=truth_startAC+b*TRUTH_BAR;
+    truth_kick(bT); truth_hihat(bT); truth_hihat(bT+TRUTH_BAR*0.5);
+    if (b%2===1) truth_snare(bT);
+  }
+  for (let wi=0;wi<wordCount;wi++) {
+    const barStart=wi*TRUTH_BAR, letters=spans.filter(l=>l.wordIdx===wi), n=letters.length, ni=TRUTH_BAR/n;
+    truth_timers.push(setTimeout(()=>{ wraps.forEach(w=>w.classList.remove('bar-active')); if(wraps[wi]) wraps[wi].classList.add('bar-active'); }, barStart*1000));
+    for (let li=0;li<n;li++) {
+      const {span,char}=letters[li], off=barStart+li*ni, vol=0.10+(truth_charDeg(char)/13)*0.08;
+      const oct=Math.floor(li/7)%3;
+      truth_note(truth_hz(truth_charDeg(char))*Math.pow(2,oct), truth_startAC+off, ni*0.85, vol);
+      truth_timers.push(setTimeout(()=>{
+        span.classList.remove('decay'); span.classList.add('hit'); truth_particle(span);
+        setTimeout(()=>{ span.classList.remove('hit'); span.classList.add('decay'); },120);
+      }, off*1000));
+    }
+  }
+  const totalDur=wordCount*TRUTH_BAR*1000;
+  (function animBar() {
+    if (!truth_playing) return;
+    const pct=Math.min((performance.now()-truth_startWall)/totalDur*100,100);
+    bf.style.width=pct+'%';
+    if (pct<100) truth_rafId=requestAnimationFrame(animBar); else setTimeout(stopTruthPlayback,800);
+  })();
+}
+
+function stopTruthPlayback() {
+  truth_playing=false; truth_timers.forEach(clearTimeout); truth_timers=[];
+  if (truth_rafId) { cancelAnimationFrame(truth_rafId); truth_rafId=null; }
+  const pv=document.getElementById('truth-playback-view'), bf=document.getElementById('truth-bar-fill');
+  const bp=document.getElementById('truth-btn-play'), bs=document.getElementById('truth-btn-stop');
+  const jrnl=document.getElementById('truth-journal');
+  pv.querySelectorAll('.tpl-word').forEach(w=>w.classList.remove('bar-active'));
+  bf.style.width='0%'; pv.style.display='none'; jrnl.style.display='';
+  bs.style.display='none'; bs.classList.remove('active'); bp.style.display='';
+}
+
+function closeTruthOverlay() {
+  stopTruthPlayback();
+  document.getElementById('truth-overlay').classList.remove('visible');
+}
+
+document.getElementById('truth-btn-play').addEventListener('click', startTruthPlayback);
+document.getElementById('truth-btn-stop').addEventListener('click', stopTruthPlayback);
+document.getElementById('truth-back').addEventListener('click', closeTruthOverlay);
+document.getElementById('truth-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('truth-overlay')) closeTruthOverlay();
+});
+
+/* ═══ NAVIGATION ARROWS ═══ */
+const navPrev = document.getElementById('nav-prev');
+const navNext = document.getElementById('nav-next');
+
+function showNavArrows(v) {
+  navPrev.classList.toggle('visible', v);
+  navNext.classList.toggle('visible', v);
+}
+
+function navigateToZone(newZone) {
+  // Close any current content without triggering miniplayer
+  modal.classList.remove('visible');
+  mFrame.src = ''; mFrame.style.display = 'none'; mPlace.style.display = 'none';
+  closeTruthOverlay();
+  zoomTarget = newZone;
+  back.textContent = `↑ ${newZone.name} — click or ESC to return`;
+  const { drawW, drawH, ox, oy } = imgLayout();
+  const zx = ox + newZone.nx * drawW, zy = oy + newZone.ny * drawH;
+  const tx = W/2 - zx, ty = H/2 - zy;
+  animateZoom(zoomCurrent, { tx, ty, scale: 4.0 }, 900, () => {
+    openZoneContent(newZone);
+  });
+}
+
+navPrev.addEventListener('click', e => {
+  e.stopPropagation();
+  const idx = zoomTarget ? ZONES.indexOf(zoomTarget) : 0;
+  navigateToZone(ZONES[(idx - 1 + ZONES.length) % ZONES.length]);
+});
+navNext.addEventListener('click', e => {
+  e.stopPropagation();
+  const idx = zoomTarget ? ZONES.indexOf(zoomTarget) : 0;
+  navigateToZone(ZONES[(idx + 1) % ZONES.length]);
+});
 
 /* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
 (function() {
