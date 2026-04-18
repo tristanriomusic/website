@@ -228,6 +228,34 @@
       text-shadow: 0 0 12px rgba(180,100,255,0.4); transition: color 0.3s;
     }
     #truth-back:hover { color: rgba(255,255,255,0.8); }
+
+    /* ── Cosmic Storm button ── */
+    #storm-btn {
+      position: fixed; bottom: 3vh; right: 20px; z-index: 25;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 3px;
+      color: rgba(255,255,255,0.32);
+      font-family: 'Georgia', serif;
+      font-size: clamp(9px, 0.95vw, 13px);
+      letter-spacing: 0.28em; text-transform: uppercase;
+      padding: 0.55em 1.2em;
+      cursor: pointer;
+      transition: color 0.35s, border-color 0.35s, box-shadow 0.35s, background 0.35s;
+      user-select: none;
+    }
+    #storm-btn:hover {
+      color: rgba(255,255,255,0.75);
+      border-color: rgba(0,220,255,0.45);
+    }
+    #storm-btn.active {
+      color: #00eeff;
+      border-color: rgba(0,220,255,0.7);
+      background: rgba(0,60,80,0.35);
+      box-shadow: 0 0 18px rgba(0,200,255,0.35), inset 0 0 10px rgba(0,180,255,0.1);
+      animation: stormPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes stormPulse { 0%,100%{box-shadow:0 0 18px rgba(0,200,255,0.35)} 50%{box-shadow:0 0 32px rgba(0,220,255,0.6)} }
     .truth-note-particle {
       position: fixed; pointer-events: none; z-index: 70;
       font-size: clamp(11px,1.4vw,17px);
@@ -241,24 +269,45 @@
     /* ── Navigation arrows (shown when zoomed in) ── */
     .nav-arrow {
       display: none;
-      position: fixed; top: 50%; z-index: 66;
-      color: rgba(255,255,255,0.28);
-      font-size: clamp(9px, 1vw, 13px);
-      letter-spacing: 0.3em; text-transform: uppercase;
-      cursor: pointer; user-select: none;
-      padding: 14px 7px;
-      text-shadow: 0 0 12px rgba(0,200,255,0.3);
-      transition: color 0.3s, text-shadow 0.3s;
-      writing-mode: vertical-rl;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 3px;
-      background: rgba(0,0,0,0.35);
-      backdrop-filter: blur(6px);
+      position: fixed; top: 0; bottom: 0; width: 100px; z-index: 66;
+      align-items: center; justify-content: center;
+      overflow: hidden; user-select: none;
+      transition: background 0.5s;
     }
-    #nav-prev { left: 8px; transform: translateY(-50%) rotate(180deg); }
-    #nav-next { right: 8px; transform: translateY(-50%); }
-    .nav-arrow.visible { display: block; }
-    .nav-arrow:hover { color: rgba(255,255,255,0.85); text-shadow: 0 0 20px rgba(0,220,255,0.75); border-color: rgba(0,220,255,0.3); }
+    #nav-prev { left: 0; background: linear-gradient(to right, rgba(0,8,24,0.60), transparent); }
+    #nav-next { right: 0; background: linear-gradient(to left, rgba(0,8,24,0.60), transparent); }
+    .nav-arrow.visible { display: flex; }
+    /* countdown fill — rises from bottom over 2s on hover */
+    .nav-fill {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 0%;
+      background: linear-gradient(to top, rgba(0,220,255,0.22), transparent);
+      pointer-events: none;
+    }
+    .nav-arrow.hovering .nav-fill {
+      height: 100%;
+      transition: height 2s linear;
+    }
+    /* label */
+    .nav-label {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      color: rgba(255,255,255,0.28);
+      transition: color 0.4s, text-shadow 0.4s;
+      pointer-events: none;
+    }
+    .nav-arrow.hovering .nav-label {
+      color: rgba(255,255,255,0.9);
+      text-shadow: 0 0 22px rgba(0,220,255,0.8);
+    }
+    .nav-symbol {
+      font-size: clamp(22px, 3vw, 40px);
+      line-height: 1;
+    }
+    .nav-text {
+      font-size: clamp(8px, 0.85vw, 11px);
+      letter-spacing: 0.35em; text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
   </style>
 </head>
 <body>
@@ -283,9 +332,17 @@
   <div id="modal-close">&#x2715; Close</div>
 </div>
 
+<button id="storm-btn">Cosmic Storm</button>
+
 <!-- Navigation arrows -->
-<div id="nav-prev" class="nav-arrow">← Further</div>
-<div id="nav-next" class="nav-arrow">Further →</div>
+<div id="nav-prev" class="nav-arrow">
+  <div class="nav-fill"></div>
+  <div class="nav-label"><span class="nav-symbol">←</span><span class="nav-text">Further</span></div>
+</div>
+<div id="nav-next" class="nav-arrow">
+  <div class="nav-fill"></div>
+  <div class="nav-label"><span class="nav-symbol">→</span><span class="nav-text">Further</span></div>
+</div>
 
 <!-- Truth writing overlay -->
 <div id="truth-overlay">
@@ -431,6 +488,14 @@ let zoomCurrent = {tx:0, ty:0, scale:1};
 /* ═══ TIME ═══ */
 let t = 0;
 
+/* ═══ COSMIC STORM ═══ */
+let cosmicStorm = false;
+const stormBtn = document.getElementById('storm-btn');
+stormBtn.addEventListener('click', () => {
+  cosmicStorm = !cosmicStorm;
+  stormBtn.classList.toggle('active', cosmicStorm);
+});
+
 /* ═══ WARP STARFIELD ═══ */
 const STAR_COLORS = ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff',
                      '#ffffff','#ffffff','#ffffff','#00ffff','#ffff00','#ff44aa'];
@@ -542,32 +607,81 @@ function draw() {
     ctx.translate(-mobileOffsetX, 0);
   }
 
-  /* ── Draw artwork with wave animation ── */
+  /* ── Detect hovered zone (before draw so we can boost deformation) ── */
+  hoveredZone = null;
+  for (let i = 0; i < ZONES.length; i++) {
+    const z = ZONES[i];
+    const zx = ox + z.nx * drawW, zy = oy + z.ny * drawH;
+    const czrx = (z.cnrx !== undefined ? z.cnrx : z.nrx) * drawW * 1.5;
+    const czry = (z.cnry !== undefined ? z.cnry : z.nry) * drawH * 1.5;
+    if (!zoomed && Math.pow((mx + mobileOffsetX - zx) / czrx, 2) + Math.pow((my - zy) / czry, 2) < 1)
+      hoveredZone = z;
+  }
+
+  /* ── Draw artwork: orb-gravity deformation makes lines warp and breathe ── */
   ctx.save();
   ctx.filter = 'contrast(12) brightness(1.4)';
+  const NS = 60;
+
+  function stripDisplace(si) {
+    const syC = (si + 0.5) / NS;
+    const sf = cosmicStorm ? 1.0 : 0.14; // storm factor — subtle vs wild
+
+    // Base organic wave (horizontal shimmer)
+    let wx = (Math.sin(t * 0.006 + si * 0.21) * 2.2
+            + Math.sin(t * 0.010 + si * 0.13 + 1.4) * 1.1) * sf;
+    // Width scale for depth illusion
+    let wMod = 1.0 + Math.sin(t * 0.005 + si * 0.31) * 0.016 * sf;
+
+    if (!cosmicStorm) return { wx, wMod }; // subtle: no orb gravity
+
+    // Storm: orb gravity pulls strips toward each orb's gravitational field
+    for (let i = 0; i < ZONES.length; i++) {
+      const z = ZONES[i];
+      const dp = t * 0.007 + i * 1.3;
+      const orbY = z.ny + Math.cos(dp * 0.73) * 0.004;
+      const orbX = z.nx + Math.sin(dp) * 0.005;
+      const dy = syC - orbY;
+      const str = z.dark ? 0.024 : 0.011;
+      const hoverBoost = (hoveredZone === z) ? 2.2 : 1.0;
+      const falloff = (str * hoverBoost) / (1.0 + 25 * dy * dy);
+      const ph = t * 0.009 + i * 2.1;
+      wx += (orbX - 0.5) * drawW * falloff * Math.sin(ph + si * 0.14);
+      wMod += falloff * 0.5 * Math.abs(Math.sin(ph * 0.8 + si * 0.22));
+      if (z.dark) {
+        wx += Math.sin(t * 0.041 + si * 7.1 + i * 3.3) * drawW * falloff * 0.45;
+        wx += Math.cos(t * 0.029 + si * 4.4 + i * 1.9) * drawW * falloff * 0.25;
+      }
+    }
+    return { wx, wMod };
+  }
+
+  // Clip to image bounds so horizontal shimmer doesn't bleed outside
+  ctx.save();
+  ctx.beginPath(); ctx.rect(ox - 2, oy - 2, drawW + 4, drawH + 4); ctx.clip();
+
   if (needsRot) {
     ctx.translate(ox + drawW/2, oy + drawH/2);
     ctx.rotate(-Math.PI / 2);
-    const NS = 45;
     for (let si = 0; si < NS; si++) {
       const sy = si / NS, ey = (si + 1) / NS;
-      const wx = Math.sin(t * 0.006 + si * 0.21) * 2.5;
-      const wy = Math.sin(t * 0.004 + si * 0.27) * 1.5;
+      const { wx, wMod } = stripDisplace(si);
       ctx.drawImage(img, sy*img.naturalWidth, 0, (ey-sy)*img.naturalWidth, img.naturalHeight,
-        -drawH/2 + sy*drawH + wy, -drawW/2 + wx, drawH/NS + 1, drawW);
+        -drawH/2 + sy*drawH, -drawW/2 + wx, drawH/NS + 2, drawW * wMod);
     }
   } else {
-    const NS = 45;
     for (let si = 0; si < NS; si++) {
       const sy = si / NS, ey = (si + 1) / NS;
-      const wx = Math.sin(t * 0.006 + si * 0.21) * 2.5;
-      const wy = Math.sin(t * 0.004 + si * 0.27) * 1.5;
+      const { wx, wMod } = stripDisplace(si);
       ctx.drawImage(img, 0, sy*img.naturalHeight, img.naturalWidth, (ey-sy)*img.naturalHeight,
-        ox + wx, oy + sy*drawH + wy, drawW + 3, drawH/NS + 1);
+        ox + wx, oy + si * (drawH/NS), (drawW + 3) * wMod, drawH/NS + 2);
     }
   }
-  ctx.filter = 'none';
   ctx.restore();
+  ctx.filter = 'none';
+  ctx.restore(); // clip
+  ctx.filter = 'none';
+  ctx.restore(); // filter
 
   /* ── Invert only the image rect → paper becomes black, transparent edges untouched ── */
   ctx.globalCompositeOperation = 'difference';
@@ -579,132 +693,6 @@ function draw() {
   ctx.strokeStyle = '#000';
   ctx.lineWidth = 4;
   ctx.strokeRect(ox, oy, drawW, drawH);
-
-  /* ── Nebula overlays + gravity tendrils ── */
-  ctx.globalCompositeOperation = 'screen';
-  hoveredZone = null;
-
-  for (let i = 0; i < ZONES.length; i++) {
-    const z = ZONES[i];
-
-    // Orb-center drifts slowly — gravity breathing
-    const driftPhase = t * 0.007 + i * 1.3;
-    const driftX = Math.sin(driftPhase)        * drawW * 0.006;
-    const driftY = Math.cos(driftPhase * 0.73) * drawH * 0.005;
-
-    const pulse  = 1 + 0.22 * Math.sin(t * 0.013 + i * 0.9);
-    const hShift = (t * 0.45 + i * 37) % 360;
-    const sat    = 92 + 8 * Math.sin(t * 0.008 + i);
-    const alpha1 = 0.78 + 0.28 * Math.abs(Math.sin(t * 0.010 + i * 1.3));
-    const alpha2 = 0.35 + 0.18 * Math.abs(Math.sin(t * 0.013 + i * 0.7));
-
-    const zx  = ox + z.nx * drawW + driftX;
-    const zy  = oy + z.ny * drawH + driftY;
-    const zrx = z.nrx * drawW * pulse * 1.5;
-    const zry = z.nry * drawH * pulse * 1.5;
-    const czrx = (z.cnrx !== undefined ? z.cnrx : z.nrx) * drawW * 1.5;
-    const czry = (z.cnry !== undefined ? z.cnry : z.nry) * drawH * 1.5;
-
-    const isHovered = !zoomed &&
-      Math.pow((mx + mobileOffsetX - zx) / czrx, 2) + Math.pow((my - zy) / czry, 2) < 1;
-    if (isHovered) hoveredZone = z;
-    const boost = isHovered ? 1.8 : 1;
-
-    if (z.dark) {
-      /* ── Darkness orb: dark blue/purple/black evil glow ── */
-      const flicker = 0.5 + 0.5 * Math.abs(Math.sin(t * 0.031 + i * 7.3));
-      const evilHue = 235 + 20 * Math.sin(t * 0.009 + i);
-
-      // Void core (subtract light)
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.save();
-      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
-      const gDark = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx * 0.6);
-      gDark.addColorStop(0,   `rgba(0,0,8,0.55)`);
-      gDark.addColorStop(0.5, `rgba(0,0,20,0.25)`);
-      gDark.addColorStop(1,   'transparent');
-      ctx.beginPath(); ctx.arc(0, 0, zrx * 0.6, 0, Math.PI * 2);
-      ctx.fillStyle = gDark; ctx.fill();
-      ctx.restore();
-      ctx.globalCompositeOperation = 'screen';
-
-      // Dark blue outer shroud
-      ctx.save();
-      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
-      const gEvil = ctx.createRadialGradient(0, 0, zrx * 0.25, 0, 0, zrx);
-      gEvil.addColorStop(0,   `hsla(${evilHue},70%,8%,${0.4 * boost})`);
-      gEvil.addColorStop(0.4, `hsla(${evilHue},90%,16%,${(0.45 + 0.2*flicker) * boost})`);
-      gEvil.addColorStop(0.75,`hsla(${(evilHue+30)%360},80%,10%,${0.2 * boost})`);
-      gEvil.addColorStop(1,   'transparent');
-      ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
-      ctx.fillStyle = gEvil; ctx.fill();
-      ctx.restore();
-
-      // Evil tendrils — dark purple arms writhing outward
-      for (let arm = 0; arm < 4; arm++) {
-        const aAngle = t * 0.004 + arm * (Math.PI / 2) + i * 0.5 + Math.sin(t*0.009+arm)*0.4;
-        const aLen = zrx * (1.4 + 0.6 * Math.sin(t * 0.011 + arm * 2.1));
-        const ax = zx + Math.cos(aAngle) * aLen;
-        const ay = zy + Math.sin(aAngle) * aLen * (zry / zrx);
-        const tg = ctx.createLinearGradient(zx, zy, ax, ay);
-        tg.addColorStop(0, `hsla(${evilHue},80%,12%,${0.35 * boost})`);
-        tg.addColorStop(1, 'transparent');
-        ctx.beginPath(); ctx.moveTo(zx, zy); ctx.lineTo(ax, ay);
-        ctx.strokeStyle = tg;
-        ctx.lineWidth = 2 + 2 * flicker;
-        ctx.stroke();
-      }
-    } else {
-      const hue = (z.baseH + hShift) % 360;
-
-      // Main orb glow
-      ctx.save();
-      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
-      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
-      g.addColorStop(0,   `hsla(${hue},${sat}%,80%,${alpha1 * boost})`);
-      g.addColorStop(0.45,`hsla(${(hue+60)%360},${sat}%,60%,${alpha2 * boost})`);
-      g.addColorStop(1,   'transparent');
-      ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
-      ctx.fillStyle = g; ctx.fill();
-      ctx.restore();
-
-      // Inner counter-glow
-      ctx.save();
-      ctx.translate(zx, zy); ctx.scale(1, zry / zrx * 0.65);
-      const g2 = ctx.createRadialGradient(0, 0, zrx*0.25, 0, 0, zrx*0.92);
-      g2.addColorStop(0,   `hsla(${(hue+180)%360},${sat}%,78%,${alpha1*0.5*boost})`);
-      g2.addColorStop(1,   'transparent');
-      ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
-      ctx.fillStyle = g2; ctx.fill();
-      ctx.restore();
-
-      // Gravity tendrils — 3 rotating arms pulling space inward
-      for (let arm = 0; arm < 3; arm++) {
-        const aAngle = t * 0.005 + arm * (Math.PI * 2 / 3) + i * 0.8 + Math.sin(t*0.008+arm*1.7)*0.5;
-        const aLen = zrx * (1.6 + 0.5 * Math.sin(t * 0.012 + arm * 2.3 + i));
-        const ax = zx + Math.cos(aAngle) * aLen;
-        const ay = zy + Math.sin(aAngle) * aLen * (zry / zrx);
-        const tg = ctx.createLinearGradient(zx, zy, ax, ay);
-        tg.addColorStop(0, `hsla(${hue},${sat}%,70%,${0.22 * boost})`);
-        tg.addColorStop(1, 'transparent');
-        ctx.beginPath(); ctx.moveTo(zx, zy); ctx.lineTo(ax, ay);
-        ctx.strokeStyle = tg;
-        ctx.lineWidth = 1.5 + 1.5 * Math.abs(Math.sin(t * 0.01 + arm));
-        ctx.stroke();
-      }
-
-      // Orbiting satellite glow
-      const satAngle = t * 0.018 + i * 2.1;
-      const satX = zx + Math.cos(satAngle) * zrx * 0.65;
-      const satY = zy + Math.sin(satAngle) * zry * 0.65;
-      const sg = ctx.createRadialGradient(satX, satY, 0, satX, satY, zrx * 0.22);
-      sg.addColorStop(0, `hsla(${(hue+90)%360},${sat}%,90%,${0.4 * boost})`);
-      sg.addColorStop(1, 'transparent');
-      ctx.beginPath(); ctx.arc(satX, satY, zrx * 0.22, 0, Math.PI * 2);
-      ctx.fillStyle = sg; ctx.fill();
-    }
-  }
-  ctx.globalCompositeOperation = 'source-over';
 
   /* ── Warp starfield ── */
   drawWarpStars();
@@ -1341,13 +1329,16 @@ document.getElementById('truth-overlay').addEventListener('click', e => {
 const navPrev = document.getElementById('nav-prev');
 const navNext = document.getElementById('nav-next');
 
+// Zones sorted left→right by map x-position for spatial navigation
+const ZONES_BY_X = [...ZONES].sort((a, b) => a.nx - b.nx);
+
 function showNavArrows(v) {
   navPrev.classList.toggle('visible', v);
   navNext.classList.toggle('visible', v);
+  if (!v) { cancelNavHover(navPrev); cancelNavHover(navNext); }
 }
 
 function navigateToZone(newZone) {
-  // Close any current content without triggering miniplayer
   modal.classList.remove('visible');
   mFrame.src = ''; mFrame.style.display = 'none'; mPlace.style.display = 'none';
   closeTruthOverlay();
@@ -1361,16 +1352,32 @@ function navigateToZone(newZone) {
   });
 }
 
-navPrev.addEventListener('click', e => {
-  e.stopPropagation();
-  const idx = zoomTarget ? ZONES.indexOf(zoomTarget) : 0;
-  navigateToZone(ZONES[(idx - 1 + ZONES.length) % ZONES.length]);
-});
-navNext.addEventListener('click', e => {
-  e.stopPropagation();
-  const idx = zoomTarget ? ZONES.indexOf(zoomTarget) : 0;
-  navigateToZone(ZONES[(idx + 1) % ZONES.length]);
-});
+function navigateSpatial(dir) {
+  if (!zoomTarget) return;
+  const idx = ZONES_BY_X.indexOf(zoomTarget);
+  const next = ZONES_BY_X[(idx + dir + ZONES_BY_X.length) % ZONES_BY_X.length];
+  navigateToZone(next);
+}
+
+let navTimers = { prev: null, next: null };
+
+function startNavHover(el, dir, key) {
+  el.classList.add('hovering');
+  navTimers[key] = setTimeout(() => {
+    el.classList.remove('hovering');
+    navigateSpatial(dir);
+  }, 2000);
+}
+
+function cancelNavHover(el, key) {
+  if (key && navTimers[key]) { clearTimeout(navTimers[key]); navTimers[key] = null; }
+  if (el) el.classList.remove('hovering');
+}
+
+navPrev.addEventListener('mouseenter', () => startNavHover(navPrev, -1, 'prev'));
+navPrev.addEventListener('mouseleave', () => cancelNavHover(navPrev, 'prev'));
+navNext.addEventListener('mouseenter', () => startNavHover(navNext,  1, 'next'));
+navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
 
 /* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
 (function() {
