@@ -269,7 +269,7 @@ const ZONES = [
     name:'Vuur!', hoverText:'I make music for fireshows',
     baseH:15,  label:'#ff3300', type:'placeholder', msg:'Vuur!\n— Coming Soon —' },
 
-  { nx:0.6949, ny:0.6728, nrx:0.06, nry:0.08,
+  { nx:0.6949, ny:0.6728, nrx:0.1293, nry:0.2261, cnrx:0.06, cnry:0.08,
     name:'Love', hoverText:'Street Art: Ode to the art of Busking',
     baseH:340, label:'#ff69b4', type:'placeholder', msg:'Love\n— Coming Soon —' },
 
@@ -339,14 +339,11 @@ canvas.addEventListener('mousemove', e => {
 
 canvas.addEventListener('click', e => {
   if (modal.classList.contains('visible')) return;
-  if (window.miniPlayerExpanded && window.miniPlayerExpanded()) { window.miniPlayerCollapse(); return; }
   if (zoomed) { zoomOut(); return; }
   if (hoveredZone) zoomIn(hoveredZone);
-  // XY synth disabled: toggleSynth();
 });
 
 back.addEventListener('click', () => {
-  if (window.miniPlayerExpanded && window.miniPlayerExpanded()) { window.miniPlayerCollapse(); return; }
   if (modal.classList.contains('visible')) { closeModal(); return; }
   if (zoomed) zoomOut();
   else window.location.href = '../';
@@ -355,7 +352,6 @@ mClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    if (window.miniPlayerExpanded && window.miniPlayerExpanded()) { window.miniPlayerCollapse(); return; }
     if (modal.classList.contains('visible')) { closeModal(); return; }
     if (zoomed) zoomOut(); else window.location.href='../';
   }
@@ -440,9 +436,12 @@ function draw() {
     const zy  = oy + z.ny * drawH;
     const zrx = z.nrx * drawW * pulse * 1.5;
     const zry = z.nry * drawH * pulse * 1.5;
+    // Optional separate click radii (cnrx/cnry) — falls back to visual radii
+    const czrx = (z.cnrx !== undefined ? z.cnrx : z.nrx) * drawW * 1.5;
+    const czry = (z.cnry !== undefined ? z.cnry : z.nry) * drawH * 1.5;
 
     const isHovered = !zoomed &&
-      Math.pow((mx + mobileOffsetX - zx) / zrx, 2) + Math.pow((my - zy) / zry, 2) < 1;
+      Math.pow((mx + mobileOffsetX - zx) / czrx, 2) + Math.pow((my - zy) / czry, 2) < 1;
     if (isHovered) hoveredZone = z;
     const boost = isHovered ? 1.7 : 1;
 
@@ -577,8 +576,7 @@ function openZoneContent(zone) {
     return;
   }
   if (zone.type === 'bandcamp') {
-    if (window.miniPlayerExpand) window.miniPlayerExpand();
-    zoomOut();
+    showFrame(zone.bcUrl + 'autoplay=1/');
     return;
   }
   if (zone.type === 'youtube') {
@@ -614,10 +612,12 @@ function showPlaceholder(msg, color) {
 }
 
 function closeModal() {
+  const wasBandcamp = mFrame.style.display === 'block' && mFrame.src.includes('bandcamp');
   modal.classList.remove('visible');
   mFrame.src = '';
   mFrame.style.display = 'none';
   mPlace.style.display = 'none';
+  if (wasBandcamp && window.miniPlayerShow) window.miniPlayerShow();
 }
 
 /* ═══ XY GRANULAR SYNTH (NEBULA) ═══ */
