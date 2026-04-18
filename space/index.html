@@ -574,7 +574,8 @@ function openZoneContent(zone) {
     return;
   }
   if (zone.type === 'bandcamp') {
-    showFrame(zone.bcUrl + 'autoplay=1/');
+    if (window.miniPlayerShow) window.miniPlayerShow();
+    zoomOut();
     return;
   }
   if (zone.type === 'youtube') {
