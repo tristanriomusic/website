@@ -53,7 +53,7 @@
   const closeBtn = div.querySelector('#mini-player-close');
 
   function showPlayer() {
-    frame.src = `https://bandcamp.com/EmbeddedPlayer/album=${ALBUM_ID}/size=small/bgcol=000000/linkcol=aaffee/transparent=true/autoplay=1/`;
+    frame.src = `https://bandcamp.com/EmbeddedPlayer/album=${ALBUM_ID}/size=small/bgcol=000000/linkcol=aaffee/artwork=none/transparent=true/autoplay=1/`;
     div.classList.add('visible');
   }
 
