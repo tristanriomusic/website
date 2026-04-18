@@ -694,37 +694,59 @@ function draw() {
   ctx.lineWidth = 4;
   ctx.strokeRect(ox, oy, drawW, drawH);
 
-  /* ── Orb color halos — slow-breathing, no flashy effects ── */
+  /* ── Nebula overlays: slow, smooth, psychedelic (original two-layer approach) ── */
   ctx.globalCompositeOperation = 'screen';
   for (let i = 0; i < ZONES.length; i++) {
     const z = ZONES[i];
+    const pulse  = 1 + 0.14 * Math.sin(t * 0.012 + i * 0.9);
+    const hShift = (t * 0.45 + i * 37) % 360;
+    const sat    = 92 + 8 * Math.sin(t * 0.008 + i);
+    const alpha1 = 0.72 + 0.22 * Math.abs(Math.sin(t * 0.010 + i * 1.3));
+    const alpha2 = 0.32 + 0.14 * Math.abs(Math.sin(t * 0.013 + i * 0.7));
+
     const zx  = ox + z.nx * drawW;
     const zy  = oy + z.ny * drawH;
-    const zrx = z.nrx * drawW * 1.4;
-    const zry = z.nry * drawH * 1.4;
-    // Slow gentle breathing — no fast flash
-    const alpha = (hoveredZone === z ? 0.72 : 0.42) + 0.10 * Math.sin(t * 0.006 + i * 0.9);
-    ctx.save();
-    ctx.translate(zx, zy);
-    ctx.scale(1, zry / zrx);
+    const zrx = z.nrx * drawW * pulse * 1.5;
+    const zry = z.nry * drawH * pulse * 1.5;
+
+    const boost = (hoveredZone === z) ? 1.7 : 1;
+
     if (z.dark) {
-      // Darkness: soft dark-blue wash
-      const g = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
-      g.addColorStop(0,   `rgba(10,5,40,${alpha * 0.7})`);
-      g.addColorStop(0.55,`rgba(20,10,60,${alpha * 0.4})`);
-      g.addColorStop(1,   'transparent');
+      // Darkness orb: soft dark-blue/purple shroud (no void core, no tendrils)
+      const evilHue = 235 + 20 * Math.sin(t * 0.009 + i);
+      ctx.save();
+      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
+      const gd = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
+      gd.addColorStop(0,   `hsla(${evilHue},75%,12%,${alpha1 * 0.55 * boost})`);
+      gd.addColorStop(0.5, `hsla(${evilHue},85%,18%,${alpha2 * 0.4 * boost})`);
+      gd.addColorStop(1,   'transparent');
       ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
-      ctx.fillStyle = g; ctx.fill();
+      ctx.fillStyle = gd; ctx.fill();
+      ctx.restore();
     } else {
-      const hue = z.baseH;
+      const hue = (z.baseH + hShift) % 360;
+
+      // Layer 1: main outer glow
+      ctx.save();
+      ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
       const g = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
-      g.addColorStop(0,   `hsla(${hue},90%,72%,${alpha})`);
-      g.addColorStop(0.5, `hsla(${hue},80%,50%,${alpha * 0.45})`);
+      g.addColorStop(0,   `hsla(${hue},${sat}%,80%,${alpha1 * boost})`);
+      g.addColorStop(0.45,`hsla(${(hue+60)%360},${sat}%,60%,${alpha2 * boost})`);
       g.addColorStop(1,   'transparent');
       ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
       ctx.fillStyle = g; ctx.fill();
+      ctx.restore();
+
+      // Layer 2: inner counter-glow (complementary hue, compressed ellipse)
+      ctx.save();
+      ctx.translate(zx, zy); ctx.scale(1, zry / zrx * 0.65);
+      const g2 = ctx.createRadialGradient(0, 0, zrx*0.25, 0, 0, zrx*0.92);
+      g2.addColorStop(0,   `hsla(${(hue+180)%360},${sat}%,78%,${alpha1*0.5*boost})`);
+      g2.addColorStop(1,   'transparent');
+      ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
+      ctx.fillStyle = g2; ctx.fill();
+      ctx.restore();
     }
-    ctx.restore();
   }
   ctx.globalCompositeOperation = 'source-over';
 
