@@ -572,12 +572,14 @@ function openZoneContent(zone) {
   }
   if (zone.type === 'external') {
     window.open(zone.url, '_blank');
-    zoomOut();
+    // stay zoomed in — user exits manually
+    back.textContent = `↑ ${zone.name} — click or ESC to return`;
     return;
   }
   if (zone.type === 'bandcamp') {
     if (window.bcExpand) window.bcExpand();
-    zoomOut();
+    // stay zoomed in — user exits manually
+    back.textContent = `↑ ${zone.name} — click or ESC to return`;
     return;
   }
   if (zone.type === 'youtube') {
