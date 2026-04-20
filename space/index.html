@@ -122,6 +122,15 @@
       border-radius: 4px;
     }
 
+    #modal-video {
+      width: min(85vw, 900px);
+      height: min(75vh, 560px);
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 0 80px rgba(255,136,68,0.28), 0 8px 60px rgba(0,0,0,0.7);
+      border-radius: 4px;
+      background: #000;
+    }
+
     #modal-placeholder {
       color: rgba(255,255,255,0.75);
       font-size: clamp(16px, 2.5vw, 36px);
@@ -229,6 +238,133 @@
     }
     #truth-back:hover { color: rgba(255,255,255,0.8); }
 
+    /* ── Love overlay ── */
+    #love-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 60;
+      align-items: center; justify-content: center;
+      background: rgba(10,0,5,0.62);
+      backdrop-filter: blur(3px);
+      overflow: hidden;
+    }
+    #love-overlay.visible { display: flex; animation: fadeM 0.5s ease; }
+    #love-ui {
+      width: clamp(300px, 72vw, 820px);
+      display: flex; flex-direction: column; align-items: center; gap: 2vh;
+      position: relative; z-index: 2;
+    }
+    #love-prompt {
+      color: rgba(255,180,210,0.85);
+      font-size: clamp(13px, 1.7vw, 22px);
+      letter-spacing: 0.12em;
+      text-align: center; line-height: 1.7;
+      text-shadow: 0 0 28px rgba(255,100,160,0.7), 0 0 60px rgba(200,60,120,0.35);
+      animation: lovePulse 4s ease-in-out infinite;
+    }
+    @keyframes lovePulse { 0%,100%{opacity:.75} 50%{opacity:1} }
+    #love-journal {
+      width: 100%;
+      background: rgba(255,100,160,0.05);
+      border: 1px solid rgba(255,120,170,0.22);
+      border-radius: 4px;
+      color: rgba(255,220,235,0.9);
+      font-family: 'Georgia', serif;
+      font-size: clamp(14px, 1.8vw, 22px);
+      line-height: 1.9;
+      padding: 3vh 3vw;
+      resize: none; outline: none;
+      min-height: 28vh;
+      caret-color: rgba(255,120,180,0.9);
+      backdrop-filter: blur(4px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    #love-journal:focus {
+      border-color: rgba(255,100,160,0.5);
+      box-shadow: 0 0 40px rgba(255,80,140,0.14), inset 0 0 22px rgba(180,40,100,0.06);
+    }
+    #love-journal::placeholder { color: rgba(255,180,210,0.25); font-style: italic; }
+    #love-send {
+      background: none;
+      border: 1px solid rgba(255,120,170,0.38);
+      border-radius: 3px;
+      color: rgba(255,180,210,0.6);
+      font-family: 'Georgia', serif;
+      font-size: clamp(11px, 1.1vw, 15px);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      padding: 8px 22px; cursor: pointer;
+      transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    #love-send:hover {
+      color: #ffb8d4; border-color: rgba(255,140,190,0.7);
+      box-shadow: 0 0 20px rgba(255,100,160,0.3);
+    }
+    #love-send-msg { color: rgba(255,180,210,0.6); font-size: clamp(10px,1vw,13px); letter-spacing:0.2em; min-height:1.5em; }
+    #love-back {
+      color: rgba(255,180,210,0.35); font-size: clamp(10px,1.1vw,14px);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      cursor: pointer; user-select: none;
+      text-shadow: 0 0 12px rgba(255,100,160,0.4); transition: color 0.3s;
+    }
+    #love-back:hover { color: rgba(255,180,210,0.85); }
+    /* Love FX overlay canvas */
+    #love-fx-canvas {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      z-index: 64; pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    /* Hidden caret mirror for position tracking */
+    #love-caret-mirror {
+      position: fixed; visibility: hidden; pointer-events: none; z-index: -1;
+      white-space: pre-wrap; word-wrap: break-word; overflow: hidden;
+      font-family: 'Georgia', serif;
+    }
+
+    /* ── Aquarium overlay ── */
+    #aquarium-overlay {
+      display: none; position: fixed; inset: 0; z-index: 60;
+      flex-direction: column;
+      background: rgba(0,8,20,0.72);
+      backdrop-filter: blur(3px);
+    }
+    #aquarium-overlay.visible { display: flex; animation: fadeM 0.5s ease; }
+    #aquarium-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    #aquarium-ui {
+      position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      z-index: 2;
+    }
+    #aquarium-title {
+      color: rgba(100,220,255,0.7); font-size: clamp(10px,1vw,13px);
+      letter-spacing: 0.35em; text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(0,180,255,0.5);
+    }
+    #aquarium-fish-btns {
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+    }
+    .aq-add-btn {
+      background: rgba(0,30,50,0.7);
+      border: 1px solid rgba(0,180,255,0.25);
+      border-radius: 3px; padding: 6px 14px;
+      color: rgba(150,230,255,0.65);
+      font-family: 'Georgia', serif;
+      font-size: clamp(10px,0.9vw,13px); letter-spacing: 0.2em;
+      cursor: pointer; transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .aq-add-btn:hover {
+      color: rgba(200,245,255,0.95); border-color: rgba(0,200,255,0.6);
+      box-shadow: 0 0 14px rgba(0,180,255,0.25);
+    }
+    #aquarium-back {
+      color: rgba(100,200,255,0.35); font-size: clamp(10px,1.1vw,14px);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      cursor: pointer; user-select: none;
+      text-shadow: 0 0 12px rgba(0,180,255,0.4); transition: color 0.3s;
+    }
+    #aquarium-back:hover { color: rgba(150,230,255,0.85); }
+
     /* ── Cosmic Storm button ── */
     #storm-btn {
       position: fixed; bottom: 3vh; right: 20px; z-index: 25;
@@ -312,6 +448,8 @@
 </head>
 <body>
 <canvas id="main"></canvas>
+<canvas id="love-fx-canvas"></canvas>
+<div id="love-caret-mirror"></div>
 <div id="tip"><span id="tip-name"></span><span id="tip-desc"></span></div>
 <div id="back">&#8592; Return</div>
 <div id="panel-dots">
@@ -328,6 +466,7 @@
   <iframe id="modal-frame" src="" frameborder="0"
     allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
     style="display:none"></iframe>
+  <video id="modal-video" controls style="display:none"></video>
   <div id="modal-placeholder" style="display:none"></div>
   <div id="modal-close">&#x2715; Close</div>
 </div>
@@ -342,6 +481,35 @@
 <div id="nav-next" class="nav-arrow">
   <div class="nav-fill"></div>
   <div class="nav-label"><span class="nav-symbol">→</span><span class="nav-text">Further</span></div>
+</div>
+
+<!-- Aquarium overlay -->
+<div id="aquarium-overlay">
+  <canvas id="aquarium-canvas"></canvas>
+  <div id="aquarium-ui">
+    <div id="aquarium-title">Add a creature to the ecosystem</div>
+    <div id="aquarium-fish-btns">
+      <button class="aq-add-btn" data-species="plankton">🟢 Plankton</button>
+      <button class="aq-add-btn" data-species="sardine">🐟 Sardine</button>
+      <button class="aq-add-btn" data-species="clownfish">🟠 Clownfish</button>
+      <button class="aq-add-btn" data-species="tuna">🔵 Tuna</button>
+      <button class="aq-add-btn" data-species="shark">⬛ Shark</button>
+      <button class="aq-add-btn" data-species="jellyfish">🪼 Jellyfish</button>
+      <button class="aq-add-btn" data-species="octopus">🟣 Octopus</button>
+    </div>
+    <div id="aquarium-back">← Return</div>
+  </div>
+</div>
+
+<!-- Love messaging overlay -->
+<div id="love-overlay">
+  <div id="love-ui">
+    <div id="love-prompt">The most beautiful moments are made together, let's collaborate!<br>Send me any request or idea you might have below.</div>
+    <textarea id="love-journal" placeholder="Write here… don't forget to let me know how I can contact you back!"></textarea>
+    <div id="love-send-msg"></div>
+    <button id="love-send">Send with Love ♥</button>
+    <div id="love-back">&#8592; Return</div>
+  </div>
 </div>
 
 <!-- Truth writing overlay -->
@@ -369,6 +537,7 @@ const tipDesc  = document.getElementById('tip-desc');
 const back     = document.getElementById('back');
 const modal    = document.getElementById('modal');
 const mFrame   = document.getElementById('modal-frame');
+const mVideo   = document.getElementById('modal-video');
 const mPlace   = document.getElementById('modal-placeholder');
 const mClose   = document.getElementById('modal-close');
 let W, H;
@@ -431,8 +600,8 @@ const ZONES = [
     baseH:40,  label:'#ffaa00', type:'bandcamp', bcUrl:'https://bandcamp.com/EmbeddedPlayer/album=2211761745/size=large/bgcol=000000/linkcol=ffffff/artwork=small/transparent=true/' },
 
   { nx:0.5779, ny:0.5707, nrx:0.0563, nry:0.0643,
-    name:'Peace', hoverText:'Unique Experiences in Extraordinary Settings',
-    baseH:180, label:'#00ffcc', type:'external', url:'https://peace-drab.vercel.app/' },
+    name:'Rituelles', hoverText:'New Song: Check it out',
+    baseH:180, label:'#00ffcc', type:'placeholder', msg:'Rituelles\n— Coming Soon —' },
 
   { nx:0.4951, ny:0.2283, nrx:0.1148, nry:0.1479,
     name:"L'Idée", hoverText:'Soundtrack to an animation masterpiece from 1933',
@@ -443,16 +612,16 @@ const ZONES = [
     baseH:170, label:'#00ffcc', type:'youtube', url:'https://www.youtube.com/watch?v=syRB1RfUOwc' },
 
   { nx:0.7402, ny:0.1730, nrx:0.1699, nry:0.0869,
-    name:'Rituelles', hoverText:'New Song: Check it out',
-    baseH:320, label:'#ff2d78', type:'placeholder', msg:'Rituelles\n— Coming Soon —' },
+    name:'Peace', hoverText:'Unique Experiences in Extraordinary Settings',
+    baseH:320, label:'#ff2d78', type:'external', url:'https://peace-drab.vercel.app/' },
 
   { nx:0.4562, ny:0.7836, nrx:0.0882, nry:0.0892,
     name:'Loopmachien', hoverText:'My personalized looping & sequencing software — try it out!',
     baseH:25,  label:'#ff6400', type:'external', url:'https://tristanriomusic.github.io/ipadmarssynth/' },
 
   { nx:0.8231, ny:0.7074, nrx:0.0910, nry:0.2195,
-    name:'Exploration of Ideas', hoverText:'Collection of ideas',
-    baseH:55,  label:'#aaff00', type:'placeholder', msg:'Exploration of Ideas\n— Coming Soon —' },
+    name:'Forest', hoverText:'Collection of ideas',
+    baseH:55,  label:'#aaff00', type:'placeholder', msg:'Forest\n— Coming Soon —' },
 
   { nx:0.2413, ny:0.8839, nrx:0.09, nry:0.12,
     name:'Truth', hoverText:'Every letter is a sound — write your truth!',
@@ -460,20 +629,20 @@ const ZONES = [
 
   { nx:0.8735, ny:0.4145, nrx:0.1293, nry:0.1586,
     name:'Desert Dream', hoverText:'Is there life on Mars? How we turned a pirate ship to a spaceship',
-    baseH:90,  label:'#ff8844', type:'placeholder', msg:'Desert Dream\n— Coming Soon —' },
+    baseH:90,  label:'#ff8844', type:'localvideo', src:'/videos/desert-dream.mp4' },
 
   { nx:0.2029, ny:0.6201, nrx:0.0588, nry:0.1340,
-    name:'Vuur!', hoverText:'I make music for fireshows',
-    baseH:15,  label:'#ff3300', type:'placeholder', msg:'Vuur!\n— Coming Soon —' },
+    name:'Aquarium', hoverText:'A living ecosystem — add fish, watch the chain unfold',
+    baseH:195, label:'#00ccff', type:'aquarium' },
 
   { nx:0.755, ny:0.345, nrx:0.072, nry:0.095,
-    name:'Darkness — Here we face our Demons', hoverText:'Enter the darkness',
+    name:'Darkness', hoverText:'Face your demons',
     baseH:240, label:'#3322aa', type:'placeholder', msg:'Darkness\n— Here we face our Demons —',
     dark:true },
 
   { nx:0.6949, ny:0.6728, nrx:0.1293, nry:0.2261, cnrx:0.06, cnry:0.08,
-    name:'Love', hoverText:'Street Art: Ode to the art of Busking',
-    baseH:340, label:'#ff69b4', type:'placeholder', msg:'Love\n— Coming Soon —' },
+    name:'Love', hoverText:'Let\'s create something beautiful together ♥',
+    baseH:340, label:'#ff69b4', type:'love' },
 
   { nx:0.1322, ny:0.5400, nrx:0.04, nry:0.05,
     name:'Join Us', hoverText:'Join Us!',
@@ -489,8 +658,9 @@ let zoomCurrent = {tx:0, ty:0, scale:1};
 let t = 0;
 
 /* ═══ COSMIC STORM ═══ */
-let cosmicStorm = false;
-let stormManual = false;   // true when user explicitly clicked the button
+let cosmicStorm = false;   // target on/off
+let stormLevel  = 0.0;     // 0.0–1.0, lerps toward cosmicStorm
+let stormManual = false;
 let prevDarknessActive = false;
 const stormBtn = document.getElementById('storm-btn');
 stormBtn.addEventListener('click', () => {
@@ -580,6 +750,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (modal.classList.contains('visible')) { closeModal(); return; }
     if (document.getElementById('truth-overlay').classList.contains('visible')) { closeTruthOverlay(); return; }
+    if (document.getElementById('love-overlay').classList.contains('visible')) { closeLoveOverlay(); return; }
+    if (document.getElementById('aquarium-overlay').classList.contains('visible')) { closeAquarium(); return; }
     if (zoomed) zoomOut(); else window.location.href='../';
   }
 });
@@ -598,6 +770,8 @@ function imgLayout() {
 /* ═══ MAIN DRAW ═══ */
 function draw() {
   t++;
+  // Lerp storm level — ~2s fade in, ~3s fade out
+  stormLevel += (cosmicStorm ? 1.0 : 0.0 - stormLevel) * (cosmicStorm ? 0.035 : 0.022);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, H);
 
@@ -639,6 +813,26 @@ function draw() {
     !!(zoomed && zoomTarget && zoomTarget.dark)
   );
 
+  // Hearts when zoomed into Love universe
+  if (zoomed && zoomTarget && zoomTarget.type === 'love' && t % 18 === 0) {
+    spawnHeart(
+      Math.random() * W,
+      H * 0.3 + Math.random() * H * 0.6,
+      true
+    );
+  }
+
+  // Map hearts for Love zone hover
+  if (hoveredZone && hoveredZone.type === 'love' && t % 14 === 0) {
+    const { drawW: dw, drawH: dh, ox: ox2, oy: oy2 } = imgLayout();
+    const zx = ox2 + hoveredZone.nx * dw, zy = oy2 + hoveredZone.ny * dh;
+    spawnHeart(
+      zx + (Math.random() - 0.5) * hoveredZone.nrx * dw * 1.6,
+      zy + (Math.random() - 0.5) * hoveredZone.nry * dh * 0.8,
+      true
+    );
+  }
+
   /* ── Draw artwork: orb-gravity deformation makes lines warp and breathe ── */
   ctx.save();
   ctx.filter = 'contrast(12) brightness(1.4)';
@@ -646,7 +840,7 @@ function draw() {
 
   function stripDisplace(si) {
     const syC = (si + 0.5) / NS;
-    const sf = cosmicStorm ? 1.0 : 0.14; // storm factor — subtle vs wild
+    const sf = 0.14 + stormLevel * 0.86; // lerped 0.14→1.0
 
     // Base organic wave (horizontal shimmer)
     let wx = (Math.sin(t * 0.006 + si * 0.21) * 2.2
@@ -654,7 +848,7 @@ function draw() {
     // Width scale for depth illusion
     let wMod = 1.0 + Math.sin(t * 0.005 + si * 0.31) * 0.016 * sf;
 
-    if (!cosmicStorm) return { wx, wMod }; // subtle: no orb gravity
+    if (stormLevel < 0.02) return { wx, wMod }; // no orb gravity at rest
 
     // Storm: orb gravity pulls strips toward each orb's gravitational field
     for (let i = 0; i < ZONES.length; i++) {
@@ -845,6 +1039,8 @@ function zoomIn(zone) {
 function zoomOut() {
   closeModal();
   closeTruthOverlay();
+  closeLoveOverlay();
+  closeAquarium();
   showNavArrows(false);
   animateZoom(zoomCurrent, { tx:0, ty:0, scale:1 }, 500, () => {
     zoomed = false;
@@ -898,6 +1094,19 @@ function openZoneContent(zone) {
     setTimeout(() => document.getElementById('truth-journal').focus(), 300);
     return;
   }
+  if (zone.type === 'love') {
+    document.getElementById('love-overlay').classList.add('visible');
+    setTimeout(() => document.getElementById('love-journal').focus(), 300);
+    return;
+  }
+  if (zone.type === 'aquarium') {
+    openAquarium();
+    return;
+  }
+  if (zone.type === 'localvideo') {
+    showVideo(zone.src);
+    return;
+  }
   if (zone.type === 'placeholder') {
     showPlaceholder(zone.msg, zone.label);
     return;
@@ -907,8 +1116,18 @@ function openZoneContent(zone) {
 function showFrame(src) {
   mFrame.src = src;
   mFrame.style.display = 'block';
+  mVideo.style.display = 'none';
   mPlace.style.display = 'none';
   modal.classList.add('visible');
+}
+
+function showVideo(src) {
+  mVideo.src = src;
+  mVideo.style.display = 'block';
+  mFrame.style.display = 'none';
+  mPlace.style.display = 'none';
+  modal.classList.add('visible');
+  mVideo.play().catch(() => {});
 }
 
 function showPlaceholder(msg, color) {
@@ -926,6 +1145,9 @@ function closeModal() {
   modal.classList.remove('visible');
   mFrame.src = '';
   mFrame.style.display = 'none';
+  mVideo.pause();
+  mVideo.src = '';
+  mVideo.style.display = 'none';
   mPlace.style.display = 'none';
   if (wasBandcamp && window.miniPlayerShow) window.miniPlayerShow();
 }
@@ -1187,6 +1409,10 @@ function exitEditMode() {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'e' || e.key === 'E') {
+    const truthOpen   = document.getElementById('truth-overlay').classList.contains('visible');
+    const loveOpen    = document.getElementById('love-overlay').classList.contains('visible');
+    const aquariumOpen = document.getElementById('aquarium-overlay').classList.contains('visible');
+    if (truthOpen || loveOpen || aquariumOpen) return;
     if (editMode) exitEditMode(); else enterEditMode();
   }
 });
@@ -1400,6 +1626,1096 @@ document.getElementById('truth-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('truth-overlay')) closeTruthOverlay();
 });
 
+/* ═══ LOVE FX ═══ */
+let loveIntensity = 0;
+const LOVE_BUBBLES = [];
+const LOVE_PARTICLES = [];  // watercolour paint blobs
+
+// Love FX canvas — full-screen wash + bubbles
+const loveFxCanvas = document.getElementById('love-fx-canvas');
+const lc = loveFxCanvas.getContext('2d');
+function resizeLoveFx() { loveFxCanvas.width = window.innerWidth; loveFxCanvas.height = window.innerHeight; }
+resizeLoveFx();
+window.addEventListener('resize', resizeLoveFx);
+
+function spawnBubble() {
+  LOVE_BUBBLES.push({
+    x: Math.random() * window.innerWidth,
+    y: window.innerHeight + 30,
+    r: 8 + Math.random() * 36,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: -(0.08 + Math.random() * 0.22),
+    wobble: Math.random() * Math.PI * 2,
+    hue: 300 + Math.random() * 60,
+    alpha: 0.07 + Math.random() * 0.14,
+    life: 1.0
+  });
+}
+
+// ── Watercolour blob particle ──
+// Each "heart" is a cluster of soft paint blobs arranged loosely in heart shape,
+// drawn directly on the fx canvas — no DOM elements.
+function addHeartParticles(ox, oy, isMapHeart) {
+  const hue0 = 295 + Math.random() * 70;
+  const scale = isMapHeart ? (0.5 + Math.random() * 0.4) : (0.55 + Math.random() * 0.6);
+  // Sample 10 points around heart curve — gentle, not explosive
+  const pts = 10;
+  for (let i = 0; i < pts; i++) {
+    const t = (i / pts) * Math.PI * 2;
+    const hx = 16 * Math.pow(Math.sin(t), 3);
+    const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+    const jx = (Math.random() - 0.5) * 5;
+    const jy = (Math.random() - 0.5) * 5;
+    const spd = 0.08 + Math.random() * 0.28;
+    const ang = Math.atan2(hy + jy, hx + jx) + (Math.random() - 0.5) * 0.4;
+    LOVE_PARTICLES.push({
+      x:  ox + (hx + jx) * scale * 1.6,
+      y:  oy + (hy + jy) * scale * 1.6,
+      vx: Math.cos(ang) * spd * 0.18,
+      vy: Math.sin(ang) * spd * 0.18 - 0.45 - Math.random() * 0.35,
+      r:  (8 + Math.random() * 14) * scale,
+      hue: hue0 + (Math.random() - 0.5) * 40,
+      sat: 72 + Math.random() * 22,
+      lit: 55 + Math.random() * 30,
+      alpha: 0.28 + Math.random() * 0.30,
+      life: 1.0,
+      decay: 0.003 + Math.random() * 0.004
+    });
+  }
+  // 3 loose smear blobs that also rise
+  for (let i = 0; i < 3; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const d   = Math.random() * 14 * scale;
+    LOVE_PARTICLES.push({
+      x: ox + Math.cos(ang) * d,
+      y: oy + Math.sin(ang) * d,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: -(0.30 + Math.random() * 0.40),
+      r:  (12 + Math.random() * 20) * scale,
+      hue: hue0 + (Math.random() - 0.5) * 50,
+      sat: 65 + Math.random() * 28,
+      lit: 48 + Math.random() * 38,
+      alpha: 0.12 + Math.random() * 0.18,
+      life: 1.0,
+      decay: 0.002 + Math.random() * 0.003
+    });
+  }
+}
+
+// Alias for map hearts (same system, smaller)
+function spawnHeart(x, y, isMapHeart) {
+  addHeartParticles(x, y, isMapHeart);
+}
+
+function drawLoveFx(loveActive) {
+  const W = loveFxCanvas.width, H = loveFxCanvas.height;
+  loveIntensity += ((loveActive ? 1.0 : 0.0) - loveIntensity) * (loveActive ? 0.018 : 0.010);
+  lc.clearRect(0, 0, W, H);
+
+  const hasParticles = LOVE_PARTICLES.length > 0;
+  if (loveIntensity < 0.004 && !hasParticles) {
+    requestAnimationFrame(() => drawLoveFx(
+      (typeof hoveredZone !== 'undefined' && hoveredZone && hoveredZone.type === 'love') ||
+      (typeof zoomed !== 'undefined' && zoomed && zoomTarget && zoomTarget.type === 'love') ||
+      document.getElementById('love-overlay').classList.contains('visible')
+    ));
+    return;
+  }
+
+  // ── Warm pink wash (subtle, like light through rose glass) ──
+  if (loveIntensity > 0.01) {
+    const wash = lc.createRadialGradient(W*0.5, H*0.55, 0, W*0.5, H*0.5, W*0.82);
+    wash.addColorStop(0,   `rgba(180,20,80,${0.14 * loveIntensity})`);
+    wash.addColorStop(0.5, `rgba(140,15,60,${0.09 * loveIntensity})`);
+    wash.addColorStop(1,   `rgba(80,5,35,${0.03 * loveIntensity})`);
+    lc.fillStyle = wash; lc.fillRect(0, 0, W, H);
+
+    // Spawn ambient bubbles — slow, infrequent
+    if (Math.random() < loveIntensity * 0.04) spawnBubble();
+  }
+
+  // ── Bubbles ──
+  for (let i = LOVE_BUBBLES.length - 1; i >= 0; i--) {
+    const b = LOVE_BUBBLES[i];
+    b.x += b.vx + Math.sin(b.wobble) * 0.5;
+    b.y += b.vy;
+    b.wobble += 0.022;
+    b.life -= 0.002;
+    if (b.y < -b.r * 2 || b.life <= 0) { LOVE_BUBBLES.splice(i, 1); continue; }
+    const a = b.alpha * b.life * Math.min(loveIntensity * 3, 1);
+    lc.beginPath(); lc.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    const bg = lc.createRadialGradient(b.x - b.r*0.3, b.y - b.r*0.3, 1, b.x, b.y, b.r);
+    bg.addColorStop(0,    `hsla(${b.hue},85%,90%,${a*0.30})`);
+    bg.addColorStop(0.65, `hsla(${b.hue},78%,60%,${a*0.06})`);
+    bg.addColorStop(1,    `hsla(${b.hue},82%,68%,${a*0.42})`);
+    lc.fillStyle = bg; lc.fill();
+    lc.strokeStyle = `hsla(${b.hue},78%,82%,${a*0.55})`;
+    lc.lineWidth = 1.0 + Math.random() * 0.6; lc.stroke();
+    lc.beginPath(); lc.arc(b.x - b.r*0.26, b.y - b.r*0.28, b.r*0.12, 0, Math.PI*2);
+    lc.fillStyle = `hsla(${b.hue},50%,97%,${a*0.45})`; lc.fill();
+  }
+
+  // ── Watercolour paint blob particles ──
+  for (let i = LOVE_PARTICLES.length - 1; i >= 0; i--) {
+    const p = LOVE_PARTICLES[i];
+    p.x  += p.vx + Math.sin(p.life * 12 + p.hue) * 0.18;
+    p.y  += p.vy;
+    p.vx *= 0.995;
+    // no vy friction — keep rising
+    p.life -= p.decay;
+    if (p.life <= 0) { LOVE_PARTICLES.splice(i, 1); continue; }
+    // Soft watercolour blob — radial gradient, no hard edges
+    const a = p.alpha * p.life * p.life; // quadratic fade = watercolour drying
+    const g = lc.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+    g.addColorStop(0,    `hsla(${p.hue},${p.sat}%,${p.lit}%,${a})`);
+    g.addColorStop(0.45, `hsla(${p.hue},${p.sat}%,${p.lit}%,${a * 0.5})`);
+    g.addColorStop(1,    `hsla(${p.hue},${p.sat - 10}%,${p.lit}%,0)`);
+    lc.fillStyle = g;
+    lc.beginPath(); lc.arc(p.x, p.y, p.r, 0, Math.PI * 2); lc.fill();
+  }
+
+  requestAnimationFrame(() => drawLoveFx(
+    (typeof hoveredZone !== 'undefined' && hoveredZone && hoveredZone.type === 'love') ||
+    (typeof zoomed !== 'undefined' && zoomed && zoomTarget && zoomTarget.type === 'love') ||
+    document.getElementById('love-overlay').classList.contains('visible')
+  ));
+}
+drawLoveFx(false);
+
+// ── Caret position tracker ──
+const loveCaretMirror = document.getElementById('love-caret-mirror');
+function getCaretPos(ta) {
+  const st = window.getComputedStyle(ta);
+  const rect = ta.getBoundingClientRect();
+  ['top','left','width','padding','font','fontSize','fontFamily','fontWeight',
+   'lineHeight','letterSpacing','whiteSpace','wordWrap','border','boxSizing','overflow']
+    .forEach(p => loveCaretMirror.style[p] = st[p]);
+  loveCaretMirror.style.position = 'fixed';
+  loveCaretMirror.style.top  = rect.top + 'px';
+  loveCaretMirror.style.left = rect.left + 'px';
+  loveCaretMirror.style.width = rect.width + 'px';
+  loveCaretMirror.style.visibility = 'hidden';
+  loveCaretMirror.style.overflow = 'hidden';
+  loveCaretMirror.textContent = ta.value.substring(0, ta.selectionStart);
+  const span = document.createElement('span');
+  span.textContent = '\u200b';
+  loveCaretMirror.appendChild(span);
+  const sr = span.getBoundingClientRect();
+  loveCaretMirror.textContent = '';
+  return { x: sr.left, y: sr.top + sr.height / 2 };
+}
+
+// ── Keypress → paint burst from caret ──
+document.getElementById('love-journal').addEventListener('keydown', e => {
+  if (e.key.length !== 1 && e.key !== 'Enter') return;
+  const jrnl = document.getElementById('love-journal');
+  let cx, cy;
+  try { const p = getCaretPos(jrnl); cx = p.x; cy = p.y; }
+  catch { const r = jrnl.getBoundingClientRect(); cx = r.left + r.width * 0.5; cy = r.top + r.height * 0.45; }
+  addHeartParticles(cx, cy, false);
+});
+
+document.getElementById('love-send').addEventListener('click', async () => {
+  const msg = document.getElementById('love-journal').value.trim();
+  const statusEl = document.getElementById('love-send-msg');
+  if (!msg) { statusEl.textContent = 'Write something first ♥'; return; }
+  statusEl.textContent = 'Sending…';
+  try {
+    const form = new FormData();
+    form.append('message', msg);
+    form.append('_subject', 'VibeCode Love Message ♥');
+    form.append('_captcha', 'false');
+    const res = await fetch('https://formsubmit.co/ajax/tristanriomusic@gmail.com', {
+      method: 'POST', headers: { 'Accept': 'application/json' }, body: form
+    });
+    if (res.ok) {
+      statusEl.textContent = 'Sent with love ♥ Thank you!';
+      document.getElementById('love-journal').value = '';
+      // burst of hearts on success
+      const rect = document.getElementById('love-send').getBoundingClientRect();
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => addHeartParticles(rect.left + rect.width/2, rect.top, false), i * 300);
+      }
+    } else { statusEl.textContent = 'Something went wrong — try again?'; }
+  } catch { statusEl.textContent = 'Something went wrong — try again?'; }
+});
+
+function closeLoveOverlay() {
+  document.getElementById('love-overlay').classList.remove('visible');
+}
+document.getElementById('love-back').addEventListener('click', closeLoveOverlay);
+document.getElementById('love-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('love-overlay')) closeLoveOverlay();
+});
+
+/* ═══ AQUARIUM ═══ */
+const aqCanvas = document.getElementById('aquarium-canvas');
+const aqCtx    = aqCanvas.getContext('2d');
+const aqOverlay = document.getElementById('aquarium-overlay');
+let aqRunning = false, aqFrame = 0;
+
+function resizeAq() { aqCanvas.width = window.innerWidth; aqCanvas.height = window.innerHeight; }
+resizeAq(); window.addEventListener('resize', resizeAq);
+
+// ── Species definitions ──
+// tier: 0=plankton(food), 1=small, 2=medium, 3=large, 4=apex
+const SPECIES = {
+  plankton:  { tier:0, size:4,  speed:0.3, color:'#88ff44', r:4,   prey:[],              label:'Plankton',   turnRate:0.08 },
+  sardine:   { tier:1, size:6,  speed:1.6, color:'#aaddff', r:6,   prey:['plankton'],    label:'Sardine',    turnRate:0.14 },
+  clownfish: { tier:1, size:7,  speed:1.3, color:'#ff8833', r:7,   prey:['plankton'],    label:'Clownfish',  turnRate:0.12 },
+  tuna:      { tier:2, size:11, speed:2.0, color:'#4488cc', r:11,  prey:['sardine','clownfish'], label:'Tuna', turnRate:0.08 },
+  shark:     { tier:3, size:18, speed:2.4, color:'#556677', r:18,  prey:['tuna','clownfish','sardine'], label:'Shark', turnRate:0.05 },
+  jellyfish: { tier:1, size:9,  speed:0.5, color:'#cc88ff', r:9,   prey:['plankton'],    label:'Jellyfish',  turnRate:0.04 },
+  octopus:   { tier:2, size:13, speed:1.1, color:'#aa44aa', r:13,  prey:['sardine','clownfish','jellyfish'], label:'Octopus', turnRate:0.10 },
+};
+
+const AQ_CREATURES = [];
+let AQ_CORALS = [];
+let AQ_BUBBLES_AQ = [];
+let AQ_IMG1 = null, AQ_IMG2 = null, AQ_IMGS_READY = 0;
+
+function loadAqImages() {
+  const done = () => { AQ_IMGS_READY++; };
+  AQ_IMG1 = new Image(); AQ_IMG1.onload = done; AQ_IMG1.src = '/Aquarium 1.jpeg';
+  AQ_IMG2 = new Image(); AQ_IMG2.onload = done; AQ_IMG2.src = '/Aquarium 2.jpg';
+}
+
+// Exact hues pixel-sampled from the two paintings
+const SPECIES_HUE = {
+  plankton:  192,  // cyan — bioluminescent dots in painting 1
+  sardine:   4,    // coral red — small schooling fish in painting 2
+  clownfish: 48,   // bright yellow — dominant butterfly fish in painting 2
+  tuna:      224,  // blue-purple — large angelfish in painting 2
+  shark:     205,  // dark blue-grey — distant silhouette painting 2
+  jellyfish: 288,  // white-lavender — painting 1 translucent bells
+  octopus:   268,  // deep purple
+};
+
+// Crop regions [cx, cy, cw, ch] as fractions of each painting's dimensions
+// imgN: 1 = Aquarium 1.jpeg (jellyfish), 2 = Aquarium 2.jpg (fish)
+const AQ_SPRITES = {
+  jellyfish: { imgN:1, cx:0.31, cy:0.28, cw:0.28, ch:0.34 },  // pink/red center jellyfish (tight)
+  plankton:  { imgN:1, cx:0.09, cy:0.38, cw:0.13, ch:0.19 },  // small jellyfish (tight)
+  sardine:   { imgN:2, cx:0.02, cy:0.41, cw:0.19, ch:0.14 },  // red fish school (tight)
+  clownfish: { imgN:2, cx:0.34, cy:0.29, cw:0.12, ch:0.18 },  // single yellow butterfly fish
+  tuna:      { imgN:2, cx:0.26, cy:0.58, cw:0.38, ch:0.23 },  // large blue/purple fish (tight)
+  shark:     { imgN:2, cx:0.49, cy:0.03, cw:0.22, ch:0.06 },  // shark silhouette (tight)
+  octopus:   { imgN:2, cx:0.30, cy:0.63, cw:0.34, ch:0.20 },  // large teal fish (tight)
+};
+const AQ_SPRITE_CACHE = {};
+
+function initCorals(W, H) {
+  AQ_CORALS = [];
+  // Naturally distributed coral types with painting-accurate hues
+  const layout = [
+    // type, hue, count, x-zone [0..1]
+    { type:'branch',  hue:8,   n:5, xs:[0.03,0.42] },
+    { type:'tube',    hue:95,  n:4, xs:[0.22,0.55] },
+    { type:'fan',     hue:285, n:4, xs:[0.38,0.72] },
+    { type:'anemone', hue:138, n:3, xs:[0.55,0.88] },
+    { type:'bubble',  hue:42,  n:3, xs:[0.70,0.97] },
+  ];
+  for (const cfg of layout) {
+    for (let i = 0; i < cfg.n; i++) {
+      const t = i / Math.max(cfg.n - 1, 1);
+      AQ_CORALS.push({
+        x: (cfg.xs[0] + t * (cfg.xs[1] - cfg.xs[0])) * W + (Math.random() - 0.5) * W * 0.06,
+        h: 35 + Math.random() * 75,
+        branches: 2 + Math.floor(Math.random() * 4),
+        hue: cfg.hue + (Math.random() - 0.5) * 24,
+        wobble: Math.random() * Math.PI * 2,
+        type: cfg.type
+      });
+    }
+  }
+}
+
+function addCreature(species, W, H) {
+  const sp = SPECIES[species];
+  AQ_CREATURES.push({
+    species,
+    x: 60 + Math.random() * (W - 120),
+    y: 80 + Math.random() * (H * 0.65),
+    vx: (Math.random() - 0.5) * sp.speed,
+    vy: (Math.random() - 0.5) * sp.speed * 0.5,
+    angle: Math.random() * Math.PI * 2,
+    hunger: 0.5,
+    energy: 1.0,
+    age: 0,
+    wobble: Math.random() * Math.PI * 2,
+    id: Math.random()
+  });
+}
+
+// Pre-render painting crop with chroma-key background removal
+function buildSprites() {
+  if (AQ_IMGS_READY === 0) return;
+  for (const [species, def] of Object.entries(AQ_SPRITES)) {
+    if (AQ_SPRITE_CACHE[species]) continue;
+    const img = def.imgN === 1 ? AQ_IMG1 : AQ_IMG2;
+    if (!img || !img.complete || !img.naturalWidth) continue;
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const srcX = Math.round(def.cx * iw), srcY = Math.round(def.cy * ih);
+    const srcW = Math.round(def.cw * iw), srcH = Math.round(def.ch * ih);
+    const sp = SPECIES[species];
+    const displayMax = sp.r * 11;
+    const scaleF = displayMax / Math.max(srcW, srcH);
+    const dw = Math.max(4, Math.round(srcW * scaleF));
+    const dh = Math.max(4, Math.round(srcH * scaleF));
+    const c = document.createElement('canvas');
+    c.width = dw; c.height = dh;
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, dw, dh);
+
+    // Sample background color from a ring of border pixels
+    const imgData = ctx.getImageData(0, 0, dw, dh);
+    const px = imgData.data;
+    let bgR = 0, bgG = 0, bgB = 0, n = 0;
+    const brd = Math.max(2, Math.round(Math.min(dw, dh) * 0.10));
+    for (let y = 0; y < dh; y++) {
+      for (let x = 0; x < dw; x++) {
+        if (x < brd || x >= dw - brd || y < brd || y >= dh - brd) {
+          const i = (y * dw + x) * 4;
+          bgR += px[i]; bgG += px[i+1]; bgB += px[i+2]; n++;
+        }
+      }
+    }
+    bgR /= n; bgG /= n; bgB /= n;
+
+    // Chroma-key: erase pixels close to the background ocean blue,
+    // but only if the pixel is actually blue-dominant (protects reds, yellows, pinks)
+    const lo = 48, hi = 95;
+    for (let i = 0; i < px.length; i += 4) {
+      const r = px[i], g = px[i+1], b = px[i+2];
+      const dr = r - bgR, dg = g - bgG, db = b - bgB;
+      const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+      // Only key pixels that are blue-dominant — spares warm creature colors
+      const isBluish = b >= r * 0.95 && b >= g * 0.82;
+      if (!isBluish) continue;
+      if (dist < lo) {
+        px[i+3] = 0;
+      } else if (dist < hi) {
+        px[i+3] = Math.round(((dist - lo) / (hi - lo)) * 255);
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    AQ_SPRITE_CACHE[species] = { canvas: c, w: dw, h: dh };
+  }
+}
+
+// Neon line helper — thick dim + thin bright, no shadowBlur needed
+function neonLine(x0,y0,x1,y1,hue,alpha,thick) {
+  aqCtx.lineWidth = thick * 3;
+  aqCtx.strokeStyle = `hsla(${hue},100%,55%,${alpha*0.35})`;
+  aqCtx.beginPath(); aqCtx.moveTo(x0,y0); aqCtx.lineTo(x1,y1); aqCtx.stroke();
+  aqCtx.lineWidth = thick;
+  aqCtx.strokeStyle = `hsla(${hue},100%,88%,${alpha})`;
+  aqCtx.beginPath(); aqCtx.moveTo(x0,y0); aqCtx.lineTo(x1,y1); aqCtx.stroke();
+}
+
+function drawCoral(c, H) {
+  const base = H - 28;
+  const sway = Math.sin(aqFrame * 0.013 + c.wobble) * 5;
+  aqCtx.save();
+  aqCtx.translate(c.x, base);
+
+  if (c.type === 'branch') {
+    // Red/orange branching coral — like left side of painting 1
+    function paintBranch(len, depth, angle) {
+      if (depth === 0 || len < 3) return;
+      const ex = Math.cos(angle + sway * 0.028) * len;
+      const ey = -Math.abs(Math.sin(angle)) * len;
+      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.lineTo(ex, ey);
+      aqCtx.strokeStyle = `hsla(${c.hue},75%,22%,0.75)`;
+      aqCtx.lineWidth = depth * 2.0; aqCtx.stroke();
+      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.lineTo(ex, ey);
+      aqCtx.strokeStyle = `hsla(${c.hue},80%,58%,0.65)`;
+      aqCtx.lineWidth = depth * 0.7; aqCtx.stroke();
+      aqCtx.beginPath(); aqCtx.arc(ex, ey, depth * 0.9, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${(c.hue+15)%360},85%,70%,0.75)`; aqCtx.fill();
+      aqCtx.save(); aqCtx.translate(ex, ey);
+      paintBranch(len*0.64, depth-1, angle+0.48+Math.sin(aqFrame*0.013+depth)*0.10);
+      paintBranch(len*0.64, depth-1, angle-0.48-Math.sin(aqFrame*0.013+depth)*0.10);
+      aqCtx.restore();
+    }
+    paintBranch(c.h * 0.56, Math.min(c.branches, 4), Math.PI / 2);
+
+  } else if (c.type === 'fan') {
+    // Purple sea fan — right side of painting 1
+    const spokes = c.branches * 4;
+    for (let i = 0; i <= spokes; i++) {
+      const a = -Math.PI * 0.78 + (i / spokes) * Math.PI * 1.56;
+      const ex = Math.cos(a + sway * 0.035) * c.h;
+      const ey = Math.sin(a) * c.h * 0.78;
+      const cpx = ex * 0.38 + Math.sin(aqFrame * 0.018 + i) * 7;
+      const cpy = ey * 0.42 - 14;
+      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.quadraticCurveTo(cpx, cpy, ex + sway*0.6, ey);
+      aqCtx.strokeStyle = `hsla(${c.hue},55%,28%,0.55)`;
+      aqCtx.lineWidth = 2.2; aqCtx.stroke();
+      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.quadraticCurveTo(cpx, cpy, ex + sway*0.6, ey);
+      aqCtx.strokeStyle = `hsla(${c.hue},70%,68%,0.55)`;
+      aqCtx.lineWidth = 0.9; aqCtx.stroke();
+    }
+    // Horizontal webbing lines
+    for (let j = 1; j <= 4; j++) {
+      const jy = -(c.h * j * 0.22);
+      const jw = c.h * (0.55 - j * 0.05);
+      aqCtx.beginPath(); aqCtx.moveTo(-jw, jy); aqCtx.lineTo(jw, jy);
+      aqCtx.strokeStyle = `hsla(${c.hue},55%,55%,0.18)`;
+      aqCtx.setLineDash([3, 5]); aqCtx.lineWidth = 0.7; aqCtx.stroke(); aqCtx.setLineDash([]);
+    }
+
+  } else if (c.type === 'tube') {
+    // Yellow-green tube coral — painting 1 bottom center
+    const count = 3 + Math.floor(c.branches * 0.9);
+    for (let i = 0; i < count; i++) {
+      const tx = (i - count / 2 + 0.5) * 13;
+      const th = c.h * (0.55 + i * 0.11 + Math.sin(aqFrame * 0.018 + i * 1.4 + c.wobble) * 0.05);
+      const tw = 3.5 + Math.sin(i * 2.1) * 1.2;
+      aqCtx.beginPath();
+      aqCtx.moveTo(tx - tw, 0); aqCtx.lineTo(tx - tw, -th);
+      aqCtx.arc(tx, -th, tw, Math.PI, 0);
+      aqCtx.lineTo(tx + tw, 0);
+      aqCtx.fillStyle = `hsla(${c.hue + i*12},65%,20%,0.85)`; aqCtx.fill();
+      aqCtx.strokeStyle = `hsla(${c.hue + i*12},70%,60%,0.65)`;
+      aqCtx.lineWidth = 0.9; aqCtx.stroke();
+      // Rim glow at opening
+      aqCtx.beginPath(); aqCtx.arc(tx, -th, tw * 0.75, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${c.hue},85%,72%,0.35)`; aqCtx.fill();
+    }
+
+  } else if (c.type === 'anemone') {
+    // Green sea anemone — painting 2 right side
+    const tentCount = 18;
+    aqCtx.beginPath(); aqCtx.ellipse(0, -c.h * 0.28, c.h * 0.11, c.h * 0.30, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${c.hue},55%,18%,0.85)`; aqCtx.fill();
+    for (let i = 0; i < tentCount; i++) {
+      const ta = (i / tentCount) * Math.PI * 2;
+      const wave = Math.sin(aqFrame * 0.035 + i * 0.85 + c.wobble) * 0.28;
+      const endX = Math.cos(ta + wave) * c.h * 0.42;
+      const endY = -c.h * 0.58 + Math.sin(ta + wave) * c.h * 0.18;
+      aqCtx.beginPath();
+      aqCtx.moveTo(Math.cos(ta) * c.h * 0.07, -c.h * 0.56);
+      aqCtx.quadraticCurveTo(endX * 0.5 + Math.sin(aqFrame * 0.025 + i) * 6, endY * 0.5 - 8, endX, endY);
+      aqCtx.strokeStyle = `hsla(${c.hue},65%,22%,0.55)`;
+      aqCtx.lineWidth = 2; aqCtx.stroke();
+      aqCtx.strokeStyle = `hsla(${c.hue},70%,60%,0.65)`;
+      aqCtx.lineWidth = 0.85; aqCtx.stroke();
+      aqCtx.beginPath(); aqCtx.arc(endX, endY, 1.6, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${(c.hue+45)%360},85%,78%,0.8)`; aqCtx.fill();
+    }
+
+  } else if (c.type === 'bubble') {
+    // Bubble/brain coral — white clusters, painting 2 left
+    const positions = [
+      [0,-c.h*0.1],[c.h*0.28,-c.h*0.22],[-c.h*0.28,-c.h*0.22],
+      [c.h*0.18,-c.h*0.42],[-c.h*0.18,-c.h*0.42],[0,-c.h*0.55],
+      [c.h*0.32,-c.h*0.38],[-c.h*0.32,-c.h*0.38],[0,-c.h*0.32],
+    ];
+    for (const [bx, by] of positions) {
+      const br = c.h * (0.13 + Math.sin(bx * 0.1 + c.wobble) * 0.03);
+      aqCtx.beginPath(); aqCtx.arc(bx, by, br * 1.25, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${c.hue},30%,16%,0.65)`; aqCtx.fill();
+      const bg2 = aqCtx.createRadialGradient(bx - br*0.3, by - br*0.3, 0, bx, by, br);
+      bg2.addColorStop(0, `hsla(${c.hue},35%,88%,0.92)`);
+      bg2.addColorStop(0.6,`hsla(${c.hue},25%,68%,0.60)`);
+      bg2.addColorStop(1,  `hsla(${c.hue},20%,45%,0.30)`);
+      aqCtx.beginPath(); aqCtx.arc(bx, by, br, 0, Math.PI * 2);
+      aqCtx.fillStyle = bg2; aqCtx.fill();
+      aqCtx.strokeStyle = `hsla(${c.hue},35%,50%,0.45)`;
+      aqCtx.lineWidth = 0.7; aqCtx.stroke();
+    }
+  }
+
+  aqCtx.restore();
+}
+
+function drawCreature(cr) {
+  const sp = SPECIES[cr.species];
+  const cached = AQ_SPRITE_CACHE[cr.species];
+
+  if (!cached) {
+    // Plain fallback while sprites build
+    aqCtx.save();
+    aqCtx.globalAlpha = 0.55;
+    aqCtx.beginPath();
+    aqCtx.arc(cr.x, cr.y, sp.r * 1.2, 0, Math.PI * 2);
+    aqCtx.fillStyle = sp.color;
+    aqCtx.fill();
+    aqCtx.restore();
+    return;
+  }
+
+  const { canvas, w, h } = cached;
+  const bob     = Math.sin(cr.wobble + aqFrame * 0.05) * 2.5;
+  const breathe = 1 + Math.sin(aqFrame * 0.06 + cr.wobble) * 0.04;
+  const indV    = 0.85 + (Math.sin(cr.id * 7.13) * 0.5 + 0.5) * 0.30;
+  const facing  = Math.cos(cr.angle) >= 0 ? 1 : -1;
+
+  aqCtx.save();
+  aqCtx.translate(cr.x, cr.y + bob);
+  aqCtx.scale(facing * breathe * indV, breathe * indV);
+  aqCtx.drawImage(canvas, -w / 2, -h / 2, w, h);
+  aqCtx.restore();
+
+  // Hunger glow ring
+  if (cr.hunger > 0.7 && sp.tier > 0) {
+    const a  = (cr.hunger - 0.7) * 2.2;
+    const rR = sp.r * 2.2 + Math.sin(aqFrame * 0.18 + cr.wobble) * 3;
+    const fH = (aqFrame * 3 + cr.wobble * 50) % 60;
+    aqCtx.save();
+    aqCtx.globalCompositeOperation = 'screen'; aqCtx.globalAlpha = a * 0.35;
+    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, rR * 1.3, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsl(${fH},100%,40%)`; aqCtx.fill();
+    aqCtx.restore();
+    aqCtx.save(); aqCtx.globalAlpha = a * 0.7;
+    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, rR, 0, Math.PI * 2);
+    aqCtx.strokeStyle = `hsl(${fH},100%,75%)`; aqCtx.lineWidth = 2; aqCtx.stroke();
+    aqCtx.restore();
+  }
+}
+
+function _drawCreature_UNUSED(cr) {
+  const sp = SPECIES[cr.species];
+  // Species-locked natural hue with tiny individual variation — painterly, not rainbow
+  const hue  = (SPECIES_HUE[cr.species] + Math.sin(cr.id * 7.3) * 14 + 360) % 360;
+  const hue2 = (hue + 35) % 360;   // warm analogous
+  const hue3 = (hue - 28 + 360) % 360;
+  const pulse = 0.75 + 0.25 * Math.sin(aqFrame * 0.07 + cr.wobble);
+
+  aqCtx.save();
+  aqCtx.translate(cr.x, cr.y);
+  const facingRight = Math.cos(cr.angle) >= 0;
+  aqCtx.scale(facingRight ? 1 : -1, 1);
+  const bob = Math.sin(cr.wobble + aqFrame * 0.05) * 1.8;
+  aqCtx.translate(0, bob);
+
+  // Soft organic aura matching species color (not neon)
+  aqCtx.save(); aqCtx.globalCompositeOperation = 'screen';
+  aqCtx.beginPath(); aqCtx.arc(0,0,sp.r*2.4,0,Math.PI*2);
+  aqCtx.fillStyle = `hsla(${hue},55%,40%,${0.07*pulse})`; aqCtx.fill();
+  aqCtx.beginPath(); aqCtx.arc(0,0,sp.r*1.3,0,Math.PI*2);
+  aqCtx.fillStyle = `hsla(${hue},60%,55%,${0.10*pulse})`; aqCtx.fill();
+  aqCtx.restore();
+
+  if (cr.species === 'jellyfish') {
+    // Painting 1 jellyfish — dome bell, radial pink ribs, hair-thin trailing tentacles
+    const bellW = sp.r * 1.6;
+    const pulseFrac = Math.sin(aqFrame * 0.065 + cr.wobble);
+    const bellH = sp.r * (0.72 + pulseFrac * 0.10);  // gentle breath
+
+    // Long hair tentacles BEHIND bell (draw first)
+    const tentCount = 14;
+    for (let i = 0; i < tentCount; i++) {
+      const tx = (i / (tentCount - 1) - 0.5) * 2 * bellW * 0.88;
+      const drift = Math.sin(aqFrame * 0.03 + i * 0.68 + cr.wobble) * sp.r * 0.55;
+      const tlen = sp.r * (3.2 + Math.sin(i * 0.9 + cr.wobble) * 0.8);
+      aqCtx.beginPath(); aqCtx.moveTo(tx, 0);
+      aqCtx.bezierCurveTo(
+        tx + drift * 0.4,   tlen * 0.28,
+        tx + drift * 0.75,  tlen * 0.60,
+        tx + drift,         tlen
+      );
+      aqCtx.strokeStyle = `hsla(${hue},42%,72%,${0.18 + Math.abs(Math.sin(i)) * 0.12})`;
+      aqCtx.lineWidth = 0.7; aqCtx.stroke();
+    }
+    // A few thick frilly inner arms (like the featured red jellyfish in painting 1)
+    for (let i = 0; i < 5; i++) {
+      const fx = (i / 4 - 0.5) * bellW * 0.55;
+      const flen = sp.r * (1.8 + Math.sin(aqFrame * 0.05 + i * 1.2 + cr.wobble) * 0.4);
+      const fwave = Math.sin(aqFrame * 0.045 + i * 0.9) * sp.r * 0.28;
+      aqCtx.beginPath(); aqCtx.moveTo(fx, 0);
+      aqCtx.bezierCurveTo(fx + fwave, flen * 0.35, fx - fwave, flen * 0.68, fx + fwave * 0.5, flen);
+      aqCtx.strokeStyle = `hsla(${(hue + 30) % 360},55%,65%,0.40)`;
+      aqCtx.lineWidth = 2.5; aqCtx.stroke();
+    }
+
+    // Bell dome — radial gradient from white centre outward
+    aqCtx.beginPath();
+    // Dome shape: draw as half-ellipse arc
+    aqCtx.arc(0, 0, bellW, Math.PI, 0);
+    aqCtx.closePath();
+    const jg = aqCtx.createRadialGradient(-bellW * 0.15, -bellH * 0.3, 0, 0, 0, bellW * 1.05);
+    jg.addColorStop(0,    `hsla(${hue},30%,96%,0.72)`);
+    jg.addColorStop(0.38, `hsla(${hue},38%,84%,0.45)`);
+    jg.addColorStop(0.72, `hsla(${hue},48%,68%,0.22)`);
+    jg.addColorStop(1,    `hsla(${hue},55%,55%,0.05)`);
+    aqCtx.fillStyle = jg; aqCtx.fill();
+
+    // Radial ribs visible through translucent bell (painting 1 internal structure)
+    const ribCount = 8;
+    for (let i = 0; i < ribCount; i++) {
+      const ra = Math.PI + (i / (ribCount - 1)) * Math.PI;  // fan across top half
+      aqCtx.beginPath(); aqCtx.moveTo(0, 0);
+      aqCtx.lineTo(Math.cos(ra) * bellW * 0.92, Math.sin(ra) * bellW * 0.92);
+      aqCtx.strokeStyle = `hsla(${(hue + 15) % 360},50%,80%,0.22)`;
+      aqCtx.lineWidth = 1; aqCtx.stroke();
+    }
+    // Pink/rose central oral arms cluster — painting 1 detail
+    for (let i = 0; i < 3; i++) {
+      const ox = (i - 1) * sp.r * 0.22;
+      aqCtx.beginPath(); aqCtx.ellipse(ox, -sp.r * 0.1, sp.r * 0.06, sp.r * 0.18, 0, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${(hue - 20 + 360) % 360},60%,72%,0.50)`; aqCtx.fill();
+    }
+    // Scalloped bell rim
+    for (let i = 0; i <= 10; i++) {
+      const sa = Math.PI + (i / 10) * Math.PI;
+      const sx = Math.cos(sa) * bellW; const sy = Math.sin(sa) * bellW;
+      aqCtx.beginPath(); aqCtx.arc(sx, sy, sp.r * 0.09, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${hue},40%,92%,0.50)`; aqCtx.fill();
+    }
+    // Bell edge stroke
+    aqCtx.beginPath(); aqCtx.arc(0, 0, bellW, Math.PI, 0);
+    aqCtx.strokeStyle = `hsla(${hue},40%,88%,0.40)`; aqCtx.lineWidth = 1; aqCtx.stroke();
+
+  } else if (cr.species === 'octopus') {
+    // Shifting mantle
+    aqCtx.beginPath(); aqCtx.ellipse(0, -2, sp.r * 0.7, sp.r * 0.6, 0, 0, Math.PI * 2);
+    const mg = aqCtx.createRadialGradient(-sp.r*0.2,-sp.r*0.3,0,0,0,sp.r*0.7);
+    mg.addColorStop(0, `hsla(${hue},90%,80%,0.9)`);
+    mg.addColorStop(0.5,`hsla(${hue2},80%,55%,0.7)`);
+    mg.addColorStop(1,  `hsla(${hue3},70%,35%,0.5)`);
+    aqCtx.fillStyle = mg;
+    aqCtx.fill();
+    // Mantle screen-blend aura
+    aqCtx.save(); aqCtx.globalCompositeOperation = 'screen';
+    aqCtx.beginPath(); aqCtx.ellipse(0, -2, sp.r * 1.0, sp.r * 0.9, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${hue},100%,50%,0.20)`; aqCtx.fill();
+    aqCtx.restore();
+    // Psychedelic writhing arms — double-stroke neon, no shadowBlur
+    for (let i = 0; i < 8; i++) {
+      const h = (hue + i * 45) % 360;
+      const baseAng = (i / 8) * Math.PI * 2;
+      const len = sp.r * 1.8;
+      const t1 = aqFrame * 0.06 + i * 0.9 + cr.wobble;
+      const x0 = Math.cos(baseAng) * sp.r * 0.4, y0 = Math.sin(baseAng) * sp.r * 0.3;
+      const cx1 = Math.cos(baseAng + 0.5) * len * 0.5 + Math.sin(t1) * 15;
+      const cy1 = Math.sin(baseAng + 0.5) * len * 0.5 + Math.cos(t1) * 15;
+      const cx2 = Math.cos(baseAng + 0.8) * len * 0.85 + Math.sin(t1 * 1.3) * 12;
+      const cy2 = Math.sin(baseAng + 0.8) * len * 0.85 + Math.cos(t1 * 1.3) * 12;
+      const ex = Math.cos(baseAng + 1.1) * len + Math.sin(t1 * 0.7) * 10;
+      const ey = Math.sin(baseAng + 1.1) * len + Math.cos(t1 * 0.7) * 10;
+      // thick dim
+      aqCtx.beginPath(); aqCtx.moveTo(x0, y0); aqCtx.bezierCurveTo(cx1,cy1,cx2,cy2,ex,ey);
+      aqCtx.strokeStyle = `hsla(${h},100%,50%,0.28)`;
+      aqCtx.lineWidth = (3.5 - i * 0.2) * 2.5; aqCtx.stroke();
+      // thin bright
+      aqCtx.beginPath(); aqCtx.moveTo(x0, y0); aqCtx.bezierCurveTo(cx1,cy1,cx2,cy2,ex,ey);
+      aqCtx.strokeStyle = `hsla(${h},95%,82%,0.75)`;
+      aqCtx.lineWidth = 3.5 - i * 0.2; aqCtx.stroke();
+    }
+    // Hypnotic eye
+    aqCtx.beginPath(); aqCtx.arc(0, -4, sp.r * 0.22, 0, Math.PI * 2);
+    const eg = aqCtx.createRadialGradient(0,-4,0,0,-4,sp.r*0.22);
+    eg.addColorStop(0, '#fff'); eg.addColorStop(0.4, `hsl(${hue},100%,60%)`); eg.addColorStop(1,'#000');
+    aqCtx.fillStyle = eg; aqCtx.fill();
+
+  } else if (cr.species === 'plankton') {
+    // Tiny bioluminescent dot — natural ocean plankton
+    const flicker = 0.6 + 0.4 * Math.sin(aqFrame * 0.12 + cr.wobble);
+    const pg = aqCtx.createRadialGradient(0,0,0,0,0,sp.r*1.2);
+    pg.addColorStop(0,   `hsla(${hue},80%,92%,${0.85*flicker})`);
+    pg.addColorStop(0.5, `hsla(${hue},75%,65%,${0.55*flicker})`);
+    pg.addColorStop(1,   `hsla(${hue},70%,45%,0)`);
+    aqCtx.beginPath(); aqCtx.arc(0, 0, sp.r * 1.2, 0, Math.PI * 2);
+    aqCtx.fillStyle = pg; aqCtx.fill();
+    // Soft glow halo
+    aqCtx.save(); aqCtx.globalCompositeOperation = 'screen';
+    aqCtx.beginPath(); aqCtx.arc(0, 0, sp.r * 2.0, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${hue},65%,50%,${0.15*flicker})`; aqCtx.fill();
+    aqCtx.restore();
+    // 4 tiny cilia hairs
+    for (let i = 0; i < 4; i++) {
+      const sa = (i / 4) * Math.PI * 2 + aqFrame * 0.03 + cr.wobble;
+      const sl = sp.r * (1.6 + Math.sin(aqFrame * 0.09 + i + cr.wobble) * 0.4);
+      aqCtx.beginPath();
+      aqCtx.moveTo(Math.cos(sa) * sp.r * 0.5, Math.sin(sa) * sp.r * 0.5);
+      aqCtx.lineTo(Math.cos(sa) * sl, Math.sin(sa) * sl);
+      aqCtx.strokeStyle = `hsla(${hue},70%,75%,0.45)`;
+      aqCtx.lineWidth = 0.6; aqCtx.stroke();
+    }
+
+  } else if (cr.species === 'shark') {
+    // Sleek torpedo silhouette — like distant shark in painting 2
+    const bodyW = sp.r * 2.4, bodyH = sp.r * 0.65;
+    const tailWag = Math.sin(aqFrame * 0.14 + cr.wobble) * 0.3;
+    // Torpedo body
+    aqCtx.beginPath();
+    aqCtx.moveTo(bodyW * 0.55, 0);
+    aqCtx.quadraticCurveTo(bodyW * 0.25, -bodyH * 0.85, -bodyW * 0.30, -bodyH * 0.55);
+    aqCtx.quadraticCurveTo(-bodyW * 0.52, 0, -bodyW * 0.30, bodyH * 0.55);
+    aqCtx.quadraticCurveTo(bodyW * 0.25, bodyH * 0.85, bodyW * 0.55, 0);
+    const sg = aqCtx.createLinearGradient(0, -bodyH, 0, bodyH);
+    sg.addColorStop(0,   `hsla(${hue},25%,45%,0.90)`);
+    sg.addColorStop(0.5, `hsla(${hue},20%,32%,0.95)`);
+    sg.addColorStop(1,   `hsla(${hue},18%,25%,0.90)`);
+    aqCtx.fillStyle = sg; aqCtx.fill();
+    aqCtx.strokeStyle = `hsla(${hue},30%,65%,0.35)`;
+    aqCtx.lineWidth = 0.8; aqCtx.stroke();
+    // Pectoral fin
+    aqCtx.beginPath();
+    aqCtx.moveTo(bodyW*0.05, bodyH*0.2);
+    aqCtx.lineTo(-bodyW*0.08, bodyH*1.4);
+    aqCtx.lineTo(-bodyW*0.28, bodyH*0.45);
+    aqCtx.closePath();
+    aqCtx.fillStyle = `hsla(${hue},22%,30%,0.85)`; aqCtx.fill();
+    // Dorsal fin
+    aqCtx.beginPath();
+    aqCtx.moveTo(bodyW*0.12, -bodyH*0.5);
+    aqCtx.lineTo(bodyW*0.22, -bodyH*1.7);
+    aqCtx.lineTo(bodyW*0.45, -bodyH*0.5);
+    aqCtx.closePath();
+    aqCtx.fillStyle = `hsla(${hue},22%,28%,0.90)`; aqCtx.fill();
+    // Tail
+    aqCtx.beginPath();
+    aqCtx.moveTo(-bodyW*0.30, 0);
+    aqCtx.lineTo(-bodyW*0.82, -bodyH*0.75 + tailWag*bodyH);
+    aqCtx.lineTo(-bodyW*0.82,  bodyH*0.75 + tailWag*bodyH);
+    aqCtx.closePath();
+    aqCtx.fillStyle = `hsla(${hue},22%,30%,0.85)`; aqCtx.fill();
+    // Eye
+    aqCtx.beginPath(); aqCtx.arc(bodyW*0.26, -bodyH*0.22, sp.r*0.11, 0, Math.PI*2);
+    aqCtx.fillStyle = '#000'; aqCtx.fill();
+    aqCtx.beginPath(); aqCtx.arc(bodyW*0.27, -bodyH*0.24, sp.r*0.04, 0, Math.PI*2);
+    aqCtx.fillStyle = 'rgba(255,255,255,0.6)'; aqCtx.fill();
+
+  } else if (cr.species === 'clownfish') {
+    // Yellow butterfly fish — exact match to painting 2's dominant yellow fish
+    const bodyW = sp.r * 1.75, bodyH = sp.r * 0.85;
+    const tailWag = Math.sin(aqFrame * 0.15 + cr.wobble) * 0.35;
+    // Tail
+    aqCtx.beginPath();
+    aqCtx.moveTo(-bodyW*0.28, 0);
+    aqCtx.lineTo(-bodyW*0.68, -bodyH*0.82 + tailWag*bodyH);
+    aqCtx.lineTo(-bodyW*0.68,  bodyH*0.82 + tailWag*bodyH);
+    aqCtx.closePath();
+    aqCtx.fillStyle = `hsla(${hue},88%,55%,0.80)`; aqCtx.fill();
+    // Body — rounded disc shape (butterfly fish are deep-bodied)
+    aqCtx.beginPath();
+    aqCtx.moveTo(bodyW*0.45, 0);
+    aqCtx.quadraticCurveTo(bodyW*0.30, -bodyH, -bodyW*0.12, -bodyH*0.88);
+    aqCtx.quadraticCurveTo(-bodyW*0.32, -bodyH*0.50, -bodyW*0.28, 0);
+    aqCtx.quadraticCurveTo(-bodyW*0.32,  bodyH*0.50, -bodyW*0.12,  bodyH*0.88);
+    aqCtx.quadraticCurveTo(bodyW*0.30,  bodyH, bodyW*0.45, 0);
+    const cfg = aqCtx.createLinearGradient(0, -bodyH, 0, bodyH);
+    cfg.addColorStop(0,   `hsla(${hue},92%,65%,0.94)`);
+    cfg.addColorStop(0.5, `hsla(${hue},88%,58%,0.90)`);
+    cfg.addColorStop(1,   `hsla(${hue},82%,50%,0.85)`);
+    aqCtx.fillStyle = cfg; aqCtx.fill();
+    // Black eye-stripe — the distinctive mark of butterfly fish
+    aqCtx.save(); aqCtx.clip();
+    aqCtx.beginPath();
+    aqCtx.moveTo(bodyW*0.42, -bodyH*0.9);
+    aqCtx.quadraticCurveTo(bodyW*0.36, 0, bodyW*0.42, bodyH*0.9);
+    aqCtx.quadraticCurveTo(bodyW*0.26, 0, bodyW*0.42, -bodyH*0.9);
+    aqCtx.fillStyle = 'rgba(15,10,5,0.75)'; aqCtx.fill();
+    aqCtx.restore();
+    // Outline
+    aqCtx.beginPath();
+    aqCtx.moveTo(bodyW*0.45, 0);
+    aqCtx.quadraticCurveTo(bodyW*0.30, -bodyH, -bodyW*0.12, -bodyH*0.88);
+    aqCtx.quadraticCurveTo(-bodyW*0.32, -bodyH*0.50, -bodyW*0.28, 0);
+    aqCtx.quadraticCurveTo(-bodyW*0.32,  bodyH*0.50, -bodyW*0.12,  bodyH*0.88);
+    aqCtx.quadraticCurveTo(bodyW*0.30,  bodyH, bodyW*0.45, 0);
+    aqCtx.strokeStyle = 'rgba(40,22,0,0.55)'; aqCtx.lineWidth = 1; aqCtx.stroke();
+    // Eye (inside the black stripe area)
+    aqCtx.beginPath(); aqCtx.arc(bodyW*0.32, -bodyH*0.18, sp.r*0.13, 0, Math.PI*2);
+    aqCtx.fillStyle = '#050505'; aqCtx.fill();
+    aqCtx.beginPath(); aqCtx.arc(bodyW*0.33, -bodyH*0.20, sp.r*0.045, 0, Math.PI*2);
+    aqCtx.fillStyle = 'rgba(255,255,255,0.65)'; aqCtx.fill();
+
+  } else {
+    // Painted fish — matches the natural brushstroke fish of painting 2
+    // Species-specific body proportions
+    const isTuna = cr.species === 'tuna';
+    const bodyW = sp.r * (isTuna ? 1.7 : 2.0), bodyH = sp.r * (isTuna ? 0.88 : 0.68);
+    const tailWag = Math.sin(aqFrame * 0.13 + cr.wobble) * 0.38;
+    // Tail — forked for tuna, plain for sardine
+    if (isTuna) {
+      // Forked tail like painting 2 blue angelfish
+      aqCtx.beginPath();
+      aqCtx.moveTo(-bodyW*0.28, 0);
+      aqCtx.lineTo(-bodyW*0.72, -bodyH*0.95 + tailWag*bodyH);
+      aqCtx.lineTo(-bodyW*0.52, 0);
+      aqCtx.lineTo(-bodyW*0.72,  bodyH*0.95 + tailWag*bodyH);
+      aqCtx.closePath();
+    } else {
+      aqCtx.beginPath();
+      aqCtx.moveTo(-bodyW*0.30, 0);
+      aqCtx.lineTo(-bodyW*0.78, -bodyH*0.80 + tailWag*bodyH);
+      aqCtx.lineTo(-bodyW*0.78,  bodyH*0.80 + tailWag*bodyH);
+      aqCtx.closePath();
+    }
+    aqCtx.fillStyle = `hsla(${hue},65%,50%,0.75)`; aqCtx.fill();
+    // Body — layered fills for painterly depth
+    const bodyPath = () => {
+      aqCtx.beginPath();
+      aqCtx.moveTo(bodyW * 0.52, 0);
+      aqCtx.quadraticCurveTo(bodyW * 0.22, -bodyH, -bodyW * 0.28, -bodyH * 0.62);
+      aqCtx.quadraticCurveTo(-bodyW * 0.48, 0, -bodyW * 0.28, bodyH * 0.62);
+      aqCtx.quadraticCurveTo(bodyW * 0.22, bodyH, bodyW * 0.52, 0);
+    };
+    // Shadow layer
+    bodyPath();
+    aqCtx.fillStyle = `hsla(${hue},55%,28%,0.45)`; aqCtx.fill();
+    // Mid layer
+    bodyPath();
+    const fg2 = aqCtx.createLinearGradient(bodyW*0.3, -bodyH*0.8, -bodyW*0.2, bodyH*0.7);
+    fg2.addColorStop(0,   `hsla(${hue},70%,72%,0.90)`);
+    fg2.addColorStop(0.45,`hsla(${hue},68%,56%,0.85)`);
+    fg2.addColorStop(1,   `hsla(${hue},62%,40%,0.80)`);
+    aqCtx.fillStyle = fg2; aqCtx.fill();
+    // Highlight — painterly bright stroke on dorsal area
+    aqCtx.beginPath();
+    aqCtx.moveTo(bodyW * 0.45, 0);
+    aqCtx.quadraticCurveTo(bodyW * 0.15, -bodyH * 0.85, -bodyW * 0.18, -bodyH * 0.50);
+    aqCtx.quadraticCurveTo(bodyW * 0.10, -bodyH * 0.60, bodyW * 0.45, 0);
+    aqCtx.fillStyle = `hsla(${hue},55%,80%,0.22)`; aqCtx.fill();
+    // Soft outline
+    bodyPath();
+    aqCtx.strokeStyle = `hsla(${hue},50%,22%,0.45)`; aqCtx.lineWidth = 1; aqCtx.stroke();
+    // Eye with iris
+    aqCtx.beginPath(); aqCtx.arc(bodyW*0.22, -bodyH*0.28, sp.r*0.15, 0, Math.PI*2);
+    aqCtx.fillStyle = `hsla(${hue},30%,12%,0.90)`; aqCtx.fill();
+    aqCtx.beginPath(); aqCtx.arc(bodyW*0.23, -bodyH*0.30, sp.r*0.055, 0, Math.PI*2);
+    aqCtx.fillStyle = 'rgba(255,255,255,0.60)'; aqCtx.fill();
+  }
+  aqCtx.restore();
+
+  // Hunger fire ring — screen-blend glow, no shadowBlur
+  if (cr.hunger > 0.7 && sp.tier > 0) {
+    const a = (cr.hunger - 0.7) * 2.2;
+    const ringR = sp.r * 1.7 + Math.sin(aqFrame * 0.18 + cr.wobble) * 3;
+    const fireH = (aqFrame * 3 + cr.wobble * 50) % 60;
+    aqCtx.save();
+    aqCtx.globalCompositeOperation = 'screen'; aqCtx.globalAlpha = a * 0.4;
+    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, ringR * 1.3, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsl(${fireH},100%,40%)`; aqCtx.fill();
+    aqCtx.restore();
+    aqCtx.save(); aqCtx.globalAlpha = a;
+    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, ringR, 0, Math.PI * 2);
+    aqCtx.strokeStyle = `hsl(${fireH},100%,70%)`;
+    aqCtx.lineWidth = 2; aqCtx.stroke();
+    aqCtx.restore();
+  }
+}
+
+function updateCreature(cr, W, H, dt) {
+  const sp = SPECIES[cr.species];
+  cr.wobble += 0.04;
+  cr.age += dt;
+  cr.hunger = Math.min(1, cr.hunger + dt * (sp.tier === 0 ? 0.002 : 0.004));
+  cr.energy = Math.max(0, cr.energy - dt * (sp.tier === 0 ? 0.0005 : 0.0012));
+
+  const floorY = H - 60;
+  const ceilY  = 40;
+
+  // Hunting: find nearest prey
+  let target = null, targetDist = Infinity;
+  if (sp.tier > 0) {
+    for (const other of AQ_CREATURES) {
+      if (other === cr || !sp.prey.includes(other.species)) continue;
+      const d = Math.hypot(other.x - cr.x, other.y - cr.y);
+      if (d < targetDist) { targetDist = d; target = other; }
+    }
+  }
+
+  // Flee: look for predators
+  let flee = null, fleeDist = Infinity;
+  for (const other of AQ_CREATURES) {
+    if (other === cr) continue;
+    const oSp = SPECIES[other.species];
+    if (!oSp.prey.includes(cr.species)) continue;
+    const d = Math.hypot(other.x - cr.x, other.y - cr.y);
+    const senseRange = oSp.r * 14;
+    if (d < senseRange && d < fleeDist) { fleeDist = d; flee = other; }
+  }
+
+  let desiredAngle = cr.angle;
+
+  if (flee) {
+    // Flee away from predator
+    desiredAngle = Math.atan2(cr.y - flee.y, cr.x - flee.x);
+  } else if (target && cr.hunger > 0.25) {
+    // Hunt prey
+    const huntRange = sp.r * 18;
+    if (targetDist < huntRange) {
+      desiredAngle = Math.atan2(target.y - cr.y, target.x - cr.x);
+      // Eat if close enough
+      if (targetDist < sp.r * 1.6 + SPECIES[target.species].r) {
+        cr.hunger = Math.max(0, cr.hunger - 0.6);
+        cr.energy = Math.min(1, cr.energy + 0.4);
+        const idx = AQ_CREATURES.indexOf(target);
+        if (idx !== -1) AQ_CREATURES.splice(idx, 1);
+      }
+    }
+  } else {
+    // Wander — gentle curves
+    desiredAngle += (Math.random() - 0.5) * sp.turnRate;
+    // Plankton drift upward gently
+    if (cr.species === 'plankton') desiredAngle += Math.sin(aqFrame * 0.02 + cr.wobble) * 0.05;
+  }
+
+  // Avoid walls
+  const margin = 80;
+  if (cr.x < margin)  desiredAngle += sp.turnRate * 3;
+  if (cr.x > W - margin) desiredAngle -= sp.turnRate * 3;
+  if (cr.y < ceilY + 20) desiredAngle += sp.turnRate * 2;
+  if (cr.y > floorY - 20) desiredAngle -= sp.turnRate * 2;
+
+  // Smooth angle
+  let diff = desiredAngle - cr.angle;
+  while (diff > Math.PI) diff -= Math.PI * 2;
+  while (diff < -Math.PI) diff += Math.PI * 2;
+  cr.angle += diff * Math.min(sp.turnRate * 4, 0.18);
+
+  // Speed modulation
+  const spd = sp.speed * (flee ? 1.6 : target && cr.hunger > 0.25 ? 1.2 : 0.7 + Math.sin(cr.wobble * 0.3) * 0.3);
+  cr.vx += (Math.cos(cr.angle) * spd - cr.vx) * 0.12;
+  cr.vy += (Math.sin(cr.angle) * spd - cr.vy) * 0.12;
+  cr.x += cr.vx;
+  cr.y += cr.vy;
+
+  // Hard clamp
+  cr.x = Math.max(20, Math.min(W - 20, cr.x));
+  cr.y = Math.max(ceilY, Math.min(floorY, cr.y));
+}
+
+function drawAquarium() {
+  if (!aqRunning) return;
+  aqFrame++;
+  const W = aqCanvas.width, H = aqCanvas.height;
+  aqCtx.clearRect(0, 0, W, H);
+
+  // ── BACKGROUND: deep blue ocean + coral strips from paintings ──
+  {
+    // Base gradient — deep sea blue
+    const bg = aqCtx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0,    'hsl(200, 72%, 20%)');
+    bg.addColorStop(0.60, 'hsl(210, 80%, 10%)');
+    bg.addColorStop(1,    'hsl(218, 88%, 5%)');
+    aqCtx.fillStyle = bg;
+    aqCtx.fillRect(0, 0, W, H);
+  }
+  if (AQ_IMGS_READY > 0) {
+    buildSprites();
+    const blend = Math.sin(aqFrame * 0.0006) * 0.5 + 0.5;  // slow 0→1 oscillation
+    const coralH = Math.round(H * 0.34);
+    const coralY = H - coralH;
+    aqCtx.save();
+    // Coral strip from painting 1 (bottom 28% = pure reef, no faces)
+    if (AQ_IMG1.complete && AQ_IMG1.naturalWidth) {
+      const iw = AQ_IMG1.naturalWidth, ih = AQ_IMG1.naturalHeight;
+      aqCtx.globalAlpha = 0.92 - blend * 0.25;
+      aqCtx.drawImage(AQ_IMG1, 0, ih * 0.72, iw, ih * 0.28, 0, coralY, W, coralH);
+    }
+    // Coral strip from painting 2 (bottom 22% = reef only, avoids central face)
+    if (AQ_IMG2 && AQ_IMG2.complete && AQ_IMG2.naturalWidth) {
+      const iw = AQ_IMG2.naturalWidth, ih = AQ_IMG2.naturalHeight;
+      aqCtx.globalAlpha = blend * 0.75;
+      aqCtx.drawImage(AQ_IMG2, 0, ih * 0.78, iw, ih * 0.22, 0, coralY, W, coralH);
+    }
+    aqCtx.restore();
+  }
+
+  // Subtle ripple sheen — animates over the static painting for life
+  aqCtx.save(); aqCtx.globalCompositeOperation = 'overlay'; aqCtx.globalAlpha = 0.04;
+  for (let i = 0; i < 3; i++) {
+    const cy = H * (0.2 + i * 0.28) + Math.sin(aqFrame * 0.003 + i * 2.1) * H * 0.04;
+    const cx = W * 0.5 + Math.cos(aqFrame * 0.0025 + i * 1.7) * W * 0.22;
+    aqCtx.beginPath(); aqCtx.arc(cx, cy, W * (0.30 + i * 0.09), 0, Math.PI * 2);
+    aqCtx.strokeStyle = 'rgba(180,220,240,1)'; aqCtx.lineWidth = 2; aqCtx.stroke();
+  }
+  aqCtx.restore();
+
+  // Small rising bubbles from painting (painting 1 has them near center jellyfish)
+  if (Math.random() < 0.06) {
+    AQ_BUBBLES_AQ.push({ x: 20 + Math.random() * (W - 40), y: H - 80, r: 1.5 + Math.random() * 4, life: 1 });
+  }
+  for (let i = AQ_BUBBLES_AQ.length - 1; i >= 0; i--) {
+    const b = AQ_BUBBLES_AQ[i];
+    b.y -= 0.35 + b.r * 0.09; b.x += Math.sin(aqFrame * 0.035 + i * 1.2) * 0.4;
+    b.life -= 0.004;
+    if (b.y < -10 || b.life <= 0) { AQ_BUBBLES_AQ.splice(i, 1); continue; }
+    const a = b.life * 0.55;
+    aqCtx.beginPath(); aqCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    aqCtx.strokeStyle = `rgba(200,225,240,${a * 0.7})`; aqCtx.lineWidth = 0.8; aqCtx.stroke();
+    aqCtx.fillStyle = `rgba(210,235,250,${a * 0.18})`; aqCtx.fill();
+  }
+
+  // Creatures
+  for (let i = AQ_CREATURES.length - 1; i >= 0; i--) {
+    const cr = AQ_CREATURES[i];
+    updateCreature(cr, W, H, 1);
+    // Die of old age or starvation
+    if (cr.energy <= 0 || cr.age > 8000) { AQ_CREATURES.splice(i, 1); continue; }
+    drawCreature(cr);
+  }
+
+  // ── Count populations ──
+  const counts = {};
+  AQ_CREATURES.forEach(c => counts[c.species] = (counts[c.species] || 0) + 1);
+
+  // ── Auto-respawn — constant gentle inflow keeps ecosystem alive ──
+  if (aqFrame % 180 === 0 && (counts['plankton'] || 0) < 22)
+    for (let i = 0; i < 3; i++) addCreature('plankton', W, H);
+  if (aqFrame % 360 === 0 && (counts['sardine'] || 0) < 10)
+    addCreature('sardine', W, H);
+  if (aqFrame % 540 === 0 && (counts['clownfish'] || 0) < 6)
+    addCreature('clownfish', W, H);
+
+  // ── Unify digital + paint with a light oil-paint glaze ──
+  // Screen-blend vignette darkens edges like oil-painted corners
+  aqCtx.save();
+  const vg = aqCtx.createRadialGradient(W/2, H/2, H*0.28, W/2, H/2, Math.max(W,H)*0.75);
+  vg.addColorStop(0, 'rgba(0,0,0,0)');
+  vg.addColorStop(1, 'rgba(0,8,28,0.55)');
+  aqCtx.fillStyle = vg; aqCtx.fillRect(0, 0, W, H);
+  aqCtx.restore();
+
+  // Population label
+  const parts = Object.entries(counts).map(([s, n]) => `${SPECIES[s].label}: ${n}`);
+  if (parts.length) {
+    aqCtx.save();
+    aqCtx.fillStyle = 'rgba(200,230,255,0.35)';
+    aqCtx.font = `italic ${Math.max(10, Math.min(12, W * 0.010))}px Georgia`;
+    aqCtx.textAlign = 'center';
+    aqCtx.fillText(parts.join('  ·  '), W / 2, 26);
+    aqCtx.restore();
+  }
+
+  requestAnimationFrame(drawAquarium);
+}
+
+function openAquarium() {
+  aqOverlay.classList.add('visible');
+  loadAqImages();
+  const W = aqCanvas.width, H = aqCanvas.height;
+  if (!aqRunning) {
+    initCorals(W, H);
+    // Seed with a balanced starter ecosystem
+    for (let i = 0; i < 12; i++) addCreature('plankton', W, H);
+    for (let i = 0; i < 6;  i++) addCreature('sardine',  W, H);
+    for (let i = 0; i < 3;  i++) addCreature('clownfish',W, H);
+    aqRunning = true;
+    drawAquarium();
+  }
+}
+
+function closeAquarium() {
+  aqOverlay.classList.remove('visible');
+}
+
+document.getElementById('aquarium-back').addEventListener('click', closeAquarium);
+aqOverlay.addEventListener('click', e => { if (e.target === aqOverlay) closeAquarium(); });
+
+document.querySelectorAll('.aq-add-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const W = aqCanvas.width, H = aqCanvas.height;
+    addCreature(btn.dataset.species, W, H);
+  });
+});
+
 /* ═══ NAVIGATION ARROWS ═══ */
 const navPrev = document.getElementById('nav-prev');
 const navNext = document.getElementById('nav-next');
@@ -1417,6 +2733,8 @@ function navigateToZone(newZone) {
   modal.classList.remove('visible');
   mFrame.src = ''; mFrame.style.display = 'none'; mPlace.style.display = 'none';
   closeTruthOverlay();
+  closeLoveOverlay();
+  closeAquarium();
   zoomTarget = newZone;
   back.textContent = `↑ ${newZone.name} — click or ESC to return`;
   const { drawW, drawH, ox, oy } = imgLayout();
@@ -1467,7 +2785,7 @@ navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
 
   let mx = window.innerWidth / 2, my = window.innerHeight / 2;
   let prevMx = mx, prevMy = my;
-  let shipAngle = 0, smoothAngle = 0, speed = 0, frame = 0;
+  let shipAngle = 0, smoothAngle = 0, smoothPitch = 0, speed = 0, lastDy = 0, frame = 0;
   const WARP = [], RIPPLES = [];
 
   document.addEventListener('mousemove', e => {
@@ -1475,11 +2793,12 @@ navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
     mx = e.clientX; my = e.clientY;
     const dx = mx - prevMx, dy = my - prevMy;
     speed = Math.sqrt(dx*dx + dy*dy);
-    if (speed > 1.5) shipAngle = Math.atan2(dy, dx);
+    lastDy = dy;
+    if (speed > 5.0) shipAngle = Math.atan2(dy, dx);
 
     const sternX = mx - Math.cos(shipAngle) * 20;
     const sternY = my - Math.sin(shipAngle) * 20;
-    const count = Math.min(Math.floor(speed / 3) + 1, 9);
+    const count = Math.min(Math.floor(speed / 6) + 1, 5);
     const COLORS = ['#00ffff','#8844ff','#ffffff','#4488ff','#00aaff'];
     for (let i = 0; i < count; i++) {
       const spread = (Math.random() - 0.5) * 9;
@@ -1514,72 +2833,207 @@ navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
     }
   });
 
-  function drawShip(x, y, angle, bob) {
+  function drawShip(x, y, angle, pitch, bob) {
     cc.save();
-    cc.translate(x, y);
-    cc.rotate(angle + Math.sin(frame * 0.035) * 0.04);
-    cc.translate(0, bob);
+    cc.translate(x, y + bob);
 
-    const eg = cc.createRadialGradient(-20, 0, 0, -20, 0, 16);
-    eg.addColorStop(0,   'rgba(0,200,255,0.95)');
-    eg.addColorStop(0.3, 'rgba(80,40,255,0.6)');
+    // Side-view: flip horizontally based on direction
+    const facingRight = Math.cos(angle) >= 0;
+    const flip = facingRight ? 1 : -1;
+    const sway = Math.sin(frame * 0.025) * 0.028;
+    cc.rotate(sway);
+    cc.scale(flip * 0.40, 0.40);
+    // Apply pitch AFTER flip so bow always tilts toward movement direction
+    cc.rotate(pitch);
+
+    // Warp engine glow at stern
+    const eg = cc.createRadialGradient(-32, 4, 0, -32, 4, 20);
+    eg.addColorStop(0,   'rgba(0,200,255,0.85)');
+    eg.addColorStop(0.4, 'rgba(60,30,255,0.45)');
     eg.addColorStop(1,   'rgba(0,0,80,0)');
-    cc.beginPath(); cc.arc(-20, 0, 16, 0, Math.PI*2);
+    cc.beginPath(); cc.arc(-32, 4, 20, 0, Math.PI*2);
     cc.fillStyle = eg; cc.fill();
 
-    cc.shadowColor = '#00aaff'; cc.shadowBlur = 12;
+    // ── HULL (Blackbeard — dark, high stern castle) ──
+    cc.shadowColor = '#00aaff'; cc.shadowBlur = 6;
     cc.beginPath();
-    cc.moveTo(22, 0);
-    cc.quadraticCurveTo(16, -9, -12, -8);
-    cc.lineTo(-20, 0);
-    cc.lineTo(-12, 8);
-    cc.quadraticCurveTo(16, 9, 22, 0);
-    cc.fillStyle = '#1c0900'; cc.fill();
-    cc.strokeStyle = '#8B4513'; cc.lineWidth = 1.5; cc.stroke();
+    cc.moveTo(36, -1);       // bow tip
+    cc.lineTo(30, -11);      // bow rail
+    cc.lineTo(18, -13);      // foredeck
+    cc.lineTo(4,  -11);      // main deck
+    cc.lineTo(-10, -11);     // deck aft
+    cc.lineTo(-16, -16);     // stern castle step
+    cc.lineTo(-26, -16);     // stern castle top
+    cc.lineTo(-32, -10);     // stern rail
+    cc.lineTo(-32,  9);      // stern bottom
+    cc.lineTo(-22, 11);      // stern keel
+    cc.quadraticCurveTo(4, 15, 28, 9);  // curved keel
+    cc.lineTo(36, -1);
+    cc.closePath();
+    cc.fillStyle = '#080402'; cc.fill();
+    cc.strokeStyle = '#3e2006'; cc.lineWidth = 1.4; cc.stroke();
     cc.shadowBlur = 0;
 
+    // Stern castle face (vertical wall detail)
     cc.beginPath();
-    cc.moveTo(18, -1);
-    cc.quadraticCurveTo(2, -8, -12, -7);
-    cc.strokeStyle = 'rgba(200,40,40,0.75)'; cc.lineWidth = 1; cc.stroke();
+    cc.moveTo(-16, -16); cc.lineTo(-16, -11);
+    cc.strokeStyle = '#3e2006'; cc.lineWidth = 0.9; cc.stroke();
 
+    // Copper/red waterline stripe
     cc.beginPath();
-    cc.moveTo(-3, -8); cc.lineTo(10, -8); cc.lineTo(14, -21); cc.lineTo(-1, -19);
+    cc.moveTo(32, 5); cc.quadraticCurveTo(2, 13, -26, 8);
+    cc.strokeStyle = 'rgba(110,20,20,0.85)'; cc.lineWidth = 1.6; cc.stroke();
+
+    // Gun ports (5, rectangular)
+    cc.fillStyle = '#040201';
+    [22, 11, 0, -9, -19].forEach(cx => {
+      cc.beginPath(); cc.rect(cx - 3, -7, 6, 4); cc.fill();
+      cc.strokeStyle = '#2e1604'; cc.lineWidth = 0.5; cc.stroke();
+    });
+
+    // Deck planking lines (subtle)
+    cc.strokeStyle = 'rgba(62,32,6,0.35)'; cc.lineWidth = 0.5;
+    [-2, 6, 14].forEach(lx => {
+      cc.beginPath(); cc.moveTo(lx, -13); cc.lineTo(lx, -11); cc.stroke();
+    });
+
+    // ── BOWSPRIT ──
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 2.0;
+    cc.beginPath(); cc.moveTo(32, -9); cc.lineTo(56, -28); cc.stroke();
+    // Bobstay (thin line under bowsprit)
+    cc.lineWidth = 0.7;
+    cc.beginPath(); cc.moveTo(34, -3); cc.lineTo(56, -28); cc.stroke();
+
+    // ── MASTS ──
+    cc.strokeStyle = '#4a2c10';
+    // Foremast
+    cc.lineWidth = 2.0;
+    cc.beginPath(); cc.moveTo(18, -12); cc.lineTo(18, -42); cc.stroke();
+    // Mainmast
+    cc.lineWidth = 2.6;
+    cc.beginPath(); cc.moveTo(-2, -12); cc.lineTo(-2, -64); cc.stroke();
+    // Mizzenmast (stern castle)
+    cc.lineWidth = 1.6;
+    cc.beginPath(); cc.moveTo(-24, -15); cc.lineTo(-24, -37); cc.stroke();
+
+    // ── RIGGING (stays) ──
+    cc.strokeStyle = 'rgba(74,44,16,0.5)'; cc.lineWidth = 0.6;
+    cc.beginPath(); cc.moveTo(18, -16); cc.lineTo(54, -27); cc.stroke();
+    cc.beginPath(); cc.moveTo(18, -22); cc.lineTo(54, -27); cc.stroke();
+    cc.beginPath(); cc.moveTo(18, -40); cc.lineTo(-2, -62); cc.stroke();
+    cc.beginPath(); cc.moveTo(18, -28); cc.lineTo(-2, -44); cc.stroke();
+    cc.beginPath(); cc.moveTo(-2, -44); cc.lineTo(-24, -35); cc.stroke();
+    cc.beginPath(); cc.moveTo(-2, -62); cc.lineTo(-24, -35); cc.stroke();
+
+    const billow = Math.sin(frame * 0.018) * 6;
+    const tatter = Math.sin(frame * 0.031) * 1.8;
+
+    // ── MAIN SAIL (two panels, tattered tops) ──
+    // Left panel (windward)
+    cc.beginPath();
+    cc.moveTo(-2, -14); cc.lineTo(-22, -14);
+    cc.quadraticCurveTo(-28 + billow, -37, -22, -58);
+    cc.lineTo(-18, -57 + tatter); cc.lineTo(-13, -59);
+    cc.lineTo(-8,  -57 + tatter*0.6); cc.lineTo(-4, -59); cc.lineTo(-2, -58);
     cc.closePath();
-    cc.fillStyle = 'rgba(238,218,148,0.9)'; cc.fill();
-    cc.strokeStyle = 'rgba(100,80,30,0.55)'; cc.lineWidth = 0.5; cc.stroke();
-    cc.font = '7px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
-    cc.fillStyle = 'rgba(0,0,0,0.85)'; cc.fillText('☠', 6, -14);
-
+    cc.fillStyle = 'rgba(195,170,95,0.82)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.5)'; cc.lineWidth = 0.5; cc.stroke();
+    // Right panel (leeward)
     cc.beginPath();
-    cc.moveTo(-3, 8); cc.lineTo(10, 8); cc.lineTo(14, 21); cc.lineTo(-1, 19);
+    cc.moveTo(-2, -14); cc.lineTo(18, -14);
+    cc.quadraticCurveTo(24 - billow, -37, 18, -58);
+    cc.lineTo(14, -57 + tatter); cc.lineTo(9, -59);
+    cc.lineTo(4,  -57 + tatter*0.6); cc.lineTo(0, -59); cc.lineTo(-2, -58);
     cc.closePath();
-    cc.fillStyle = 'rgba(238,218,148,0.9)'; cc.fill();
-    cc.strokeStyle = 'rgba(100,80,30,0.55)'; cc.lineWidth = 0.5; cc.stroke();
-    cc.fillStyle = 'rgba(0,0,0,0.85)'; cc.fillText('☠', 6, 14);
+    cc.fillStyle = 'rgba(178,154,82,0.80)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.5)'; cc.lineWidth = 0.5; cc.stroke();
+    // Yards
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.5;
+    cc.beginPath(); cc.moveTo(-22, -14); cc.lineTo(18, -14); cc.stroke();
+    cc.beginPath(); cc.moveTo(-22, -58); cc.lineTo(18, -58); cc.stroke();
+    cc.lineWidth = 1.1;
+    cc.beginPath(); cc.moveTo(-14, -36); cc.lineTo(10, -36); cc.stroke();
 
-    cc.beginPath(); cc.arc(3, 0, 2.5, 0, Math.PI*2);
-    cc.fillStyle = '#555'; cc.fill();
-    cc.strokeStyle = '#999'; cc.lineWidth = 0.8; cc.stroke();
-
-    cc.font = '9px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
-    cc.fillStyle = 'rgba(255,255,255,0.72)'; cc.fillText('☠', -8, 0);
-
-    cc.fillStyle = '#2a2a2a';
-    for (let i = -1; i <= 1; i++) {
-      cc.beginPath(); cc.arc(i*7, -8, 1.3, 0, Math.PI*2); cc.fill();
-      cc.beginPath(); cc.arc(i*7, 8,  1.3, 0, Math.PI*2); cc.fill();
-    }
-
+    // ── TOPSAIL ──
     cc.beginPath();
-    cc.moveTo(-18, -3); cc.lineTo(-25, -2); cc.lineTo(-25, 2); cc.lineTo(-18, 3);
+    cc.moveTo(-2, -58); cc.lineTo(-12, -58);
+    cc.quadraticCurveTo(-16 + billow*0.5, -65, -11, -72);
+    cc.lineTo(-2, -72); cc.closePath();
+    cc.fillStyle = 'rgba(185,162,88,0.70)'; cc.fill();
+    cc.beginPath();
+    cc.moveTo(-2, -58); cc.lineTo(9, -58);
+    cc.quadraticCurveTo(12 - billow*0.5, -65, 8, -72);
+    cc.lineTo(-2, -72); cc.closePath();
+    cc.fillStyle = 'rgba(170,148,76,0.68)'; cc.fill();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.0;
+    cc.beginPath(); cc.moveTo(-12, -58); cc.lineTo(9, -58); cc.stroke();
+    cc.beginPath(); cc.moveTo(-11, -72); cc.lineTo(8, -72); cc.stroke();
+
+    // ── FORE SAIL ──
+    cc.beginPath();
+    cc.moveTo(18, -13); cc.lineTo(5, -13);
+    cc.quadraticCurveTo(1 + billow*0.7, -26, 6, -40);
+    cc.lineTo(18, -40); cc.closePath();
+    cc.fillStyle = 'rgba(192,168,90,0.76)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.4)'; cc.lineWidth = 0.5; cc.stroke();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.1;
+    cc.beginPath(); cc.moveTo(5, -13); cc.lineTo(18, -13); cc.stroke();
+    cc.beginPath(); cc.moveTo(6, -40); cc.lineTo(18, -40); cc.stroke();
+
+    // ── JIB ──
+    cc.beginPath();
+    cc.moveTo(32, -10); cc.lineTo(54, -27); cc.lineTo(18, -40); cc.closePath();
+    cc.fillStyle = 'rgba(215,192,118,0.62)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.4)'; cc.lineWidth = 0.5; cc.stroke();
+
+    // ── MIZZEN SAIL ──
+    cc.beginPath();
+    cc.moveTo(-24, -16); cc.lineTo(-34, -16);
+    cc.quadraticCurveTo(-38 + billow*0.35, -26, -34, -36);
+    cc.lineTo(-24, -36); cc.closePath();
+    cc.fillStyle = 'rgba(185,162,85,0.72)'; cc.fill();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.0;
+    cc.beginPath(); cc.moveTo(-34, -16); cc.lineTo(-24, -16); cc.stroke();
+    cc.beginPath(); cc.moveTo(-34, -36); cc.lineTo(-24, -36); cc.stroke();
+
+    // ── CROW'S NEST (mainmast) ──
+    cc.fillStyle = '#1e1008';
+    cc.beginPath(); cc.rect(-7, -54, 11, 5); cc.fill();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 0.8; cc.stroke();
+    // Foremast crow's nest
+    cc.beginPath(); cc.rect(14, -37, 9, 4); cc.fill(); cc.stroke();
+
+    // ── JOLLY ROGER ──
+    const fw = Math.sin(frame * 0.085) * 4;
+    cc.beginPath();
+    cc.moveTo(-2, -76);
+    cc.lineTo(-2 + 14 + fw, -76);
+    cc.lineTo(-2 + 12 + fw*0.6, -70);
+    cc.lineTo(-2, -70);
     cc.closePath();
-    cc.fillStyle = '#1a1a1a'; cc.fill();
-    cc.strokeStyle = '#00aaff'; cc.lineWidth = 0.8; cc.stroke();
+    cc.fillStyle = '#0a0a0a'; cc.fill();
+    cc.font = '6px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
+    cc.fillStyle = 'rgba(255,255,255,0.88)';
+    cc.fillText('☠', -2 + 7 + fw*0.5, -73);
+
+    // ── STERN LANTERN ──
+    const lp = 0.5 + 0.5 * Math.sin(frame * 0.07);
+    cc.shadowColor = `rgba(255,190,60,${0.5 + lp*0.4})`;
+    cc.shadowBlur = 5 + lp * 5;
+    cc.beginPath(); cc.arc(-30, -18, 2.8, 0, Math.PI*2);
+    cc.fillStyle = `rgba(255,210,90,${0.55 + lp*0.35})`; cc.fill();
+    cc.shadowBlur = 0;
+
+    // ── WARP NOZZLE ──
     cc.beginPath();
-    cc.moveTo(-18, -2); cc.lineTo(-23, 0); cc.lineTo(-18, 2); cc.closePath();
-    cc.fillStyle = `rgba(0,${180+Math.floor(Math.sin(frame*0.15)*50)},255,0.95)`;
-    cc.fill();
+    cc.moveTo(-24, -5); cc.lineTo(-32, -3); cc.lineTo(-32, 7); cc.lineTo(-24, 9);
+    cc.closePath();
+    cc.fillStyle = '#111'; cc.fill();
+    cc.strokeStyle = '#00aaff'; cc.lineWidth = 0.9; cc.stroke();
+    const fl = 180 + Math.floor(Math.sin(frame * 0.15) * 55);
+    cc.beginPath();
+    cc.moveTo(-24, -2); cc.lineTo(-31, 2); cc.lineTo(-24, 8); cc.closePath();
+    cc.fillStyle = `rgba(0,${fl},255,0.95)`; cc.fill();
 
     cc.restore();
   }
@@ -1594,7 +3048,13 @@ navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
     let diff = shipAngle - smoothAngle;
     while (diff > Math.PI) diff -= Math.PI*2;
     while (diff < -Math.PI) diff += Math.PI*2;
-    smoothAngle += diff * 0.18;
+    smoothAngle += diff * 0.035;
+
+    // Pitch: vertical tilt based on dy — smoothed slowly for heavy ship feel
+    if (speed > 0.5) {
+      const targetPitch = (lastDy / Math.max(speed, 1)) * 1.4;
+      smoothPitch += (targetPitch - smoothPitch) * 0.06;
+    }
 
     const bob = Math.sin(frame * 0.038) * 1.8;
 
@@ -1630,7 +3090,7 @@ navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
       if (r.r > r.maxR || r.alpha < 0.01) RIPPLES.splice(i, 1);
     }
 
-    drawShip(mx, my, smoothAngle, bob);
+    drawShip(mx, my, smoothAngle, smoothPitch, bob);
     requestAnimationFrame(drawFrame);
   }
   drawFrame();
