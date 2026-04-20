@@ -456,17 +456,32 @@
     }
 
     /* ── Rituelles idle UI hide ── */
-    #back, #anim-controls, #tip, #panel-dots, .nav-arrow {
+    #back, #anim-controls, #tip, #panel-dots, .nav-arrow, #modal.audio-mode {
       transition: opacity 0.55s ease, visibility 0.55s ease;
     }
     body.rituelles-ui-hidden #back,
     body.rituelles-ui-hidden #anim-controls,
     body.rituelles-ui-hidden #tip,
     body.rituelles-ui-hidden #panel-dots,
-    body.rituelles-ui-hidden .nav-arrow {
+    body.rituelles-ui-hidden .nav-arrow,
+    body.rituelles-ui-hidden #modal.audio-mode {
       opacity: 0 !important;
       visibility: hidden !important;
       pointer-events: none !important;
+    }
+    body.rituelles-ui-hidden.reveal-back #back,
+    body.rituelles-ui-hidden.reveal-anim #anim-controls,
+    body.rituelles-ui-hidden.reveal-dots #panel-dots,
+    body.rituelles-ui-hidden.reveal-nav-prev #nav-prev,
+    body.rituelles-ui-hidden.reveal-nav-next #nav-next,
+    body.rituelles-ui-hidden.reveal-player #modal.audio-mode {
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    .nav-arrow.disabled {
+      opacity: 0.2;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -567,6 +582,8 @@ const tip      = document.getElementById('tip');
 const tipName  = document.getElementById('tip-name');
 const tipDesc  = document.getElementById('tip-desc');
 const back     = document.getElementById('back');
+const animControls = document.getElementById('anim-controls');
+const panelDotsWrap = document.getElementById('panel-dots');
 const modal    = document.getElementById('modal');
 const mFrame   = document.getElementById('modal-frame');
 const mVideo   = document.getElementById('modal-video');
@@ -750,14 +767,17 @@ mAudio.addEventListener('play', () => {
     animManual = false;
   }
   updateAnimButtonState();
+  updateNavLockState();
 });
 mAudio.addEventListener('pause', () => {
   rituellesPlaying = false;
   updateAnimButtonState();
+  updateNavLockState();
 });
 mAudio.addEventListener('ended', () => {
   rituellesPlaying = false;
   updateAnimButtonState();
+  updateNavLockState();
 });
 
 function updateDarknessStorm(darknessActive) {
@@ -815,16 +835,65 @@ let mx = 0, my = 0, hoveredZone = null;
 const RITUELLES_IDLE_MS = 5000;
 let lastUiActivityAt = performance.now();
 let rituellesUiHidden = false;
+const RITUELLES_REVEAL_MS = 5000;
+const RITUELLES_REVEAL_CLASSES = [
+  'reveal-back','reveal-anim','reveal-dots','reveal-nav-prev','reveal-nav-next','reveal-player'
+];
+const rituellesRevealUntil = {
+  back: 0,
+  anim: 0,
+  dots: 0,
+  navPrev: 0,
+  navNext: 0,
+  player: 0,
+};
 
 function setRituellesUiHidden(hidden) {
   if (hidden === rituellesUiHidden) return;
   rituellesUiHidden = hidden;
   document.body.classList.toggle('rituelles-ui-hidden', hidden);
+  if (!hidden) document.body.classList.remove(...RITUELLES_REVEAL_CLASSES);
+}
+
+function pointInEl(x, y, el) {
+  if (!el) return false;
+  const r = el.getBoundingClientRect();
+  if (r.width <= 0 || r.height <= 0) return false;
+  return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+}
+
+function updateRituellesHoverReveal(inRituellesUniverse) {
+  if (!rituellesUiHidden || !inRituellesUniverse) {
+    document.body.classList.remove(...RITUELLES_REVEAL_CLASSES);
+    rituellesRevealUntil.back = 0;
+    rituellesRevealUntil.anim = 0;
+    rituellesRevealUntil.dots = 0;
+    rituellesRevealUntil.navPrev = 0;
+    rituellesRevealUntil.navNext = 0;
+    rituellesRevealUntil.player = 0;
+    return;
+  }
+  const now = performance.now();
+  if (pointInEl(mx, my, back)) rituellesRevealUntil.back = now + RITUELLES_REVEAL_MS;
+  if (pointInEl(mx, my, animControls)) rituellesRevealUntil.anim = now + RITUELLES_REVEAL_MS;
+  if (pointInEl(mx, my, panelDotsWrap)) rituellesRevealUntil.dots = now + RITUELLES_REVEAL_MS;
+  if (pointInEl(mx, my, navPrev)) rituellesRevealUntil.navPrev = now + RITUELLES_REVEAL_MS;
+  if (pointInEl(mx, my, navNext)) rituellesRevealUntil.navNext = now + RITUELLES_REVEAL_MS;
+  if (pointInEl(mx, my, mAudio)) rituellesRevealUntil.player = now + RITUELLES_REVEAL_MS;
+
+  document.body.classList.toggle('reveal-back', rituellesRevealUntil.back > now);
+  document.body.classList.toggle('reveal-anim', rituellesRevealUntil.anim > now);
+  document.body.classList.toggle('reveal-dots', rituellesRevealUntil.dots > now);
+  document.body.classList.toggle('reveal-nav-prev', rituellesRevealUntil.navPrev > now);
+  document.body.classList.toggle('reveal-nav-next', rituellesRevealUntil.navNext > now);
+  document.body.classList.toggle('reveal-player', rituellesRevealUntil.player > now);
 }
 
 function markUiActivity() {
+  const inRituellesUniverse = !!(zoomed && zoomTarget && zoomTarget.name === 'Rituelles');
+  // While Rituelles UI is hidden, keep it hidden; only zone-hover reveal can show controls.
+  if (inRituellesUniverse && rituellesUiHidden) return;
   lastUiActivityAt = performance.now();
-  if (rituellesUiHidden) setRituellesUiHidden(false);
 }
 
 canvas.addEventListener('mousemove', e => {
@@ -1395,8 +1464,9 @@ function draw() {
 
   const inRituellesUniverse = !!(zoomed && zoomTarget && zoomTarget.name === 'Rituelles');
   const shouldHideUi = inRituellesUniverse && !document.body.classList.contains('edit-mode')
-    && (performance.now() - lastUiActivityAt >= RITUELLES_IDLE_MS);
+    && (rituellesUiHidden || (performance.now() - lastUiActivityAt >= RITUELLES_IDLE_MS));
   setRituellesUiHidden(shouldHideUi);
+  updateRituellesHoverReveal(inRituellesUniverse);
 
   requestAnimationFrame(draw);
 }
@@ -1543,6 +1613,7 @@ function showPlaceholder(msg, color) {
 
 function closeModal() {
   const wasBandcamp = mFrame.style.display === 'block' && mFrame.src.includes('bandcamp');
+  const wasRituellesAudio = !!(mAudio.src && mAudio.src.includes('Rituelles'));
   modal.classList.remove('visible');
   modal.classList.remove('audio-mode');
   mFrame.src = '';
@@ -1554,6 +1625,15 @@ function closeModal() {
   mAudio.src = '';
   mAudio.style.display = 'none';
   mPlace.style.display = 'none';
+  if (wasRituellesAudio) {
+    // Return to regular Rituelles universe view after closing playback.
+    rituellesPlaying = false;
+    animManual = false;
+    updateAnimButtonState();
+    updateNavLockState();
+    setRituellesUiHidden(false);
+    lastUiActivityAt = performance.now();
+  }
   if (wasBandcamp && window.miniPlayerShow) window.miniPlayerShow();
 }
 
@@ -3132,6 +3212,21 @@ function showNavArrows(v) {
   navPrev.classList.toggle('visible', v);
   navNext.classList.toggle('visible', v);
   if (!v) { cancelNavHover(navPrev); cancelNavHover(navNext); }
+  updateNavLockState();
+}
+
+function navLockedByPlayingRituelles() {
+  return rituellesPlaying;
+}
+
+function updateNavLockState() {
+  const locked = navLockedByPlayingRituelles();
+  navPrev.classList.toggle('disabled', locked);
+  navNext.classList.toggle('disabled', locked);
+  if (locked) {
+    cancelNavHover(navPrev, 'prev');
+    cancelNavHover(navNext, 'next');
+  }
 }
 
 function navigateToZone(newZone) {
@@ -3151,6 +3246,7 @@ function navigateToZone(newZone) {
 }
 
 function navigateSpatial(dir) {
+  if (navLockedByPlayingRituelles()) return;
   if (!zoomTarget) return;
   const idx = ZONES_BY_X.indexOf(zoomTarget);
   const next = ZONES_BY_X[(idx + dir + ZONES_BY_X.length) % ZONES_BY_X.length];
@@ -3160,6 +3256,7 @@ function navigateSpatial(dir) {
 let navTimers = { prev: null, next: null };
 
 function startNavHover(el, dir, key) {
+  if (navLockedByPlayingRituelles()) return;
   el.classList.add('hovering');
   navTimers[key] = setTimeout(() => {
     el.classList.remove('hovering');
