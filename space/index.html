@@ -467,6 +467,7 @@
     allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
     style="display:none"></iframe>
   <video id="modal-video" controls style="display:none"></video>
+  <audio id="modal-audio" controls style="display:none; width: min(85vw, 600px); border-radius: 4px; box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);"></audio>
   <div id="modal-placeholder" style="display:none"></div>
   <div id="modal-close">&#x2715; Close</div>
 </div>
@@ -538,6 +539,7 @@ const back     = document.getElementById('back');
 const modal    = document.getElementById('modal');
 const mFrame   = document.getElementById('modal-frame');
 const mVideo   = document.getElementById('modal-video');
+const mAudio   = document.getElementById('modal-audio');
 const mPlace   = document.getElementById('modal-placeholder');
 const mClose   = document.getElementById('modal-close');
 let W, H;
@@ -601,7 +603,7 @@ const ZONES = [
 
   { nx:0.5779, ny:0.5707, nrx:0.0563, nry:0.0643,
     name:'Rituelles', hoverText:'New Song: Check it out',
-    baseH:180, label:'#00ffcc', type:'placeholder', msg:'Rituelles\n— Coming Soon —' },
+    baseH:180, label:'#00ffcc', type:'localaudio', src:'../Rituelles mix 6.mp3' },
 
   { nx:0.4951, ny:0.2283, nrx:0.1148, nry:0.1479,
     name:"L'Idée", hoverText:'Soundtrack to an animation masterpiece from 1933',
@@ -1107,6 +1109,10 @@ function openZoneContent(zone) {
     showVideo(zone.src);
     return;
   }
+  if (zone.type === 'localaudio') {
+    showAudio(zone.src);
+    return;
+  }
   if (zone.type === 'placeholder') {
     showPlaceholder(zone.msg, zone.label);
     return;
@@ -1117,6 +1123,7 @@ function showFrame(src) {
   mFrame.src = src;
   mFrame.style.display = 'block';
   mVideo.style.display = 'none';
+  mAudio.style.display = 'none';
   mPlace.style.display = 'none';
   modal.classList.add('visible');
 }
@@ -1125,9 +1132,20 @@ function showVideo(src) {
   mVideo.src = src;
   mVideo.style.display = 'block';
   mFrame.style.display = 'none';
+  mAudio.style.display = 'none';
   mPlace.style.display = 'none';
   modal.classList.add('visible');
   mVideo.play().catch(() => {});
+}
+
+function showAudio(src) {
+  mAudio.src = src;
+  mAudio.style.display = 'block';
+  mFrame.style.display = 'none';
+  mVideo.style.display = 'none';
+  mPlace.style.display = 'none';
+  modal.classList.add('visible');
+  mAudio.play().catch(() => {});
 }
 
 function showPlaceholder(msg, color) {
@@ -1148,6 +1166,9 @@ function closeModal() {
   mVideo.pause();
   mVideo.src = '';
   mVideo.style.display = 'none';
+  mAudio.pause();
+  mAudio.src = '';
+  mAudio.style.display = 'none';
   mPlace.style.display = 'none';
   if (wasBandcamp && window.miniPlayerShow) window.miniPlayerShow();
 }
