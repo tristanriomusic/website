@@ -112,6 +112,12 @@
       gap: 24px;
     }
     #modal.visible { display: flex; animation: fadeM 0.5s ease; }
+    #modal.audio-mode {
+      pointer-events: none;
+      justify-content: flex-end;
+      padding-bottom: 6vh;
+    }
+    #modal.audio-mode > * { pointer-events: auto; }
     @keyframes fadeM { from{opacity:0} to{opacity:1} }
 
     #modal-frame {
@@ -365,9 +371,13 @@
     }
     #aquarium-back:hover { color: rgba(150,230,255,0.85); }
 
-    /* ── Cosmic Storm button ── */
-    #storm-btn {
+    /* ── Animation buttons ── */
+    #anim-controls {
       position: fixed; bottom: 3vh; right: 20px; z-index: 25;
+      display: flex; flex-direction: column; gap: 8px;
+      align-items: flex-end;
+    }
+    .anim-btn {
       background: none;
       border: 1px solid rgba(255,255,255,0.18);
       border-radius: 3px;
@@ -380,11 +390,11 @@
       transition: color 0.35s, border-color 0.35s, box-shadow 0.35s, background 0.35s;
       user-select: none;
     }
-    #storm-btn:hover {
+    .anim-btn:hover {
       color: rgba(255,255,255,0.75);
       border-color: rgba(0,220,255,0.45);
     }
-    #storm-btn.active {
+    .anim-btn.active {
       color: #00eeff;
       border-color: rgba(0,220,255,0.7);
       background: rgba(0,60,80,0.35);
@@ -472,7 +482,14 @@
   <div id="modal-close">&#x2715; Close</div>
 </div>
 
-<button id="storm-btn">Cosmic Storm</button>
+<div id="anim-controls">
+  <button class="anim-btn" data-anim="storm">Cosmic Storm</button>
+  <button class="anim-btn" data-anim="fluid">Liquid Space</button>
+  <button class="anim-btn" data-anim="neon">Neon Pulse</button>
+  <button class="anim-btn active" data-anim="fractal">Fractal Dream</button>
+  <button class="anim-btn" data-anim="echo">Ghost Echo</button>
+  <button class="anim-btn" data-anim="chroma">Chroma Shift</button>
+</div>
 
 <!-- Navigation arrows -->
 <div id="nav-prev" class="nav-arrow">
@@ -659,28 +676,58 @@ let zoomCurrent = {tx:0, ty:0, scale:1};
 /* ═══ TIME ═══ */
 let t = 0;
 
-/* ═══ COSMIC STORM ═══ */
-let cosmicStorm = false;   // target on/off
-let stormLevel  = 0.0;     // 0.0–1.0, lerps toward cosmicStorm
-let stormManual = false;
+/* ═══ ANIMATIONS ═══ */
+let activeAnim = 'fractal';
+let animLevel = 0.0;
+let animManual = false;
 let prevDarknessActive = false;
-const stormBtn = document.getElementById('storm-btn');
-stormBtn.addEventListener('click', () => {
-  stormManual = !stormManual;
-  cosmicStorm = stormManual;
-  stormBtn.classList.toggle('active', cosmicStorm);
+let rituellesPlaying = false;
+let fractalRampStart = null;
+let fractalViewMix = 0;
+const FRACTAL_RAMP_MS = 30000;
+
+function easeInOutCubic(v) {
+  return v < 0.5
+    ? 4 * v * v * v
+    : 1 - Math.pow(-2 * v + 2, 3) / 2;
+}
+
+function updateAnimButtonState() {
+  const isActive = rituellesPlaying || animManual || prevDarknessActive;
+  document.querySelectorAll('.anim-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.anim === activeAnim && isActive);
+  });
+}
+
+document.querySelectorAll('.anim-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (activeAnim === btn.dataset.anim) {
+      animManual = !animManual;
+    } else {
+      activeAnim = btn.dataset.anim;
+      animManual = true; 
+    }
+    updateAnimButtonState();
+  });
+});
+
+mAudio.addEventListener('play', () => {
+  if (mAudio.src && mAudio.src.includes('Rituelles')) rituellesPlaying = true;
+  updateAnimButtonState();
+});
+mAudio.addEventListener('pause', () => {
+  rituellesPlaying = false;
+  updateAnimButtonState();
+});
+mAudio.addEventListener('ended', () => {
+  rituellesPlaying = false;
+  updateAnimButtonState();
 });
 
 function updateDarknessStorm(darknessActive) {
   if (darknessActive === prevDarknessActive) return;
   prevDarknessActive = darknessActive;
-  if (darknessActive) {
-    cosmicStorm = true;
-    stormBtn.classList.add('active');
-  } else if (!stormManual) {
-    cosmicStorm = false;
-    stormBtn.classList.remove('active');
-  }
+  updateAnimButtonState();
 }
 
 /* ═══ WARP STARFIELD ═══ */
@@ -735,7 +782,7 @@ canvas.addEventListener('mousemove', e => {
 });
 
 canvas.addEventListener('click', e => {
-  if (modal.classList.contains('visible')) return;
+  if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) return;
   if (document.getElementById('truth-overlay').classList.contains('visible')) return;
   if (zoomed) { zoomOut(); return; }
   if (hoveredZone) zoomIn(hoveredZone);
@@ -772,8 +819,18 @@ function imgLayout() {
 /* ═══ MAIN DRAW ═══ */
 function draw() {
   t++;
-  // Lerp storm level — ~2s fade in, ~3s fade out
-  stormLevel += (cosmicStorm ? 1.0 : 0.0 - stormLevel) * (cosmicStorm ? 0.035 : 0.022);
+  const animNow = rituellesPlaying || animManual || prevDarknessActive;
+  animLevel += (animNow ? 1.0 : 0.0 - animLevel) * (animNow ? 0.035 : 0.022);
+  const fractalActive = animNow && activeAnim === 'fractal';
+  if (fractalActive) {
+    if (fractalRampStart === null) fractalRampStart = performance.now();
+  } else {
+    fractalRampStart = null;
+  }
+  const fractalRampRaw = fractalRampStart === null
+    ? 0
+    : Math.min((performance.now() - fractalRampStart) / FRACTAL_RAMP_MS, 1);
+  const fractalBloom = fractalActive ? easeInOutCubic(fractalRampRaw) : 0;
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, H);
 
@@ -787,9 +844,61 @@ function draw() {
     mobileOffsetX = panelIndex * (drawW / 3);
   }
 
+  /* ── Auto-tour for Fractal Dream ── */
+  let fractalTouring = false;
+  if (activeAnim === 'fractal' && fractalBloom > 0.01) {
+    fractalTouring = true;
+    const cycleMs = 30000; // 30s per orb
+    const nowMs = Date.now();
+    const cyclePos = (nowMs % cycleMs) / cycleMs; 
+    const zoneIdx = Math.floor(nowMs / cycleMs) % ZONES.length;
+    const nextIdx = (zoneIdx + 1) % ZONES.length;
+    const currentZone = ZONES[zoneIdx];
+    const nextZone = ZONES[nextIdx];
+    
+    const currX = ox + currentZone.nx * drawW;
+    const currY = oy + currentZone.ny * drawH;
+    const nxtX = ox + nextZone.nx * drawW;
+    const nxtY = oy + nextZone.ny * drawH;
+    
+    // Constant speed interpolation
+    const targetX = currX + (nxtX - currX) * cyclePos;
+    const targetY = currY + (nxtY - currY) * cyclePos;
+    const targetZScale = 1.3; // Constant scale keeps lines crisp
+    
+    if (window.fracTx == null) {
+      window.fracTx = W/2 - targetX;
+      window.fracTy = H/2 - targetY;
+      window.fracS = targetZScale;
+      window.fracRot = 0;
+    }
+    
+    window.fracTx += ((W/2 - targetX) - window.fracTx) * 0.05;
+    window.fracTy += ((H/2 - targetY) - window.fracTy) * 0.05;
+    window.fracS += (targetZScale - window.fracS) * 0.05;
+    window.fracRot += 0.002; // Constant rotation of the map
+  }
+
+  const targetFractalMix = fractalTouring ? 1 : 0;
+  fractalViewMix += (targetFractalMix - fractalViewMix) * (fractalTouring ? 0.02 : 0.018);
+  if (Math.abs(fractalViewMix) < 0.001) fractalViewMix = 0;
+
   /* ── Apply zoom transform ── */
   ctx.save();
-  if (zoomed && zoomTarget) {
+  if (fractalViewMix > 0) {
+    const fracTx = window.fracTx || 0;
+    const fracTy = window.fracTy || 0;
+    const fracS = window.fracS || 1;
+    const fracRot = window.fracRot || 0;
+    const blendScale = 1 + (fracS - 1) * fractalViewMix;
+    const blendTx = fracTx * fractalViewMix;
+    const blendTy = fracTy * fractalViewMix;
+    const blendRot = fracRot * fractalViewMix;
+    ctx.translate(W/2, H/2);
+    ctx.rotate(blendRot);
+    ctx.scale(blendScale, blendScale);
+    ctx.translate(-W/2 + blendTx, -H/2 + blendTy);
+  } else if (zoomed && zoomTarget) {
     const z = zoomCurrent;
     ctx.translate(W/2, H/2);
     ctx.scale(z.scale, z.scale);
@@ -837,38 +946,47 @@ function draw() {
 
   /* ── Draw artwork: orb-gravity deformation makes lines warp and breathe ── */
   ctx.save();
-  ctx.filter = 'contrast(12) brightness(1.4)';
+  ctx.filter = (activeAnim === 'neon' && animLevel > 0.01)
+    ? `contrast(12) brightness(1.4) hue-rotate(${t * 3 * animLevel}deg) saturate(${1 + 3 * animLevel})`
+    : 'contrast(12) brightness(1.4)';
   const NS = 60;
 
   function stripDisplace(si) {
     const syC = (si + 0.5) / NS;
-    const sf = 0.14 + stormLevel * 0.86; // lerped 0.14→1.0
+    const isStorm = activeAnim === 'storm';
+    const isFluid = activeAnim === 'fluid';
+    const sf = 0.14 + (isStorm ? animLevel * 0.86 : 0);
 
     // Base organic wave (horizontal shimmer)
     let wx = (Math.sin(t * 0.006 + si * 0.21) * 2.2
-            + Math.sin(t * 0.010 + si * 0.13 + 1.4) * 1.1) * sf;
+            + Math.sin(t * 0.010 + si * 0.13 + 1.4) * 1.1) * (isFluid ? 0.14 + animLevel * 1.5 : sf);
     // Width scale for depth illusion
-    let wMod = 1.0 + Math.sin(t * 0.005 + si * 0.31) * 0.016 * sf;
+    let wMod = 1.0 + Math.sin(t * 0.005 + si * 0.31) * 0.016 * (isFluid ? 0.14 + animLevel * 0.8 : sf);
 
-    if (stormLevel < 0.02) return { wx, wMod }; // no orb gravity at rest
+    if (animLevel < 0.02) return { wx, wMod };
 
-    // Storm: orb gravity pulls strips toward each orb's gravitational field
-    for (let i = 0; i < ZONES.length; i++) {
-      const z = ZONES[i];
-      const dp = t * 0.007 + i * 1.3;
-      const orbY = z.ny + Math.cos(dp * 0.73) * 0.004;
-      const orbX = z.nx + Math.sin(dp) * 0.005;
-      const dy = syC - orbY;
-      const str = z.dark ? 0.024 : 0.011;
-      const hoverBoost = (hoveredZone === z) ? 2.2 : 1.0;
-      const falloff = (str * hoverBoost) / (1.0 + 25 * dy * dy);
-      const ph = t * 0.009 + i * 2.1;
-      wx += (orbX - 0.5) * drawW * falloff * Math.sin(ph + si * 0.14);
-      wMod += falloff * 0.5 * Math.abs(Math.sin(ph * 0.8 + si * 0.22));
-      if (z.dark) {
-        wx += Math.sin(t * 0.041 + si * 7.1 + i * 3.3) * drawW * falloff * 0.45;
-        wx += Math.cos(t * 0.029 + si * 4.4 + i * 1.9) * drawW * falloff * 0.25;
+    if (isStorm) {
+      // Storm: orb gravity pulls strips toward each orb's gravitational field
+      for (let i = 0; i < ZONES.length; i++) {
+        const z = ZONES[i];
+        const dp = t * 0.007 + i * 1.3;
+        const orbY = z.ny + Math.cos(dp * 0.73) * 0.004;
+        const orbX = z.nx + Math.sin(dp) * 0.005;
+        const dy = syC - orbY;
+        const str = z.dark ? 0.024 : 0.011;
+        const hoverBoost = (hoveredZone === z) ? 2.2 : 1.0;
+        const falloff = (str * hoverBoost) / (1.0 + 25 * dy * dy);
+        const ph = t * 0.009 + i * 2.1;
+        wx += (orbX - 0.5) * drawW * falloff * Math.sin(ph + si * 0.14);
+        wMod += falloff * 0.5 * Math.abs(Math.sin(ph * 0.8 + si * 0.22));
+        if (z.dark) {
+          wx += Math.sin(t * 0.041 + si * 7.1 + i * 3.3) * drawW * falloff * 0.45;
+          wx += Math.cos(t * 0.029 + si * 4.4 + i * 1.9) * drawW * falloff * 0.25;
+        }
       }
+    } else if (isFluid) {
+      wx += Math.sin(t * 0.03 + si * 0.4) * 45 * animLevel;
+      wMod += Math.sin(t * 0.04 + si * 0.5) * 0.12 * animLevel;
     }
     return { wx, wMod };
   }
@@ -1002,6 +1120,94 @@ function draw() {
   ctx.fillRect(0, 0, W, H);
 
   ctx.restore(); // pop zoom / mobile offset
+
+  // Apply post-processing effects
+  if (animLevel > 0.01) {
+    if (activeAnim === 'fractal') {
+      if (!window.fbCanvas) {
+        window.fbCanvas = document.createElement('canvas');
+        window.fbCtx = window.fbCanvas.getContext('2d');
+      }
+      if (window.fbCanvas.width !== W || window.fbCanvas.height !== H) {
+        window.fbCanvas.width = W; window.fbCanvas.height = H;
+        window.fbCtx.fillStyle = '#000';
+        window.fbCtx.fillRect(0,0,W,H);
+      }
+
+      if (!window.tmpCanvas) {
+        window.tmpCanvas = document.createElement('canvas');
+        window.tmpCtx = window.tmpCanvas.getContext('2d');
+      }
+      if (window.tmpCanvas.width !== W || window.tmpCanvas.height !== H) {
+        window.tmpCanvas.width = W; window.tmpCanvas.height = H;
+      }
+      window.tmpCtx.globalCompositeOperation = 'copy';
+      window.tmpCtx.drawImage(canvas, 0, 0);
+
+      // Fade out the thick original map so the delicate filters can take over the whole screen
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = `rgba(0, 0, 0, ${fractalBloom * 0.88})`;
+      ctx.fillRect(0, 0, W, H);
+
+      const rotationPasses = fractalBloom < 0.45 ? 2 : 3;
+      ctx.save();
+      ctx.translate(W/2, H/2);
+      ctx.scale(1.24 + fractalBloom * 0.18, 1.24 + fractalBloom * 0.18);
+      ctx.globalCompositeOperation = 'lighten';
+      // Keep the fractal airy by limiting simultaneous rotations even at full bloom.
+      for(let i=0; i<rotationPasses; i++) {
+        ctx.globalAlpha = 0.08 + fractalBloom * 0.12;
+        ctx.drawImage(window.tmpCanvas, -W/2, -H/2);
+        ctx.rotate((Math.PI * 2) / rotationPasses);
+      }
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighten';
+      ctx.globalAlpha = fractalBloom * 0.78;
+      
+      // Expand from the center
+      ctx.translate(W/2, H/2);
+      const feedbackScale = 1.006 + fractalBloom * 0.022;
+      ctx.scale(feedbackScale, feedbackScale);
+      ctx.rotate(0.0007 + fractalBloom * 0.0023);
+      ctx.translate(-W/2, -H/2);
+      
+      ctx.drawImage(window.fbCanvas, 0, 0);
+      ctx.restore();
+
+      window.fbCtx.globalCompositeOperation = 'copy';
+      window.fbCtx.filter = 'hue-rotate(4deg) saturate(1.03)';
+      window.fbCtx.drawImage(canvas, 0, 0);
+      window.fbCtx.filter = 'none';
+
+      // Darken the feedback heavily to let trails fade
+      window.fbCtx.globalCompositeOperation = 'source-over';
+      window.fbCtx.fillStyle = `rgba(0, 0, 0, ${0.2 + (1 - fractalBloom) * 0.14})`;
+      window.fbCtx.fillRect(0, 0, W, H);
+    } else if (activeAnim === 'echo') {
+      ctx.save();
+      ctx.globalAlpha = animLevel * 0.15;
+      ctx.globalCompositeOperation = 'screen';
+      for(let i=1; i<=4; i++) {
+        ctx.save();
+        ctx.translate(W/2, H/2);
+        ctx.scale(1.0 + i*0.02, 1.0 + i*0.02);
+        ctx.drawImage(canvas, -W/2, -H/2);
+        ctx.restore();
+      }
+      ctx.restore();
+    } else if (activeAnim === 'chroma') {
+      ctx.save();
+      ctx.globalCompositeOperation = 'exclusion';
+      ctx.globalAlpha = animLevel * 0.5;
+      ctx.translate(W/2, H/2);
+      ctx.scale(1.0 + Math.sin(t*0.02)*0.03*animLevel, 1.0 + Math.cos(t*0.02)*0.03*animLevel);
+      ctx.rotate(Math.sin(t*0.01)*0.01*animLevel);
+      ctx.drawImage(canvas, -W/2, -H/2);
+      ctx.restore();
+    }
+  }
 
   /* ── Tooltip ── */
   if (hoveredZone && !zoomed) {
@@ -1145,6 +1351,7 @@ function showAudio(src) {
   mVideo.style.display = 'none';
   mPlace.style.display = 'none';
   modal.classList.add('visible');
+  modal.classList.add('audio-mode');
   mAudio.play().catch(() => {});
 }
 
@@ -1161,6 +1368,7 @@ function showPlaceholder(msg, color) {
 function closeModal() {
   const wasBandcamp = mFrame.style.display === 'block' && mFrame.src.includes('bandcamp');
   modal.classList.remove('visible');
+  modal.classList.remove('audio-mode');
   mFrame.src = '';
   mFrame.style.display = 'none';
   mVideo.pause();
