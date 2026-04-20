@@ -454,6 +454,20 @@
       letter-spacing: 0.35em; text-transform: uppercase;
       writing-mode: vertical-rl;
     }
+
+    /* ── Rituelles idle UI hide ── */
+    #back, #anim-controls, #tip, #panel-dots, .nav-arrow {
+      transition: opacity 0.55s ease, visibility 0.55s ease;
+    }
+    body.rituelles-ui-hidden #back,
+    body.rituelles-ui-hidden #anim-controls,
+    body.rituelles-ui-hidden #tip,
+    body.rituelles-ui-hidden #panel-dots,
+    body.rituelles-ui-hidden .nav-arrow {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
   </style>
 </head>
 <body>
@@ -684,12 +698,30 @@ let prevDarknessActive = false;
 let rituellesPlaying = false;
 let fractalRampStart = null;
 let fractalViewMix = 0;
+let fractalIntroStart = null;
+let fractalIntroFrom = null;
 const FRACTAL_RAMP_MS = 30000;
+const FRACTAL_INTRO_MS = 30000;
+const FRACTAL_ROTATION_RAMP_MS = 3800;
+const FRACTAL_BASE_ROT_SPEED = 0.0023;
+const FRACTAL_TARGET_SCALE = 1.3;
+const FRACTAL_DEEP_PHASE_END = 0.36;
 
 function easeInOutCubic(v) {
   return v < 0.5
     ? 4 * v * v * v
     : 1 - Math.pow(-2 * v + 2, 3) / 2;
+}
+
+function catmullRom(p0, p1, p2, p3, u) {
+  const u2 = u * u;
+  const u3 = u2 * u;
+  return 0.5 * (
+    (2 * p1) +
+    (-p0 + p2) * u +
+    (2 * p0 - 5 * p1 + 4 * p2 - p3) * u2 +
+    (-p0 + 3 * p1 - 3 * p2 + p3) * u3
+  );
 }
 
 function updateAnimButtonState() {
@@ -712,7 +744,11 @@ document.querySelectorAll('.anim-btn').forEach(btn => {
 });
 
 mAudio.addEventListener('play', () => {
-  if (mAudio.src && mAudio.src.includes('Rituelles')) rituellesPlaying = true;
+  if (mAudio.src && mAudio.src.includes('Rituelles')) {
+    rituellesPlaying = true;
+    activeAnim = 'fractal';
+    animManual = false;
+  }
   updateAnimButtonState();
 });
 mAudio.addEventListener('pause', () => {
@@ -776,10 +812,30 @@ function drawWarpStars() {
 
 /* ═══ MOUSE ═══ */
 let mx = 0, my = 0, hoveredZone = null;
+const RITUELLES_IDLE_MS = 5000;
+let lastUiActivityAt = performance.now();
+let rituellesUiHidden = false;
+
+function setRituellesUiHidden(hidden) {
+  if (hidden === rituellesUiHidden) return;
+  rituellesUiHidden = hidden;
+  document.body.classList.toggle('rituelles-ui-hidden', hidden);
+}
+
+function markUiActivity() {
+  lastUiActivityAt = performance.now();
+  if (rituellesUiHidden) setRituellesUiHidden(false);
+}
+
 canvas.addEventListener('mousemove', e => {
   mx = e.clientX; my = e.clientY;
   padX = e.clientX / W; padY = e.clientY / H;
+  markUiActivity();
 });
+canvas.addEventListener('mousedown', markUiActivity);
+canvas.addEventListener('touchstart', markUiActivity, { passive: true });
+canvas.addEventListener('wheel', markUiActivity, { passive: true });
+document.addEventListener('keydown', markUiActivity);
 
 canvas.addEventListener('click', e => {
   if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) return;
@@ -823,14 +879,31 @@ function draw() {
   animLevel += (animNow ? 1.0 : 0.0 - animLevel) * (animNow ? 0.035 : 0.022);
   const fractalActive = animNow && activeAnim === 'fractal';
   if (fractalActive) {
-    if (fractalRampStart === null) fractalRampStart = performance.now();
+    if (fractalRampStart === null) {
+      fractalRampStart = performance.now();
+      const introBaseTx = (zoomed && zoomTarget) ? zoomCurrent.tx : (isMobile() ? -mobileOffsetX : 0);
+      const introBaseTy = (zoomed && zoomTarget) ? zoomCurrent.ty : 0;
+      const introBaseScale = (zoomed && zoomTarget) ? zoomCurrent.scale : 1;
+      fractalIntroStart = fractalRampStart;
+      fractalIntroFrom = {
+        tx: introBaseTx,
+        ty: introBaseTy,
+        scale: introBaseScale,
+        rot: 0
+      };
+    }
   } else {
     fractalRampStart = null;
+    fractalIntroStart = null;
+    fractalIntroFrom = null;
   }
   const fractalRampRaw = fractalRampStart === null
     ? 0
     : Math.min((performance.now() - fractalRampStart) / FRACTAL_RAMP_MS, 1);
   const fractalBloom = fractalActive ? easeInOutCubic(fractalRampRaw) : 0;
+  const fractalIntroProgress = fractalIntroStart === null
+    ? 0
+    : Math.min((performance.now() - fractalIntroStart) / FRACTAL_INTRO_MS, 1);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, H);
 
@@ -846,25 +919,43 @@ function draw() {
 
   /* ── Auto-tour for Fractal Dream ── */
   let fractalTouring = false;
-  if (activeAnim === 'fractal' && fractalBloom > 0.01) {
+  if (fractalActive) {
     fractalTouring = true;
     const cycleMs = 30000; // 30s per orb
     const nowMs = Date.now();
-    const cyclePos = (nowMs % cycleMs) / cycleMs; 
+    const cyclePos = (nowMs % cycleMs) / cycleMs;
     const zoneIdx = Math.floor(nowMs / cycleMs) % ZONES.length;
     const nextIdx = (zoneIdx + 1) % ZONES.length;
+    const prevIdx = (zoneIdx - 1 + ZONES.length) % ZONES.length;
+    const next2Idx = (zoneIdx + 2) % ZONES.length;
+    const prevZone = ZONES[prevIdx];
     const currentZone = ZONES[zoneIdx];
     const nextZone = ZONES[nextIdx];
+    const next2Zone = ZONES[next2Idx];
     
+    const prevX = ox + prevZone.nx * drawW;
+    const prevY = oy + prevZone.ny * drawH;
     const currX = ox + currentZone.nx * drawW;
     const currY = oy + currentZone.ny * drawH;
     const nxtX = ox + nextZone.nx * drawW;
     const nxtY = oy + nextZone.ny * drawH;
+    const nxt2X = ox + next2Zone.nx * drawW;
+    const nxt2Y = oy + next2Zone.ny * drawH;
     
-    // Constant speed interpolation
-    const targetX = currX + (nxtX - currX) * cyclePos;
-    const targetY = currY + (nxtY - currY) * cyclePos;
-    const targetZScale = 1.3; // Constant scale keeps lines crisp
+    // Continuous spline path to avoid turn flips and pace jolts at segment boundaries.
+    const targetX = catmullRom(prevX, currX, nxtX, nxt2X, cyclePos);
+    const targetY = catmullRom(prevY, currY, nxtY, nxt2Y, cyclePos);
+    const introProgress = fractalIntroStart === null
+      ? 1
+      : Math.min((performance.now() - fractalIntroStart) / FRACTAL_INTRO_MS, 1);
+    const introEase = easeInOutCubic(introProgress);
+    const diveStartScale = fractalIntroFrom ? fractalIntroFrom.scale : FRACTAL_TARGET_SCALE;
+    const divePeakScale = diveStartScale * 1.45;
+    // Always settle toward the wide fractal framing for richer visible patterns.
+    const diveSettleScale = FRACTAL_TARGET_SCALE;
+    const targetZScale = fractalIntroFrom
+      ? divePeakScale + (diveSettleScale - divePeakScale) * introEase
+      : FRACTAL_TARGET_SCALE;
     
     if (window.fracTx == null) {
       window.fracTx = W/2 - targetX;
@@ -876,7 +967,11 @@ function draw() {
     window.fracTx += ((W/2 - targetX) - window.fracTx) * 0.05;
     window.fracTy += ((H/2 - targetY) - window.fracTy) * 0.05;
     window.fracS += (targetZScale - window.fracS) * 0.05;
-    window.fracRot += 0.002; // Constant rotation of the map
+    const rotRampRaw = fractalRampStart === null
+      ? 0
+      : Math.min((performance.now() - fractalRampStart) / FRACTAL_ROTATION_RAMP_MS, 1);
+    const rotRamp = 0.65 + 0.35 * easeInOutCubic(rotRampRaw);
+    window.fracRot += FRACTAL_BASE_ROT_SPEED * rotRamp;
   }
 
   const targetFractalMix = fractalTouring ? 1 : 0;
@@ -885,15 +980,56 @@ function draw() {
 
   /* ── Apply zoom transform ── */
   ctx.save();
+  let baseTx = 0;
+  let baseTy = 0;
+  let baseScale = 1;
+  let baseRot = 0;
+  if (zoomed && zoomTarget) {
+    baseTx = zoomCurrent.tx;
+    baseTy = zoomCurrent.ty;
+    baseScale = zoomCurrent.scale;
+  } else if (isMobile() && mobileOffsetX !== 0) {
+    baseTx = -mobileOffsetX;
+  }
+
   if (fractalViewMix > 0) {
     const fracTx = window.fracTx || 0;
     const fracTy = window.fracTy || 0;
     const fracS = window.fracS || 1;
     const fracRot = window.fracRot || 0;
-    const blendScale = 1 + (fracS - 1) * fractalViewMix;
-    const blendTx = fracTx * fractalViewMix;
-    const blendTy = fracTy * fractalViewMix;
-    const blendRot = fracRot * fractalViewMix;
+    const introElapsed = fractalIntroStart === null ? FRACTAL_INTRO_MS : (performance.now() - fractalIntroStart);
+    const introActive = fractalTouring && introElapsed < FRACTAL_INTRO_MS && !!fractalIntroFrom;
+    let blendScale = baseScale + (fracS - baseScale) * fractalViewMix;
+    let blendTx = baseTx + (fracTx - baseTx) * fractalViewMix;
+    let blendTy = baseTy + (fracTy - baseTy) * fractalViewMix;
+    let blendRot = baseRot + (fracRot - baseRot) * fractalViewMix;
+
+    if (introActive) {
+      const p = Math.min(introElapsed / FRACTAL_INTRO_MS, 1);
+      let centerTx = fractalIntroFrom.tx;
+      let centerTy = fractalIntroFrom.ty;
+      if (zoomTarget) {
+        const czx = ox + zoomTarget.nx * drawW;
+        const czy = oy + zoomTarget.ny * drawH;
+        centerTx = W / 2 - czx;
+        centerTy = H / 2 - czy;
+      }
+      const deepScale = Math.max(fractalIntroFrom.scale * 3.8, 16.0);
+      const toCenter = easeInOutCubic(Math.min(p / FRACTAL_DEEP_PHASE_END, 1));
+      const pullback = p <= FRACTAL_DEEP_PHASE_END
+        ? 0
+        : easeInOutCubic((p - FRACTAL_DEEP_PHASE_END) / (1 - FRACTAL_DEEP_PHASE_END));
+
+      const centerTrackTx = fractalIntroFrom.tx + (centerTx - fractalIntroFrom.tx) * toCenter;
+      const centerTrackTy = fractalIntroFrom.ty + (centerTy - fractalIntroFrom.ty) * toCenter;
+      const centerTrackScale = fractalIntroFrom.scale + (deepScale - fractalIntroFrom.scale) * toCenter;
+      const centerTrackRot = fractalIntroFrom.rot + fracRot * (0.55 + 0.45 * toCenter);
+
+      blendTx = centerTrackTx + (fracTx - centerTx) * pullback;
+      blendTy = centerTrackTy + (fracTy - centerTy) * pullback;
+      blendScale = centerTrackScale + (fracS - deepScale) * pullback;
+      blendRot = centerTrackRot + (fracRot - centerTrackRot) * pullback;
+    }
     ctx.translate(W/2, H/2);
     ctx.rotate(blendRot);
     ctx.scale(blendScale, blendScale);
@@ -1124,6 +1260,15 @@ function draw() {
   // Apply post-processing effects
   if (animLevel > 0.01) {
     if (activeAnim === 'fractal') {
+      const lineRevealRaw = Math.max(0, Math.min((fractalIntroProgress - 0.42) / 0.5, 1));
+      const lineReveal = easeInOutCubic(lineRevealRaw);
+      const revealRadius = (0.06 + lineReveal * 1.25) * Math.max(W, H);
+      const glowIn = easeInOutCubic(Math.min(fractalIntroProgress / FRACTAL_DEEP_PHASE_END, 1));
+      const glowOut = fractalIntroProgress <= FRACTAL_DEEP_PHASE_END
+        ? 1
+        : 1 - easeInOutCubic((fractalIntroProgress - FRACTAL_DEEP_PHASE_END) / (1 - FRACTAL_DEEP_PHASE_END));
+      const zoomGlow = glowIn * glowOut;
+
       if (!window.fbCanvas) {
         window.fbCanvas = document.createElement('canvas');
         window.fbCtx = window.fbCanvas.getContext('2d');
@@ -1154,9 +1299,20 @@ function draw() {
       ctx.translate(W/2, H/2);
       ctx.scale(1.24 + fractalBloom * 0.18, 1.24 + fractalBloom * 0.18);
       ctx.globalCompositeOperation = 'lighten';
+      ctx.beginPath();
+      ctx.arc(0, 0, revealRadius, 0, Math.PI * 2);
+      ctx.clip();
+      // Soft haze pass: gives line edges a slight evaporating aura.
+      ctx.filter = `blur(${0.9 + fractalBloom * 1.6}px)`;
       // Keep the fractal airy by limiting simultaneous rotations even at full bloom.
       for(let i=0; i<rotationPasses; i++) {
-        ctx.globalAlpha = 0.08 + fractalBloom * 0.12;
+        ctx.globalAlpha = (0.045 + fractalBloom * 0.08) * lineReveal;
+        ctx.drawImage(window.tmpCanvas, -W/2, -H/2);
+        ctx.rotate((Math.PI * 2) / rotationPasses);
+      }
+      ctx.filter = 'none';
+      for(let i=0; i<rotationPasses; i++) {
+        ctx.globalAlpha = (0.08 + fractalBloom * 0.12) * lineReveal;
         ctx.drawImage(window.tmpCanvas, -W/2, -H/2);
         ctx.rotate((Math.PI * 2) / rotationPasses);
       }
@@ -1164,10 +1320,13 @@ function draw() {
 
       ctx.save();
       ctx.globalCompositeOperation = 'lighten';
-      ctx.globalAlpha = fractalBloom * 0.78;
+      ctx.globalAlpha = fractalBloom * 0.78 * lineReveal;
       
       // Expand from the center
       ctx.translate(W/2, H/2);
+      ctx.beginPath();
+      ctx.arc(0, 0, revealRadius, 0, Math.PI * 2);
+      ctx.clip();
       const feedbackScale = 1.006 + fractalBloom * 0.022;
       ctx.scale(feedbackScale, feedbackScale);
       ctx.rotate(0.0007 + fractalBloom * 0.0023);
@@ -1175,6 +1334,18 @@ function draw() {
       
       ctx.drawImage(window.fbCanvas, 0, 0);
       ctx.restore();
+
+      if (zoomGlow > 0.001) {
+        const glow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W, H) * 0.72);
+        glow.addColorStop(0, `rgba(80, 200, 255, ${0.35 * zoomGlow})`);
+        glow.addColorStop(0.45, `rgba(30, 120, 255, ${0.22 * zoomGlow})`);
+        glow.addColorStop(1, 'rgba(0, 30, 90, 0)');
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+      }
 
       window.fbCtx.globalCompositeOperation = 'copy';
       window.fbCtx.filter = 'hue-rotate(4deg) saturate(1.03)';
@@ -1221,6 +1392,11 @@ function draw() {
   } else {
     tip.style.opacity = '0';
   }
+
+  const inRituellesUniverse = !!(zoomed && zoomTarget && zoomTarget.name === 'Rituelles');
+  const shouldHideUi = inRituellesUniverse && !document.body.classList.contains('edit-mode')
+    && (performance.now() - lastUiActivityAt >= RITUELLES_IDLE_MS);
+  setRituellesUiHidden(shouldHideUi);
 
   requestAnimationFrame(draw);
 }
