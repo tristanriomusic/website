@@ -155,6 +155,7 @@
     }
     #modal-close:hover { color: #fff; }
 
+
     /* ── Truth overlay ── */
     #truth-overlay {
       display: none;
@@ -164,6 +165,112 @@
       backdrop-filter: blur(2px);
     }
     #truth-overlay.visible { display: flex; animation: fadeM 0.5s ease; }
+
+    /* ---- Rituelles Video Layer ---- */
+    #rituelles-video-layer {
+      display: none;
+      position: fixed; inset: 0; z-index: 55;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0); /* No darkening */
+    }
+    #rituelles-video-layer.visible {
+      display: flex;
+      animation: rituellesVideoFadeIn 1.2s ease-out;
+    }
+    #rituelles-video-layer.fade-out {
+      animation: rituellesVideoFadeOut 0.8s ease-in forwards;
+    }
+    #rituelles-video-shell {
+      width: 85vw;
+      max-width: 900px;
+      height: 90vh;
+      border-radius: 0;
+      overflow: hidden;
+      transform: scale(1);
+      animation: rituellesVideoScaleIn 1.2s ease-out 0.3s forwards;
+      /* 9:16 aspect ratio */
+      aspect-ratio: 9/16;
+    }
+    #rituelles-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: transparent;
+      opacity: 0.8; /* More see-through effect */
+    }
+    
+    @keyframes rituellesVideoFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes rituellesVideoFadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    
+    @keyframes rituellesFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.02); }
+    }
+    
+    @keyframes rituellesTimeBend {
+      0% { 
+        filter: hue-rotate(0deg) saturate(1.1) brightness(1);
+        box-shadow: 0 0 40px rgba(180,100,255,0.15),
+                   0 0 80px rgba(120,80,255,0.1),
+                   0 0 120px rgba(100,150,255,0.05);
+      }
+      50% { 
+        filter: hue-rotate(180deg) saturate(1.2) brightness(1.1);
+        box-shadow: 0 0 40px rgba(255,150,100,0.2),
+                   0 0 80px rgba(180,120,255,0.15),
+                   0 0 120px rgba(100,180,255,0.1);
+      }
+      100% { 
+        filter: hue-rotate(360deg) saturate(1.1) brightness(1);
+        box-shadow: 0 0 40px rgba(180,100,255,0.15),
+                   0 0 80px rgba(120,80,255,0.1),
+                   0 0 120px rgba(100,150,255,0.05);
+      }
+    }
+    @keyframes rituellesVideoScaleIn {
+      from { 
+        opacity: 0;
+      }
+      to { 
+        opacity: 1;
+      }
+    }
+    
+    @keyframes rituellesColorRadiate {
+      0% {
+        box-shadow: 0 0 50px rgba(255,255,255,0.6),
+                   0 0 100px rgba(200,220,255,0.4),
+                   0 0 150px rgba(150,180,255,0.3),
+                   0 0 200px rgba(100,150,255,0.2),
+                   0 0 250px rgba(50,100,255,0.1),
+                   0 0 300px rgba(255,50,150,0.05);
+        filter: contrast(1.2) brightness(1.1) saturate(1.3);
+      }
+      50% {
+        box-shadow: 0 0 50px rgba(255,200,200,0.6),
+                   0 0 100px rgba(255,150,100,0.4),
+                   0 0 150px rgba(200,100,255,0.3),
+                   0 0 200px rgba(150,200,255,0.2),
+                   0 0 250px rgba(100,50,255,0.1),
+                   0 0 300px rgba(255,100,50,0.05);
+        filter: contrast(1.3) brightness(1.15) saturate(1.5);
+      }
+      100% {
+        box-shadow: 0 0 50px rgba(200,255,200,0.6),
+                   0 0 100px rgba(255,200,150,0.4),
+                   0 0 150px rgba(255,150,100,0.3),
+                   0 0 200px rgba(200,200,255,0.2),
+                   0 0 250px rgba(150,50,255,0.1),
+                   0 0 300px rgba(100,50,255,0.05);
+        filter: contrast(1.2) brightness(1.1) saturate(1.3);
+      }
+    }
     #truth-ui {
       width: clamp(300px, 72vw, 820px);
       display: flex; flex-direction: column; align-items: center; gap: 2vh;
@@ -175,6 +282,50 @@
       text-align: center;
       text-shadow: 0 0 20px rgba(180,100,255,0.7), 0 0 50px rgba(100,150,255,0.4);
       animation: questionPulse 4s ease-in-out infinite;
+    }
+    #truth-sound-systems {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1vh;
+    }
+    .truth-system-label {
+      color: rgba(255,255,255,0.5);
+      font-size: clamp(10px, 1vw, 13px);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .truth-system-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .truth-system-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 3px;
+      color: rgba(255,255,255,0.4);
+      font-family: 'Georgia', serif;
+      font-size: clamp(9px, 0.9vw, 12px);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+    .truth-system-btn:hover {
+      color: rgba(255,255,255,0.7);
+      border-color: rgba(180,100,255,0.5);
+      box-shadow: 0 0 12px rgba(180,100,255,0.2);
+    }
+    .truth-system-btn.active {
+      color: #fff;
+      border-color: rgba(180,100,255,0.8);
+      background: rgba(180,100,255,0.15);
+      box-shadow: 0 0 18px rgba(180,100,255,0.4), inset 0 0 8px rgba(180,100,255,0.1);
     }
     @keyframes questionPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
     #truth-journal {
@@ -329,8 +480,8 @@
     #aquarium-overlay {
       display: none; position: fixed; inset: 0; z-index: 60;
       flex-direction: column;
-      background: linear-gradient(180deg, rgba(15, 60, 150, 0.85) 0%, rgba(30, 110, 215, 0.85) 50%, rgba(10, 70, 160, 0.85) 100%);
-      backdrop-filter: blur(3px);
+      background: linear-gradient(180deg, rgba(5, 14, 22, 0.88) 0%, rgba(14, 37, 45, 0.86) 38%, rgba(32, 14, 42, 0.9) 100%);
+      backdrop-filter: blur(4px);
     }
     #aquarium-overlay.visible { display: flex; animation: fadeM 0.5s ease; }
     #aquarium-canvas {
@@ -350,6 +501,58 @@
     #aquarium-fish-btns {
       display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
     }
+    #aquarium-status {
+      max-width: min(86vw, 780px);
+      color: rgba(205, 237, 233, 0.72);
+      font-size: clamp(10px, 0.95vw, 13px);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.6;
+      text-shadow: 0 0 14px rgba(120, 255, 218, 0.18);
+    }
+    #aquarium-flow-wrap {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 14px;
+      background: rgba(8, 14, 20, 0.52);
+      border: 1px solid rgba(140, 255, 210, 0.18);
+      border-radius: 999px;
+      color: rgba(210, 238, 230, 0.72);
+      font-size: clamp(10px, 0.9vw, 13px);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    #aquarium-flow {
+      width: min(42vw, 240px);
+      accent-color: #7cffc0;
+    }
+    #aquarium-event {
+      max-width: min(88vw, 720px);
+      padding: 16px 18px;
+      background: rgba(20, 12, 15, 0.82);
+      border: 1px solid rgba(233, 210, 170, 0.24);
+      box-shadow: 0 0 36px rgba(0, 0, 0, 0.35);
+      color: rgba(234, 221, 199, 0.9);
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+    #aquarium-event.visible { display: flex; }
+    #aquarium-event-title {
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      font-size: clamp(11px, 1vw, 14px);
+      color: rgba(255, 231, 189, 0.92);
+    }
+    #aquarium-event-text {
+      font-size: clamp(12px, 1vw, 14px);
+      line-height: 1.6;
+      color: rgba(235, 225, 210, 0.8);
+    }
+    #aquarium-event-actions {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    }
     .aq-add-btn {
       background: rgba(0,30,50,0.7);
       border: 1px solid rgba(0,180,255,0.25);
@@ -362,6 +565,21 @@
     .aq-add-btn:hover {
       color: rgba(200,245,255,0.95); border-color: rgba(0,200,255,0.6);
       box-shadow: 0 0 14px rgba(0,180,255,0.25);
+    }
+    .aq-ritual-btn {
+      background: rgba(52, 31, 26, 0.7);
+      border: 1px solid rgba(235, 216, 170, 0.28);
+      border-radius: 3px;
+      padding: 7px 14px;
+      color: rgba(248, 233, 205, 0.88);
+      font-family: 'Georgia', serif;
+      font-size: clamp(11px, 0.95vw, 13px);
+      letter-spacing: 0.12em;
+      cursor: pointer;
+    }
+    .aq-ritual-btn:hover {
+      border-color: rgba(255, 239, 204, 0.6);
+      box-shadow: 0 0 18px rgba(255, 231, 175, 0.16);
     }
     #aquarium-back {
       color: rgba(100,200,255,0.35); font-size: clamp(10px,1.1vw,14px);
@@ -515,6 +733,7 @@
   <button class="anim-btn" data-anim="storm">Cosmic Storm</button>
   <button class="anim-btn" data-anim="fluid">Liquid Space</button>
   <button class="anim-btn" data-anim="neon">Neon Pulse</button>
+  <button class="anim-btn" data-anim="frantic">Frantic</button>
   <button class="anim-btn active" data-anim="fractal">Fractal Dream</button>
   <button class="anim-btn" data-anim="echo">Ghost Echo</button>
   <button class="anim-btn" data-anim="chroma">Chroma Shift</button>
@@ -534,15 +753,29 @@
 <div id="aquarium-overlay">
   <canvas id="aquarium-canvas"></canvas>
   <div id="aquarium-ui">
-    <div id="aquarium-title">Add a creature to the ecosystem</div>
+    <div id="aquarium-title">Seed the eldritch ecosystem</div>
+    <div id="aquarium-status"></div>
+    <label id="aquarium-flow-wrap">
+      <span>The Flow</span>
+      <input id="aquarium-flow" type="range" min="1" max="6" step="0.1" value="1">
+      <span id="aquarium-flow-value">1.0x</span>
+    </label>
+    <div id="aquarium-event">
+      <div id="aquarium-event-title">Mad Tea Party</div>
+      <div id="aquarium-event-text"></div>
+      <div id="aquarium-event-actions">
+        <button class="aq-ritual-btn" id="aq-pour-tea">Pour the Tea</button>
+        <button class="aq-ritual-btn" id="aq-break-cup">Break the Cup</button>
+      </div>
+    </div>
     <div id="aquarium-fish-btns">
-      <button class="aq-add-btn" data-species="plankton">🟢 Plankton</button>
-      <button class="aq-add-btn" data-species="sardine">🐟 Sardine</button>
-      <button class="aq-add-btn" data-species="clownfish">🟠 Clownfish</button>
-      <button class="aq-add-btn" data-species="tuna">🔵 Tuna</button>
-      <button class="aq-add-btn" data-species="shark">⬛ Shark</button>
-      <button class="aq-add-btn" data-species="jellyfish">🪼 Jellyfish</button>
-      <button class="aq-add-btn" data-species="octopus">🟣 Octopus</button>
+      <button class="aq-add-btn" data-species="plankton">Toxic Glitter</button>
+      <button class="aq-add-btn" data-species="sardine">Tea Fry</button>
+      <button class="aq-add-btn" data-species="clownfish">Cheshire Cuttlefish</button>
+      <button class="aq-add-btn" data-species="tuna">Jabberwock Larva</button>
+      <button class="aq-add-btn" data-species="shark">Jabberwock Leviathan</button>
+      <button class="aq-add-btn" data-species="jellyfish">Sentient Anemone</button>
+      <button class="aq-add-btn" data-species="octopus">Caterpillar-Hydra</button>
     </div>
     <div id="aquarium-back">← Return</div>
   </div>
@@ -562,16 +795,38 @@
 <!-- Truth writing overlay -->
 <div id="truth-overlay">
   <div id="truth-ui">
-    <div id="truth-question">What does Trūth mean to You?</div>
+    <div id="truth-question">What does Trüth mean to You?</div>
+    
+    <!-- Sound system selection -->
+    <div id="truth-sound-systems">
+      <div class="truth-system-label">Sound System:</div>
+      <div class="truth-system-buttons">
+        <button class="truth-system-btn" data-system="lydian">Lydian Notes</button>
+        <button class="truth-system-btn" data-system="organ">Organ</button>
+        <button class="truth-system-btn" data-system="organ">Organ</button>
+        <button class="truth-system-btn" data-system="drone">Drone</button>
+        <button class="truth-system-btn" data-system="rhythm">Rhythm</button>
+        <button class="truth-system-btn" data-system="ambient">Ambient</button>
+        <button class="truth-system-btn" data-system="sequence">Sequences</button>
+      </div>
+    </div>
+    
     <textarea id="truth-journal" placeholder="Write here… every letter sings."></textarea>
     <div id="truth-playback-view"></div>
     <div id="truth-bar-progress"><div id="truth-bar-fill"></div></div>
     <div id="truth-controls">
       <button class="ctrl-btn" id="truth-btn-play">&#9654; Play</button>
       <button class="ctrl-btn" id="truth-btn-stop" style="display:none">&#9632; Stop</button>
-      <span id="truth-bpm-label">65 BPM · 1 word = 1 beat</span>
+      <span id="truth-bpm-label">60 BPM · 1 word = 1 beat</span>
     </div>
     <div id="truth-back">&#8592; Return</div>
+  </div>
+</div>
+
+<!-- Rituelles Video Layer -->
+<div id="rituelles-video-layer">
+  <div id="rituelles-video-shell">
+    <video id="rituelles-video" muted playsinline preload="auto" src="../1776805285295033.mp4"></video>
   </div>
 </div>
 
@@ -590,6 +845,12 @@ const mVideo   = document.getElementById('modal-video');
 const mAudio   = document.getElementById('modal-audio');
 const mPlace   = document.getElementById('modal-placeholder');
 const mClose   = document.getElementById('modal-close');
+
+// Rituelles video elements
+const rituellesVideoLayer = document.getElementById('rituelles-video-layer');
+const rituellesVideo = document.getElementById('rituelles-video');
+let rituellesVideoTimer = null;
+let rituellesVideoTriggered = false;
 let W, H;
 
 function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
@@ -677,7 +938,7 @@ const ZONES = [
     name:'Truth', hoverText:'Every letter is a sound — write your truth!',
     baseH:280, label:'#cc44ff', type:'truth' },
 
-  { nx:0.8735, ny:0.4145, nrx:0.1293, nry:0.1586,
+  { nx:0.8735, ny:0.4145, nrx:0.1293, nry:0.1586, cnrx:0.06, cnry:0.07,
     name:'Desert Dream', hoverText:'Is there life on Mars? How we turned a pirate ship to a spaceship',
     baseH:90,  label:'#ff8844', type:'localvideo', src:'../videos/desert-dream.mp4' },
 
@@ -685,9 +946,9 @@ const ZONES = [
     name:'Aquarium', hoverText:'A living ecosystem — add fish, watch the chain unfold',
     baseH:195, label:'#00ccff', type:'aquarium' },
 
-  { nx:0.755, ny:0.345, nrx:0.072, nry:0.095,
+  { nx:0.755, ny:0.345, nrx:0.072, nry:0.095, cnrx:0.05, cnry:0.06,
     name:'Darkness', hoverText:'Face your demons',
-    baseH:240, label:'#3322aa', type:'placeholder', msg:'Darkness\n— Here we face our Demons —',
+    baseH:240, label:'#3322aa', type:'placeholder', msg:'Darkness\n-- Here we face our Demons --',
     dark:true },
 
   { nx:0.6949, ny:0.6728, nrx:0.1293, nry:0.2261, cnrx:0.06, cnry:0.08,
@@ -695,8 +956,8 @@ const ZONES = [
     baseH:340, label:'#ff69b4', type:'love' },
 
   { nx:0.1322, ny:0.5400, nrx:0.04, nry:0.05,
-    name:'Join Us', hoverText:'Join Us!',
-    baseH:200, label:'#ffffff', type:'placeholder', msg:'Join Us!\n— Mailing list coming soon —' },
+    name:'SpaceRave Planet', hoverText:'spaced out beats with a psychedelic touch',
+    baseH:200, label:'#ffffff', type:'placeholder', msg:'SpaceRave Planet\n— spaced out beats with a psychedelic touch —' },
 ];
 
 /* ═══ ZOOM STATE ═══ */
@@ -712,6 +973,7 @@ let activeAnim = 'fractal';
 let animLevel = 0.0;
 let animManual = false;
 let prevDarknessActive = false;
+let prevDesertDreamActive = false;
 let rituellesPlaying = false;
 let fractalRampStart = null;
 let fractalViewMix = 0;
@@ -723,6 +985,13 @@ const FRACTAL_ROTATION_RAMP_MS = 3800;
 const FRACTAL_BASE_ROT_SPEED = 0.0023;
 const FRACTAL_TARGET_SCALE = 1.3;
 const FRACTAL_DEEP_PHASE_END = 0.36;
+const DESERT_NEON_LEVEL = 0.72;
+
+function getEffectiveAnim() {
+  if (prevDarknessActive) return 'storm';
+  if (prevDesertDreamActive) return 'neon';
+  return activeAnim;
+}
 
 function easeInOutCubic(v) {
   return v < 0.5
@@ -742,11 +1011,13 @@ function catmullRom(p0, p1, p2, p3, u) {
 }
 
 function updateAnimButtonState() {
-  const isActive = rituellesPlaying || animManual || prevDarknessActive;
+  const isActive = rituellesPlaying || animManual || prevDarknessActive || prevDesertDreamActive;
+  const currentAnim = getEffectiveAnim();
   document.querySelectorAll('.anim-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.anim === activeAnim && isActive);
+    b.classList.toggle('active', b.dataset.anim === currentAnim && isActive);
   });
 }
+
 
 document.querySelectorAll('.anim-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -765,9 +1036,22 @@ mAudio.addEventListener('play', () => {
     rituellesPlaying = true;
     activeAnim = 'fractal';
     animManual = false;
+    
+    // Reset video trigger state when song starts
+    rituellesVideoTriggered = false;
   }
   updateAnimButtonState();
   updateNavLockState();
+});
+
+// Add timeupdate event listener to check for 1:15 mark
+mAudio.addEventListener('timeupdate', () => {
+  if (mAudio.src && mAudio.src.includes('Rituelles') && rituellesPlaying && !rituellesVideoTriggered) {
+    // Check if current time has reached or passed 1:15 (75 seconds)
+    if (mAudio.currentTime >= 75) {
+      startRituellesVideo();
+    }
+  }
 });
 mAudio.addEventListener('pause', () => {
   rituellesPlaying = false;
@@ -785,6 +1069,97 @@ function updateDarknessStorm(darknessActive) {
   prevDarknessActive = darknessActive;
   updateAnimButtonState();
 }
+
+function updateDesertDreamNeon(desertDreamActive) {
+  if (desertDreamActive === prevDesertDreamActive) return;
+  prevDesertDreamActive = desertDreamActive;
+  updateAnimButtonState();
+}
+
+/* ---- Rituelles Video Functions ---- */
+function startRituellesVideo() {
+  if (rituellesVideoTriggered) return; // Prevent multiple triggers
+  rituellesVideoTriggered = true;
+  
+  // Reset video to beginning
+  rituellesVideo.currentTime = 0;
+  rituellesVideo.play();
+  
+  // Show video layer with smooth animation
+  rituellesVideoLayer.classList.add('visible');
+  rituellesVideoLayer.classList.remove('fade-out');
+}
+
+function endRituellesVideo() {
+  // Add fade-out animation
+  rituellesVideoLayer.classList.add('fade-out');
+  rituellesVideoLayer.classList.remove('visible');
+  
+  // Hide video after animation completes
+  setTimeout(() => {
+    rituellesVideoLayer.classList.remove('fade-out');
+    rituellesVideoLayer.classList.remove('visible');
+    rituellesVideo.pause();
+    rituellesVideo.currentTime = 0;
+  }, 800);
+}
+
+// Add video end event listener
+rituellesVideo.addEventListener('ended', () => {
+  endRituellesVideo();
+});
+
+// Color shifting effect that responds to background animation colors
+let rituellesColorShift = { r: 255, g: 255, b: 255 }; // Default white
+let rituellesShiftSpeed = 0.02;
+
+function updateRituellesColorShift() {
+  if (!rituellesVideoLayer.classList.contains('visible')) return;
+  
+  // Detect dominant background color (simplified - in real implementation would detect actual animation colors)
+  const time = Date.now() / 1000;
+  const colorPhase = (time * rituellesShiftSpeed) % 1;
+  
+  // Shift colors based on dominant background color
+  if (colorPhase < 0.33) {
+    // Purple dominant - shift to purple tones
+    rituellesColorShift = { 
+      r: 180 + Math.sin(time * 0.001) * 75,
+      g: 100 + Math.sin(time * 0.002) * 80,
+      b: 255 + Math.sin(time * 0.001) * 50
+    };
+  } else if (colorPhase < 0.66) {
+    // Blue dominant - shift to blue tones
+    rituellesColorShift = { 
+      r: 100 + Math.sin(time * 0.001) * 50,
+      g: 150 + Math.sin(time * 0.002) * 50,
+      b: 255 + Math.sin(time * 0.001) * 50
+    };
+  } else {
+    // Default/other - shift to mixed tones
+    rituellesColorShift = { 
+      r: 255,
+      g: 200 + Math.sin(time * 0.001) * 55,
+      b: 150 + Math.sin(time * 0.002) * 105
+    };
+  }
+  
+  // Apply color shift to video
+  const video = document.getElementById('rituelles-video');
+  if (video) {
+    video.style.filter = `hue-rotate(${(time * 20) % 360}deg) saturate(1.2) brightness(1.1)`;
+    video.style.boxShadow = `
+      0 0 30px rgba(${rituellesColorShift.r},${rituellesColorShift.g},${rituellesColorShift.b},0.3),
+      0 0 60px rgba(${rituellesColorShift.r * 0.8},${rituellesColorShift.g * 0.8},${rituellesColorShift.b * 0.8},0.2),
+      0 0 90px rgba(${rituellesColorShift.r * 0.6},${rituellesColorShift.g * 0.6},${rituellesColorShift.b * 0.6},0.1)
+    `;
+  }
+}
+
+// Update color shift continuously
+setInterval(() => {
+  updateRituellesColorShift();
+}, 50);
 
 /* ═══ WARP STARFIELD ═══ */
 const STAR_COLORS = ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff',
@@ -944,9 +1319,11 @@ function imgLayout() {
 /* ═══ MAIN DRAW ═══ */
 function draw() {
   t++;
-  const animNow = rituellesPlaying || animManual || prevDarknessActive;
+  const effectiveAnim = getEffectiveAnim();
+  const animNow = rituellesPlaying || animManual || prevDarknessActive || prevDesertDreamActive;
   animLevel += (animNow ? 1.0 : 0.0 - animLevel) * (animNow ? 0.035 : 0.022);
-  const fractalActive = animNow && activeAnim === 'fractal';
+  const neonEffectLevel = (effectiveAnim === 'neon' && prevDesertDreamActive) ? DESERT_NEON_LEVEL : animLevel;
+  const fractalActive = animNow && effectiveAnim === 'fractal';
   if (fractalActive) {
     if (fractalRampStart === null) {
       fractalRampStart = performance.now();
@@ -1112,6 +1489,19 @@ function draw() {
     ctx.translate(-mobileOffsetX, 0);
   }
 
+  // Add neon vibration/distortion effect
+  if ((effectiveAnim === 'neon' || effectiveAnim === 'frantic') && neonEffectLevel > 0.1) {
+    const isFrantic = effectiveAnim === 'frantic';
+    const vibrationIntensity = neonEffectLevel * (isFrantic ? 1.9 : 0.22);
+    const vibX = Math.sin(t * (isFrantic ? 0.08 : 0.045)) * vibrationIntensity
+      + Math.sin(t * (isFrantic ? 0.13 : 0.045) + 1.2) * vibrationIntensity * (isFrantic ? 0.6 : 0.05);
+    const vibY = Math.cos(t * (isFrantic ? 0.11 : 0.058)) * vibrationIntensity
+      + Math.cos(t * (isFrantic ? 0.09 : 0.042) + 0.8) * vibrationIntensity * (isFrantic ? 0.6 : 0.05);
+    const vibSkew = Math.sin(t * (isFrantic ? 0.06 : 0.024)) * neonEffectLevel * (isFrantic ? 0.05 : 0.0045);
+    ctx.translate(vibX, vibY);
+    ctx.transform(1, vibSkew, vibSkew * 0.5, 1, 0, 0);
+  }
+
   /* ── Detect hovered zone (before draw so we can boost deformation) ── */
   hoveredZone = null;
   for (let i = 0; i < ZONES.length; i++) {
@@ -1127,6 +1517,12 @@ function draw() {
   updateDarknessStorm(
     !!(hoveredZone && hoveredZone.dark) ||
     !!(zoomed && zoomTarget && zoomTarget.dark)
+  );
+
+  // Auto-trigger neon pulse when in Desert Dream zone (hover or navigated to)
+  updateDesertDreamNeon(
+    !!(hoveredZone && hoveredZone.name === 'Desert Dream') ||
+    !!(zoomed && zoomTarget && zoomTarget.name === 'Desert Dream')
   );
 
   // Hearts when zoomed into Love universe
@@ -1151,15 +1547,19 @@ function draw() {
 
   /* ── Draw artwork: orb-gravity deformation makes lines warp and breathe ── */
   ctx.save();
-  ctx.filter = (activeAnim === 'neon' && animLevel > 0.01)
-    ? `contrast(12) brightness(1.4) hue-rotate(${t * 3 * animLevel}deg) saturate(${1 + 3 * animLevel})`
+  ctx.filter = ((effectiveAnim === 'neon' || effectiveAnim === 'frantic') && neonEffectLevel > 0.01)
+    ? (effectiveAnim === 'frantic'
+      ? `contrast(22) brightness(1.95) hue-rotate(${t * 4.6 * neonEffectLevel}deg) saturate(${1 + 5.2 * neonEffectLevel}) invert(${0.05 * neonEffectLevel})`
+      : `contrast(13.2) brightness(1.18) hue-rotate(${t * 1.15 * neonEffectLevel}deg) saturate(${1 + 0.95 * neonEffectLevel}) invert(${0.008 * neonEffectLevel})`)
     : 'contrast(12) brightness(1.4)';
   const NS = 60;
 
   function stripDisplace(si) {
     const syC = (si + 0.5) / NS;
-    const isStorm = activeAnim === 'storm';
-    const isFluid = activeAnim === 'fluid';
+    const isStorm = effectiveAnim === 'storm';
+    const isFluid = effectiveAnim === 'fluid';
+    const isNeon = effectiveAnim === 'neon';
+    const isFrantic = effectiveAnim === 'frantic';
     const sf = 0.14 + (isStorm ? animLevel * 0.86 : 0);
 
     // Base organic wave (horizontal shimmer)
@@ -1193,6 +1593,15 @@ function draw() {
       wx += Math.sin(t * 0.03 + si * 0.4) * 45 * animLevel;
       wMod += Math.sin(t * 0.04 + si * 0.5) * 0.12 * animLevel;
     }
+
+    // Neon pulse: extreme distortion and flicker
+    if ((isNeon || isFrantic) && neonEffectLevel > 0.05) {
+      const neonIntensity = neonEffectLevel * (isFrantic ? 0.95 : 0.14);
+      wx += Math.sin(t * (isFrantic ? 0.19 : 0.055) + si * (isFrantic ? 2.1 : 0.75)) * drawW * neonIntensity * (isFrantic ? 0.3 : 0.02);
+      wx += Math.cos(t * (isFrantic ? 0.14 : 0.042) + si * (isFrantic ? 1.2 : 0.45)) * drawW * neonIntensity * (isFrantic ? 0.18 : 0.012);
+      wMod += Math.sin(t * (isFrantic ? 0.17 : 0.048) + si * (isFrantic ? 1.0 : 0.34)) * neonIntensity * (isFrantic ? 0.12 : 0.01);
+    }
+
     return { wx, wMod };
   }
 
@@ -1255,8 +1664,8 @@ function draw() {
       ctx.save();
       ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
       const gd = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
-      gd.addColorStop(0,   `hsla(${evilHue},75%,12%,${alpha1 * 0.55 * boost})`);
-      gd.addColorStop(0.5, `hsla(${evilHue},85%,18%,${alpha2 * 0.4 * boost})`);
+      gd.addColorStop(0,   `hsla(${evilHue},75%,35%,${alpha1 * 0.8 * boost})`);
+      gd.addColorStop(0.5, `hsla(${evilHue},85%,45%,${alpha2 * 0.7 * boost})`);
       gd.addColorStop(1,   'transparent');
       ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
       ctx.fillStyle = gd; ctx.fill();
@@ -1328,7 +1737,7 @@ function draw() {
 
   // Apply post-processing effects
   if (animLevel > 0.01) {
-    if (activeAnim === 'fractal') {
+    if (effectiveAnim === 'fractal') {
       const lineRevealRaw = Math.max(0, Math.min((fractalIntroProgress - 0.42) / 0.5, 1));
       const lineReveal = easeInOutCubic(lineRevealRaw);
       const revealRadius = (0.06 + lineReveal * 1.25) * Math.max(W, H);
@@ -1425,7 +1834,7 @@ function draw() {
       window.fbCtx.globalCompositeOperation = 'source-over';
       window.fbCtx.fillStyle = `rgba(0, 0, 0, ${0.2 + (1 - fractalBloom) * 0.14})`;
       window.fbCtx.fillRect(0, 0, W, H);
-    } else if (activeAnim === 'echo') {
+    } else if (effectiveAnim === 'echo') {
       ctx.save();
       ctx.globalAlpha = animLevel * 0.15;
       ctx.globalCompositeOperation = 'screen';
@@ -1437,7 +1846,7 @@ function draw() {
         ctx.restore();
       }
       ctx.restore();
-    } else if (activeAnim === 'chroma') {
+    } else if (effectiveAnim === 'chroma') {
       ctx.save();
       ctx.globalCompositeOperation = 'exclusion';
       ctx.globalAlpha = animLevel * 0.5;
@@ -1467,6 +1876,21 @@ function draw() {
     && (rituellesUiHidden || (performance.now() - lastUiActivityAt >= RITUELLES_IDLE_MS));
   setRituellesUiHidden(shouldHideUi);
   updateRituellesHoverReveal(inRituellesUniverse);
+
+  // Neon scanline overlay and final flicker
+  if ((effectiveAnim === 'neon' || effectiveAnim === 'frantic') && neonEffectLevel > 0.15) {
+    ctx.globalAlpha = neonEffectLevel * (effectiveAnim === 'frantic' ? 0.14 : 0.035);
+    ctx.fillStyle = '#ffffff';
+    ctx.globalCompositeOperation = 'screen';
+    const lineStep = effectiveAnim === 'frantic' ? 4 : 7;
+    for (let y = 0; y < H; y += lineStep) {
+      if ((Math.floor(y / lineStep) + Math.floor(t / (effectiveAnim === 'frantic' ? 3 : 6))) % 2 === 0) {
+        ctx.fillRect(0, y, W, effectiveAnim === 'frantic' ? 1.2 : 0.9);
+      }
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+  }
 
   requestAnimationFrame(draw);
 }
@@ -1626,6 +2050,7 @@ function closeModal() {
   mAudio.style.display = 'none';
   mPlace.style.display = 'none';
   if (wasRituellesAudio) {
+    endRituellesCompanionVideo(true);
     // Return to regular Rituelles universe view after closing playback.
     rituellesPlaying = false;
     animManual = false;
@@ -1924,80 +2349,360 @@ function toggleSynth() {
 
 /* ═══ TRUTH OVERLAY ═══ */
 const TRUTH_LYDIAN = [0, 2, 4, 6, 7, 9, 11];
-const TRUTH_ROOT   = 82.41; // E2
-const TRUTH_BPM    = 65;
+const TRUTH_ROOT   = 164.82; // E3 (one octave higher)
+const TRUTH_BPM    = 60;
 const TRUTH_BAR    = 60 / TRUTH_BPM;
-const TRUTH_SYMS   = ['♩','♪','♫','♬'];
+const TRUTH_SYMS   = ['', '', '', ''];
 
-let truth_mGain = null, truth_revNode = null, truth_revWet = null;
+// Fixed note mapping for each letter using E Lydian scale with third-based structure
+// Letters mapped to scale degrees in thirds: 1, 3, 5, 7, 2, 4, 6, 1, 3, 5, 7, 2, 4, 6, etc.
+const TRUTH_LETTER_NOTES = {
+  'a': 0, 'b': 2, 'c': 4, 'd': 6, 'e': 1, 'f': 3, 'g': 5, 'h': 0, 'i': 2, 'j': 4, 'k': 6, 'l': 1, 'm': 3,
+  'n': 5, 'o': 0, 'p': 2, 'q': 4, 'r': 6, 's': 1, 't': 3, 'u': 5, 'v': 0, 'w': 2, 'x': 4, 'y': 6, 'z': 1,
+  ' ': 3 // Space gets a neutral note
+};
+
+let truth_mGain = null, truth_merger = null, truth_revNode = null, truth_revWet = null, truth_delay = null, truth_delayWet = null;
 let truth_playing = false, truth_timers = [], truth_rafId = null;
 let truth_startAC = null, truth_startWall = null, truth_totalBars = 0;
+let truth_currentSystem = 'lydian'; // Default to Lydian Notes system
 
 function truth_hz(degree) {
   const oct = Math.floor(degree / 7), step = degree % 7;
   return TRUTH_ROOT * Math.pow(2, oct) * Math.pow(2, TRUTH_LYDIAN[step] / 12);
 }
 function truth_charDeg(ch) {
-  const c = ch.toLowerCase().charCodeAt(0);
-  return (c < 97 || c > 122) ? 0 : Math.round((c - 97) / 25 * 13);
+  const c = ch.toLowerCase();
+  return TRUTH_LETTER_NOTES[c] !== undefined ? TRUTH_LETTER_NOTES[c] : 3; // Default to neutral note
 }
-function truth_buildIR(sec) {
-  const sr = ac.sampleRate, len = Math.floor(sr * sec);
-  const buf = ac.createBuffer(2, len, sr);
-  for (let ch = 0; ch < 2; ch++) {
-    const d = buf.getChannelData(ch); let lp = 0;
-    for (let i = 0; i < len; i++) {
-      const n = Math.random()*2-1; lp = lp*0.82 + n*0.18;
-      d[i] = lp * Math.pow(1 - i/len, 2.2);
-    }
-  }
-  return buf;
+function truth_fixedNoteHz(ch) {
+  const degree = truth_charDeg(ch);
+  return TRUTH_ROOT * Math.pow(2, TRUTH_LYDIAN[degree] / 12);
+}
+
+function truth_charDeg(ch) {
+  const c = ch.toLowerCase();
+  return TRUTH_LETTER_NOTES[c] !== undefined ? TRUTH_LETTER_NOTES[c] : 3; // Default to neutral note
+}
+
+// System 1: Lydian Notes - Simple and magical
+function truth_noteLydian(ch, t, durS, vol=0.25) {
+  truth_initAudio();
+  const hz = truth_fixedNoteHz(ch);
+  
+  // Pure sine for serenity
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = hz;
+  
+  // Gentle stereo positioning
+  const panner = ac.createStereoPanner();
+  panner.pan.value = (ch.charCodeAt(0) % 20 - 10) / 30; // Subtle character-based pan
+  
+  // Soft envelope for beauty
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.03);
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  osc.connect(env);
+  env.connect(panner);
+  panner.connect(truth_merger, 0, 0);
+  panner.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  osc.stop(t + durS);
+}
+
+function truth_noteChord(word, t, durS, vol=0.2) {
+  if (!word || word.trim() === '') return;
+  
+  truth_initAudio();
+  
+  const ch = word.toLowerCase().charAt(0);
+  if (!ch || ch === ' ') return;
+  
+  const hz = truth_fixedNoteHz(ch);
+  
+  // Simple beautiful chord
+  const root = ac.createOscillator();
+  root.type = 'sine';
+  root.frequency.value = hz;
+  
+  // Gentle fifth for warmth
+  const fifth = ac.createOscillator();
+  fifth.type = 'sine';
+  fifth.frequency.value = hz * 1.5; // Perfect fifth
+  
+  // Centered for serenity
+  const panner = ac.createStereoPanner();
+  panner.pan.value = 0;
+  
+  // Soft envelope for beauty
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.05);
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  const fifthGain = ac.createGain();
+  fifthGain.gain.value = vol * 0.15; // Gentle warmth
+  
+  root.connect(env);
+  fifth.connect(fifthGain);
+  fifthGain.connect(env);
+  env.connect(panner);
+  panner.connect(truth_merger, 0, 0);
+  panner.connect(truth_merger, 0, 1);
+  
+  root.start(t);
+  fifth.start(t);
+  root.stop(t + durS);
+  fifth.stop(t + durS);
+}
+
+function truth_noteSequence(ch, t, durS, vol=0.25) {
+  truth_initAudio();
+  
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = truth_fixedNoteHz(ch);
+  
+  // Subtle third harmonic
+  const third = ac.createOscillator();
+  third.type = 'sine';
+  third.frequency.value = truth_fixedNoteHz(ch) * 1.25; // Major third
+  
+  // Character-based stereo position
+  const panner = ac.createStereoPanner();
+  panner.pan.value = (ch.charCodeAt(0) % 100 - 50) / 50;
+  
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.005);
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  const thirdGain = ac.createGain();
+  thirdGain.gain.value = vol * 0.12;
+  
+  osc.connect(env);
+  third.connect(thirdGain);
+  thirdGain.connect(env);
+  env.connect(panner);
+  panner.connect(truth_merger, 0, 0);
+  panner.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  third.start(t);
+  osc.stop(t + durS);
+  third.stop(t + durS);
+}
+
+function truth_noteOrgan(ch, t, durS, vol=0.22) {
+  truth_initAudio();
+  
+  const hz = truth_fixedNoteHz(ch);
+  
+  // Magical organ sound
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = hz;
+  
+  // Gentle octave for organ warmth
+  const octave = ac.createOscillator();
+  octave.type = 'sine';
+  octave.frequency.value = hz * 2;
+  
+  // Soft stereo positioning
+  const panner = ac.createStereoPanner();
+  panner.pan.value = (ch.charCodeAt(0) % 10 - 5) / 20; // Gentle character-based pan
+  
+  // Smooth envelope for serenity
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.08); // Gentle organ swell
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  const octaveGain = ac.createGain();
+  octaveGain.gain.value = vol * 0.12; // Subtle warmth
+  
+  osc.connect(env);
+  octave.connect(octaveGain);
+  octaveGain.connect(env);
+  env.connect(panner);
+  panner.connect(truth_merger, 0, 0);
+  panner.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  octave.start(t);
+  osc.stop(t + durS);
+  octave.stop(t + durS);
 }
 function truth_initAudio() {
   initAudio();
   if (truth_mGain) return;
   if (ac.state === 'suspended') ac.resume();
-  truth_mGain = ac.createGain(); truth_mGain.gain.value = 0.40;
-  truth_mGain.connect(masterEQ);
+  
+  // Create serene audio processing chain
+  truth_merger = ac.createChannelMerger(2);
+  truth_mGain = ac.createGain(); truth_mGain.gain.value = 0.4;
+  
+  // Gentle reverb for serenity
   truth_revNode = ac.createConvolver(); truth_revNode.buffer = truth_buildIR(2.8);
-  truth_revWet  = ac.createGain(); truth_revWet.gain.value = 0.42;
-  truth_revNode.connect(truth_revWet); truth_revWet.connect(truth_mGain);
+  truth_revWet = ac.createGain(); truth_revWet.gain.value = 0.3;
+  
+  // Subtle delay for magical space
+  truth_delay = ac.createDelay(0.5);
+  truth_delay.delayTime.value = 0.12;
+  truth_delayWet = ac.createGain(); truth_delayWet.gain.value = 0.15;
+  
+  // Connect serene processing chain
+  truth_merger.connect(truth_delay);
+  truth_merger.connect(truth_revNode);
+  truth_delay.connect(truth_delayWet);
+  truth_revWet.connect(truth_mGain);
+  truth_delayWet.connect(truth_mGain);
+  truth_mGain.connect(ac.destination);
 }
-function truth_kick(t) {
-  const env = ac.createGain(); env.gain.setValueAtTime(0.22, t); env.gain.exponentialRampToValueAtTime(0.0001, t+0.9);
-  const osc = ac.createOscillator(); osc.frequency.setValueAtTime(80, t); osc.frequency.exponentialRampToValueAtTime(42, t+0.25);
-  osc.connect(env); env.connect(truth_mGain); osc.start(t); osc.stop(t+1.0);
+
+// System 4: Drone - Peaceful and deep
+function truth_noteDrone(ch, t, durS, vol=0.18) {
+  truth_initAudio();
+  
+  const hz = truth_fixedNoteHz(ch);
+  
+  // Deep peaceful drone
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = hz * 0.5; // Lower octave for depth
+  
+  // Centered for serenity
+  const panner = ac.createStereoPanner();
+  panner.pan.value = 0;
+  
+  // Very slow envelope for peace
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.5); // Very slow emergence
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  osc.connect(env);
+  env.connect(panner);
+  panner.connect(truth_merger, 0, 0);
+  panner.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  osc.stop(t + durS);
 }
-function truth_hihat(t) {
-  const bufSz = Math.floor(ac.sampleRate * 0.08), buf = ac.createBuffer(1, bufSz, ac.sampleRate);
-  const d = buf.getChannelData(0); for (let i=0; i<bufSz; i++) d[i]=Math.random()*2-1;
-  const src = ac.createBufferSource(); src.buffer = buf;
-  const hp = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=9000;
-  const env = ac.createGain(); env.gain.setValueAtTime(0.16, t); env.gain.exponentialRampToValueAtTime(0.0001, t+0.07);
-  src.connect(hp); hp.connect(env); env.connect(truth_mGain); src.start(t); src.stop(t+0.09);
+
+// System 5: Rhythm - Holographic percussive matrix
+function truth_noteRhythm(ch, t, durS, vol=0.35) {
+  truth_initAudio();
+  
+  const hz = truth_fixedNoteHz(ch);
+  
+  // Granular percussion layers
+  const kick = ac.createOscillator();
+  kick.type = 'sine';
+  kick.frequency.value = hz * 0.5;
+  
+  const metallic = ac.createOscillator();
+  metallic.type = 'square';
+  metallic.frequency.value = hz * 7.3; // Holographic metallic
+  
+  const crystal = ac.createOscillator();
+  crystal.type = 'triangle';
+  crystal.frequency.value = hz * 13.4; // Crystalline shimmer
+  
+  // Ring modulation for holographic texture
+  const ring = ac.createOscillator();
+  ring.frequency.value = hz * 21.6; // Golden harmonic series
+  const ringGain = ac.createGain();
+  ringGain.gain.value = hz * 0.8;
+  ring.connect(ringGain);
+  ringGain.connect(metallic.frequency);
+  
+  // Chaotic stereo movement
+  const panner = ac.createStereoPanner();
+  const chaosLfo = ac.createOscillator();
+  chaosLfo.frequency.value = 3.7 + Math.random() * 2.3; // Chaotic rate
+  chaosLfo.connect(panner.pan);
+  
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol * 1.2, t + 0.001); // Punchy attack
+  env.gain.linearRampToValueAtTime(vol * 0.3, t + durS * 0.15); // Quick decay
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  const metallicGain = ac.createGain();
+  metallicGain.gain.value = vol * 0.2;
+  
+  const crystalGain = ac.createGain();
+  crystalGain.gain.value = vol * 0.08;
+  
+  kick.connect(env);
+  metallic.connect(metallicGain);
+  crystal.connect(crystalGain);
+  metallicGain.connect(env);
+  crystalGain.connect(env);
+  env.connect(panner);
+  panner.connect(truth_merger, 0, 0);
+  panner.connect(truth_merger, 0, 1);
+  
+  kick.start(t);
+  metallic.start(t);
+  crystal.start(t);
+  ring.start(t);
+  chaosLfo.start(t);
+  
+  kick.stop(t + durS);
+  metallic.stop(t + durS);
+  crystal.stop(t + durS);
+  ring.stop(t + durS);
+  chaosLfo.stop(t + durS);
 }
-function truth_snare(t) {
-  const bufSz = Math.floor(ac.sampleRate*0.18), buf=ac.createBuffer(1,bufSz,ac.sampleRate);
-  const d=buf.getChannelData(0); for(let i=0;i<bufSz;i++) d[i]=Math.random()*2-1;
-  const src=ac.createBufferSource(); src.buffer=buf;
-  const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2200; bp.Q.value=0.7;
-  const nEnv=ac.createGain(); nEnv.gain.setValueAtTime(0.24,t); nEnv.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
-  src.connect(bp); bp.connect(nEnv); nEnv.connect(truth_mGain); src.start(t); src.stop(t+0.18);
-  const osc=ac.createOscillator(); osc.frequency.value=200;
-  const oEnv=ac.createGain(); oEnv.gain.setValueAtTime(0.18,t); oEnv.gain.exponentialRampToValueAtTime(0.0001,t+0.07);
-  osc.connect(oEnv); oEnv.connect(truth_mGain); osc.start(t); osc.stop(t+0.09);
+
+// System 6: Ambient - Tranquil and magical
+function truth_noteAmbient(ch, t, durS, vol=0.15) {
+  truth_initAudio();
+  
+  const hz = truth_fixedNoteHz(ch);
+  
+  // Magical ambient pad
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = hz;
+  
+  // Gentle high-frequency shimmer
+  const shimmer = ac.createOscillator();
+  shimmer.type = 'triangle';
+  shimmer.frequency.value = hz * 3; // Gentle harmonic
+  
+  // Wide stereo for magical space
+  const panner = ac.createStereoPanner();
+  panner.pan.value = (ch.charCodeAt(0) % 40 - 20) / 40; // Wide gentle pan
+  
+  // Very slow envelope for tranquility
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.8); // Very gentle emergence
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  const shimmerGain = ac.createGain();
+  shimmerGain.gain.value = vol * 0.08; // Subtle magic
+  
+  osc.connect(env);
+  shimmer.connect(shimmerGain);
+  shimmerGain.connect(env);
+  env.connect(panner);
+  panner.connect(truth_merger, 0, 0);
+  panner.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  shimmer.start(t);
+  osc.stop(t + durS);
+  shimmer.stop(t + durS);
 }
-function truth_note(hz, t, durS, vol=0.15) {
-  const env=ac.createGain(), atk=Math.min(0.05,durS*0.2), rel=Math.min(0.5,durS*0.7);
-  env.gain.setValueAtTime(0,t); env.gain.linearRampToValueAtTime(vol,t+atk);
-  env.gain.exponentialRampToValueAtTime(0.0001,t+atk+rel);
-  env.connect(truth_mGain); env.connect(truth_revNode);
-  for (const det of [-4,0,5]) {
-    const osc=ac.createOscillator(); osc.type='sine'; osc.frequency.value=hz; osc.detune.value=det;
-    const g=ac.createGain(); g.gain.value=det===0?0.6:0.2;
-    osc.connect(g); g.connect(env); osc.start(t); osc.stop(t+atk+rel+0.05);
-  }
-}
+
 function truth_particle(el) {
   const ref = el || document.getElementById('truth-journal');
   const rect = ref.getBoundingClientRect();
@@ -2011,17 +2716,60 @@ function truth_particle(el) {
   setTimeout(() => div.remove(), 1400);
 }
 
+// Word boundary detection for chord system only
+let truth_currentWord = '';
+
 document.getElementById('truth-journal').addEventListener('keydown', e => {
   if (e.key.length !== 1 && e.key !== 'Enter') return;
   truth_initAudio();
-  const jrnl = document.getElementById('truth-journal');
-  const pos = jrnl.selectionStart, text = jrnl.value;
-  const lineStart = text.lastIndexOf('\n', pos-1)+1;
-  const col = pos - lineStart;
-  const line = text.substring(0,pos).split('\n').length;
-  const hz = truth_hz(col % 14) * Math.pow(2, Math.min(line-1,2));
-  truth_note(hz, ac.currentTime, 1.2);
+  
+  // Use current sound system
+  switch (truth_currentSystem) {
+    case 'chord':
+      // For chord system, trigger chord on word boundaries
+      if (e.key === ' ') {
+        if (truth_currentWord) {
+          truth_noteChord(truth_currentWord, ac.currentTime, 2.5);
+          truth_currentWord = '';
+        }
+      } else if (e.key === 'Enter') {
+        if (truth_currentWord) {
+          truth_noteChord(truth_currentWord, ac.currentTime, 2.5);
+          truth_currentWord = '';
+        }
+      } else {
+        // Regular letters build current word
+        truth_currentWord += e.key;
+      }
+      break;
+    case 'drone':
+      // For drone system, trigger on each keypress
+      truth_noteDrone(e.key, ac.currentTime, 0.3);
+      break;
+    case 'lydian':
+      truth_noteLydian(e.key, ac.currentTime, 1.2);
+      break;
+    case 'rhythm':
+      truth_noteRhythm(e.key, ac.currentTime, 0.3);
+      break;
+    case 'ambient':
+      truth_noteAmbient(e.key, ac.currentTime, 2.0);
+      break;
+    case 'sequence':
+      truth_noteSequence(e.key, ac.currentTime, 0.6);
+      break;
+  }
+  
   truth_particle(null);
+});
+
+// Sound system button switching
+document.querySelectorAll('.truth-system-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.truth-system-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    truth_currentSystem = btn.dataset.system;
+  });
 });
 
 function truth_buildDOM(text) {
@@ -2061,18 +2809,30 @@ function startTruthPlayback() {
   bf.style.width='0%';
   const {spans,wraps,wordCount}=truth_buildDOM(text);
   truth_totalBars=wordCount; truth_startAC=ac.currentTime+0.1; truth_startWall=performance.now()+100;
-  for (let b=0;b<wordCount;b++) {
-    const bT=truth_startAC+b*TRUTH_BAR;
-    truth_kick(bT); truth_hihat(bT); truth_hihat(bT+TRUTH_BAR*0.5);
-    if (b%2===1) truth_snare(bT);
-  }
-  for (let wi=0;wi<wordCount;wi++) {
+    for (let wi=0;wi<wordCount;wi++) {
     const barStart=wi*TRUTH_BAR, letters=spans.filter(l=>l.wordIdx===wi), n=letters.length, ni=TRUTH_BAR/n;
     truth_timers.push(setTimeout(()=>{ wraps.forEach(w=>w.classList.remove('bar-active')); if(wraps[wi]) wraps[wi].classList.add('bar-active'); }, barStart*1000));
+    
     for (let li=0;li<n;li++) {
-      const {span,char}=letters[li], off=barStart+li*ni, vol=0.10+(truth_charDeg(char)/13)*0.08;
-      const oct=Math.floor(li/7)%3;
-      truth_note(truth_hz(truth_charDeg(char))*Math.pow(2,oct), truth_startAC+off, ni*0.85, vol);
+      const {span,char}=letters[li], off=barStart+li*ni, vol=0.15;
+      // Use current sound system for playback
+      switch (truth_currentSystem) {
+        case 'chord':
+          // Chords handled at word level
+          break;
+        case 'lydian':
+          truth_noteLydian(char, truth_startAC+off, ni*0.85, vol);
+          break;
+        case 'rhythm':
+          truth_noteRhythm(char, truth_startAC+off, ni*0.5, vol);
+          break;
+        case 'ambient':
+          truth_noteAmbient(char, truth_startAC+off, ni*1.2, vol);
+          break;
+        case 'sequence':
+          truth_noteSequence(char, truth_startAC+off, ni*0.7, vol);
+          break;
+              }
       truth_timers.push(setTimeout(()=>{
         span.classList.remove('decay'); span.classList.add('hit'); truth_particle(span);
         setTimeout(()=>{ span.classList.remove('hit'); span.classList.add('decay'); },120);
@@ -2337,851 +3097,799 @@ document.getElementById('love-overlay').addEventListener('click', e => {
 const aqCanvas = document.getElementById('aquarium-canvas');
 const aqCtx    = aqCanvas.getContext('2d');
 const aqOverlay = document.getElementById('aquarium-overlay');
+const aqStatus = document.getElementById('aquarium-status');
+const aqFlow = document.getElementById('aquarium-flow');
+const aqFlowValue = document.getElementById('aquarium-flow-value');
+const aqEvent = document.getElementById('aquarium-event');
+const aqEventText = document.getElementById('aquarium-event-text');
 let aqRunning = false, aqFrame = 0;
 
 function resizeAq() { aqCanvas.width = window.innerWidth; aqCanvas.height = window.innerHeight; }
 resizeAq(); window.addEventListener('resize', resizeAq);
 
-// ── Species definitions ──
-// tier: 0=plankton(food), 1=small, 2=medium, 3=large, 4=apex
 const SPECIES = {
-  plankton:  { tier:0, size:4,  speed:0.3, color:'#88ff44', r:4,   prey:[],              label:'Plankton',   turnRate:0.08 },
-  sardine:   { tier:1, size:6,  speed:1.6, color:'#aaddff', r:6,   prey:['plankton'],    label:'Sardine',    turnRate:0.14 },
-  clownfish: { tier:1, size:7,  speed:1.3, color:'#ff8833', r:7,   prey:['plankton'],    label:'Clownfish',  turnRate:0.12 },
-  tuna:      { tier:2, size:11, speed:2.0, color:'#4488cc', r:11,  prey:['sardine','clownfish'], label:'Tuna', turnRate:0.08 },
-  shark:     { tier:3, size:18, speed:2.4, color:'#556677', r:18,  prey:['tuna','clownfish','sardine'], label:'Shark', turnRate:0.05 },
-  jellyfish: { tier:1, size:9,  speed:0.5, color:'#cc88ff', r:9,   prey:['plankton'],    label:'Jellyfish',  turnRate:0.04 },
-  octopus:   { tier:2, size:13, speed:1.1, color:'#aa44aa', r:13,  prey:['sardine','clownfish','jellyfish'], label:'Octopus', turnRate:0.10 },
+  plankton:  { tier:0, r:3,  speed:0.22, prey:[], label:'Toxic Glitter',        turnRate:0.08, hue:110 },
+  sardine:   { tier:1, r:6,  speed:1.15, prey:['plankton'], label:'Tea Fry',     turnRate:0.12, hue:42 },
+  clownfish: { tier:2, r:10, speed:1.0,  prey:['plankton','sardine'], label:'Cheshire Cuttlefish', turnRate:0.09, hue:168 },
+  tuna:      { tier:2, r:12, speed:1.25, prey:['plankton','sardine','jellyfish'], label:'Jabberwock Larva', turnRate:0.08, hue:274 },
+  shark:     { tier:4, r:22, speed:1.55, prey:['tuna','clownfish','octopus','jellyfish','sardine'], label:'Jabberwock Leviathan', turnRate:0.04, hue:196 },
+  jellyfish: { tier:1, r:9,  speed:0.5,  prey:['plankton'], label:'Sentient Anemone', turnRate:0.05, hue:130 },
+  octopus:   { tier:2, r:13, speed:0.85, prey:['plankton','sardine','jellyfish'], label:'Caterpillar-Hydra', turnRate:0.10, hue:314 },
 };
 
 const AQ_CREATURES = [];
-let AQ_CORALS = [];
-let AQ_BUBBLES_AQ = [];
-let AQ_IMG1 = null, AQ_IMG2 = null, AQ_IMGS_READY = 0;
+let AQ_REEFS = [];
+let AQ_RUINS = [];
+let AQ_GLITTER = [];
+let AQ_MOTES = [];
+let AQ_REF1 = null;
+let AQ_REF2 = null;
+let AQ_REF_READY = 0;
+const AQ_STATE = {
+  stability: 0.62,
+  toxicity: 0.18,
+  biomass: 0.54,
+  insight: 0,
+  flow: 1,
+  teaParty: false,
+  sepia: 0,
+  frenzy: 0,
+  cleanse: 0,
+  cracks: 0,
+  decay: 0,
+  graveyardUntil: 0,
+  ritualCooldown: 0,
+  whisper: 'Favor a species to alter the equilibrium.'
+};
 
-function loadAqImages() {
-  const done = () => { AQ_IMGS_READY++; };
-  AQ_IMG1 = new Image(); AQ_IMG1.onload = done; AQ_IMG1.src = '/Aquarium 1.jpeg';
-  AQ_IMG2 = new Image(); AQ_IMG2.onload = done; AQ_IMG2.src = '/Aquarium 2.jpg';
+function clamp(v, lo, hi) {
+  return Math.max(lo, Math.min(hi, v));
 }
 
-// Exact hues pixel-sampled from the two paintings
-const SPECIES_HUE = {
-  plankton:  192,  // cyan — bioluminescent dots in painting 1
-  sardine:   4,    // coral red — small schooling fish in painting 2
-  clownfish: 48,   // bright yellow — dominant butterfly fish in painting 2
-  tuna:      224,  // blue-purple — large angelfish in painting 2
-  shark:     205,  // dark blue-grey — distant silhouette painting 2
-  jellyfish: 288,  // white-lavender — painting 1 translucent bells
-  octopus:   268,  // deep purple
-};
+function loadAquariumReferences() {
+  if (AQ_REF1 || AQ_REF2) return;
+  const done = () => { AQ_REF_READY++; };
+  AQ_REF1 = new Image();
+  AQ_REF1.onload = done;
+  AQ_REF1.src = '/Aquarium 1.jpeg';
+  AQ_REF2 = new Image();
+  AQ_REF2.onload = done;
+  AQ_REF2.src = '/Aquarium 2.jpg';
+}
 
-// Crop regions [cx, cy, cw, ch] as fractions of each painting's dimensions
-// imgN: 1 = Aquarium 1.jpeg (jellyfish), 2 = Aquarium 2.jpg (fish)
-const AQ_SPRITES = {
-  jellyfish: { imgN:1, cx:0.31, cy:0.28, cw:0.28, ch:0.34 },  // pink/red center jellyfish (tight)
-  plankton:  { imgN:1, cx:0.09, cy:0.38, cw:0.13, ch:0.19 },  // small jellyfish (tight)
-  sardine:   { imgN:2, cx:0.02, cy:0.41, cw:0.19, ch:0.14 },  // red fish school (tight)
-  clownfish: { imgN:2, cx:0.34, cy:0.29, cw:0.12, ch:0.18 },  // single yellow butterfly fish
-  tuna:      { imgN:2, cx:0.26, cy:0.58, cw:0.38, ch:0.23 },  // large blue/purple fish (tight)
-  shark:     { imgN:2, cx:0.49, cy:0.03, cw:0.22, ch:0.06 },  // shark silhouette (tight)
-  octopus:   { imgN:2, cx:0.30, cy:0.63, cw:0.34, ch:0.20 },  // large teal fish (tight)
-};
-const AQ_SPRITE_CACHE = {};
+function inGraveyard() {
+  return Date.now() < AQ_STATE.graveyardUntil;
+}
 
-function initCorals(W, H) {
-  AQ_CORALS = [];
-  // Naturally distributed coral types with painting-accurate hues
-  const layout = [
-    // type, hue, count, x-zone [0..1]
-    { type:'branch',  hue:8,   n:5, xs:[0.03,0.42] },
-    { type:'tube',    hue:95,  n:4, xs:[0.22,0.55] },
-    { type:'fan',     hue:285, n:4, xs:[0.38,0.72] },
-    { type:'anemone', hue:138, n:3, xs:[0.55,0.88] },
-    { type:'bubble',  hue:42,  n:3, xs:[0.70,0.97] },
-  ];
-  for (const cfg of layout) {
-    for (let i = 0; i < cfg.n; i++) {
-      const t = i / Math.max(cfg.n - 1, 1);
-      AQ_CORALS.push({
-        x: (cfg.xs[0] + t * (cfg.xs[1] - cfg.xs[0])) * W + (Math.random() - 0.5) * W * 0.06,
-        h: 35 + Math.random() * 75,
-        branches: 2 + Math.floor(Math.random() * 4),
-        hue: cfg.hue + (Math.random() - 0.5) * 24,
-        wobble: Math.random() * Math.PI * 2,
-        type: cfg.type
-      });
-    }
+function updateAquariumStatus() {
+  const graveyardText = inGraveyard()
+    ? `Graveyard of Giants: ${Math.ceil((AQ_STATE.graveyardUntil - Date.now()) / 3600000)}h to recover`
+    : AQ_STATE.whisper;
+  aqStatus.textContent = `Toxicity ${Math.round(AQ_STATE.toxicity * 100)}%  ·  Biomass ${Math.round(AQ_STATE.biomass * 100)}%  ·  Abyssal Insight ${Math.round(AQ_STATE.insight * 100)}%  ·  ${graveyardText}`;
+  aqFlowValue.textContent = `${AQ_STATE.flow.toFixed(1)}x`;
+  aqEvent.classList.toggle('visible', AQ_STATE.teaParty);
+}
+
+function cullByFraction(fraction, predicate) {
+  const candidates = AQ_CREATURES.filter(predicate || (() => true));
+  const killCount = Math.floor(candidates.length * fraction);
+  for (let i = 0; i < killCount; i++) {
+    const victim = candidates[Math.floor(Math.random() * candidates.length)];
+    const idx = AQ_CREATURES.indexOf(victim);
+    if (idx !== -1) AQ_CREATURES.splice(idx, 1);
   }
+}
+
+function triggerLeviathanFrenzy() {
+  AQ_STATE.frenzy = Math.max(AQ_STATE.frenzy, 260);
+  AQ_STATE.whisper = 'The Jabberwocky Leviathans scent the smoke and enter a feeding frenzy.';
+  addCreature('shark', aqCanvas.width, aqCanvas.height);
+  cullByFraction(0.2, c => SPECIES[c.species].tier > 0 && SPECIES[c.species].tier < 3);
+}
+
+function favorSpecies(species) {
+  if (inGraveyard()) {
+    AQ_STATE.whisper = 'The graveyard resists intervention. Time itself must heal the reef.';
+    updateAquariumStatus();
+    return;
+  }
+
+  AQ_STATE.biomass = clamp(AQ_STATE.biomass + 0.025, 0, 1);
+  AQ_STATE.stability = clamp(AQ_STATE.stability + 0.01, 0, 1);
+
+  if (species === 'octopus') {
+    AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.16, 0, 1);
+    AQ_STATE.stability = clamp(AQ_STATE.stability - 0.08, 0, 1);
+    AQ_STATE.whisper = 'The Caterpillar-Hydras bloom beautifully, but their smoke thickens the water.';
+  } else if (species === 'plankton') {
+    AQ_STATE.toxicity = clamp(AQ_STATE.toxicity - 0.03, 0, 1);
+    AQ_STATE.whisper = 'Toxic glitter settles into a shimmering equilibrium.';
+  } else if (species === 'clownfish') {
+    AQ_STATE.insight = clamp(AQ_STATE.insight + 0.04, 0, 1);
+    AQ_STATE.whisper = 'The Cheshire Cuttlefish grin wider and teach the reef new hungers.';
+  } else if (species === 'tuna') {
+    AQ_STATE.insight = clamp(AQ_STATE.insight + 0.06, 0, 1);
+    AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.04, 0, 1);
+    AQ_STATE.whisper = 'Jabberwock larvae molt into improbable, many-eyed futures.';
+  } else if (species === 'shark') {
+    AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.08, 0, 1);
+    AQ_STATE.stability = clamp(AQ_STATE.stability - 0.06, 0, 1);
+    AQ_STATE.whisper = 'A leviathan circles the reef and every smaller mouth forgets its courage.';
+  } else if (species === 'jellyfish') {
+    AQ_STATE.stability = clamp(AQ_STATE.stability + 0.04, 0, 1);
+    AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.02, 0, 1);
+    AQ_STATE.whisper = 'The sentient anemones hum and the ruins answer in green fire.';
+  } else {
+    AQ_STATE.stability = clamp(AQ_STATE.stability + 0.03, 0, 1);
+    AQ_STATE.whisper = 'Porcelain fry gather around the tea sets and calm the lower currents.';
+  }
+
+  addCreature(species, aqCanvas.width, aqCanvas.height);
+  if (AQ_STATE.toxicity > 0.82) triggerLeviathanFrenzy();
+  updateAquariumStatus();
+}
+
+function triggerMadTeaParty() {
+  AQ_STATE.teaParty = true;
+  AQ_STATE.sepia = 1;
+  AQ_STATE.ritualCooldown = 2400;
+  aqEventText.textContent = 'Pour the Tea to sacrifice 20% of the aquarium biomass and gain Abyssal Insight, or Break the Cup to trigger a cleansing defiance that may crack the glass and enrage the old horrors.';
+  updateAquariumStatus();
+}
+
+function resolveTeaParty(choice) {
+  AQ_STATE.teaParty = false;
+  if (choice === 'pour') {
+    cullByFraction(0.2);
+    AQ_STATE.biomass = clamp(AQ_STATE.biomass - 0.2, 0, 1);
+    AQ_STATE.insight = clamp(AQ_STATE.insight + 0.22, 0, 1);
+    AQ_STATE.stability = clamp(AQ_STATE.stability - 0.05, 0, 1);
+    addCreature('shark', aqCanvas.width, aqCanvas.height);
+    AQ_STATE.whisper = 'The Great Old Ones accept the offering and reveal nightmare-tier paths.';
+  } else {
+    AQ_STATE.cleanse = 420;
+    AQ_STATE.cracks = 1;
+    AQ_STATE.toxicity = clamp(AQ_STATE.toxicity * 0.42, 0, 1);
+    AQ_STATE.stability = clamp(AQ_STATE.stability + 0.08, 0, 1);
+    AQ_STATE.frenzy = Math.max(AQ_STATE.frenzy, 180);
+    AQ_STATE.whisper = 'Whimsy returns with a violent shudder. The beasts rake their claws against the glass.';
+  }
+  updateAquariumStatus();
+}
+
+function triggerGraveyard() {
+  AQ_STATE.graveyardUntil = Date.now() + 2 * 60 * 60 * 1000;
+  AQ_STATE.decay = 1;
+  AQ_STATE.toxicity = 0.12;
+  AQ_STATE.whisper = 'The Flow pushed too hard. The reef falls silent into a graveyard of giants.';
+  updateAquariumStatus();
+}
+
+function initAqWorld(W, H) {
+  AQ_REEFS = [];
+  AQ_RUINS = [];
+  AQ_GLITTER = [];
+  AQ_MOTES = [];
+
+  for (let i = 0; i < 11; i++) {
+    AQ_REEFS.push({
+      x: (i + 0.2 + Math.random() * 0.6) / 11 * W,
+      h: H * (0.14 + Math.random() * 0.22),
+      w: 26 + Math.random() * 42,
+      hue: [118, 170, 286][i % 3] + (Math.random() - 0.5) * 18,
+      pulse: Math.random() * Math.PI * 2,
+      kind: ['fungal', 'anemone', 'spines'][i % 3]
+    });
+  }
+
+  for (let i = 0; i < 4; i++) {
+    AQ_RUINS.push({
+      x: W * (0.14 + i * 0.22 + Math.random() * 0.05),
+      y: H * (0.76 + Math.random() * 0.08),
+      scale: 0.75 + Math.random() * 0.55,
+      tilt: (Math.random() - 0.5) * 0.5,
+      type: i % 2 === 0 ? 'cup' : 'pot'
+    });
+  }
+
+  for (let i = 0; i < 180; i++) {
+    AQ_GLITTER.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      z: 0.35 + Math.random() * 0.65,
+      phase: Math.random() * Math.PI * 2,
+      hue: 90 + Math.random() * 120
+    });
+  }
+
+  for (let i = 0; i < 60; i++) {
+    AQ_MOTES.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 8 + Math.random() * 28,
+      a: 0.02 + Math.random() * 0.06,
+      hue: [184, 276, 112][i % 3]
+    });
+  }
+}
+
+function seedAquarium(W, H) {
+  AQ_CREATURES.length = 0;
+  initAqWorld(W, H);
+  for (let i = 0; i < 18; i++) addCreature('plankton', W, H);
+  for (let i = 0; i < 6; i++) addCreature('sardine', W, H);
+  for (let i = 0; i < 3; i++) addCreature('clownfish', W, H);
+  for (let i = 0; i < 2; i++) addCreature('jellyfish', W, H);
+  addCreature('tuna', W, H);
 }
 
 function addCreature(species, W, H) {
   const sp = SPECIES[species];
   AQ_CREATURES.push({
     species,
-    x: 60 + Math.random() * (W - 120),
-    y: 80 + Math.random() * (H * 0.65),
+    x: W * (0.08 + Math.random() * 0.84),
+    y: H * (0.18 + Math.random() * 0.56),
     vx: (Math.random() - 0.5) * sp.speed,
-    vy: (Math.random() - 0.5) * sp.speed * 0.5,
+    vy: (Math.random() - 0.5) * sp.speed * 0.6,
     angle: Math.random() * Math.PI * 2,
-    hunger: 0.5,
-    energy: 1.0,
+    hunger: 0.25 + Math.random() * 0.4,
+    energy: 1,
     age: 0,
     wobble: Math.random() * Math.PI * 2,
+    depth: 0.45 + Math.random() * 0.55,
     id: Math.random()
   });
 }
 
-// Pre-render painting crop with chroma-key background removal
-function buildSprites() {
-  if (AQ_IMGS_READY === 0) return;
-  for (const [species, def] of Object.entries(AQ_SPRITES)) {
-    if (AQ_SPRITE_CACHE[species]) continue;
-    const img = def.imgN === 1 ? AQ_IMG1 : AQ_IMG2;
-    if (!img || !img.complete || !img.naturalWidth) continue;
-    const iw = img.naturalWidth, ih = img.naturalHeight;
-    const srcX = Math.round(def.cx * iw), srcY = Math.round(def.cy * ih);
-    const srcW = Math.round(def.cw * iw), srcH = Math.round(def.ch * ih);
-    const sp = SPECIES[species];
-    const displayMax = sp.r * 11;
-    const scaleF = displayMax / Math.max(srcW, srcH);
-    const dw = Math.max(4, Math.round(srcW * scaleF));
-    const dh = Math.max(4, Math.round(srcH * scaleF));
-    const c = document.createElement('canvas');
-    c.width = dw; c.height = dh;
-    const ctx = c.getContext('2d', { willReadFrequently: true });
-    ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, dw, dh);
+function drawAqBackdrop(W, H) {
+  const bg = aqCtx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#08131b');
+  bg.addColorStop(0.35, '#10343d');
+  bg.addColorStop(0.72, '#221635');
+  bg.addColorStop(1, '#050609');
+  aqCtx.fillStyle = bg;
+  aqCtx.fillRect(0, 0, W, H);
 
-    // Sample background color from a ring of border pixels
-    const imgData = ctx.getImageData(0, 0, dw, dh);
-    const px = imgData.data;
-    let bgR = 0, bgG = 0, bgB = 0, n = 0;
-    const brd = Math.max(2, Math.round(Math.min(dw, dh) * 0.10));
-    for (let y = 0; y < dh; y++) {
-      for (let x = 0; x < dw; x++) {
-        if (x < brd || x >= dw - brd || y < brd || y >= dh - brd) {
-          const i = (y * dw + x) * 4;
-          bgR += px[i]; bgG += px[i+1]; bgB += px[i+2]; n++;
-        }
-      }
+  if (AQ_REF_READY > 0) {
+    aqCtx.save();
+    aqCtx.globalCompositeOperation = 'soft-light';
+    aqCtx.globalAlpha = 0.32;
+    if (AQ_REF1 && AQ_REF1.complete && AQ_REF1.naturalWidth) {
+      aqCtx.drawImage(AQ_REF1, 0, 0, AQ_REF1.naturalWidth, AQ_REF1.naturalHeight, 0, 0, W, H);
     }
-    bgR /= n; bgG /= n; bgB /= n;
+    aqCtx.globalCompositeOperation = 'screen';
+    aqCtx.globalAlpha = 0.24;
+    if (AQ_REF2 && AQ_REF2.complete && AQ_REF2.naturalWidth) {
+      aqCtx.drawImage(AQ_REF2, 0, 0, AQ_REF2.naturalWidth, AQ_REF2.naturalHeight, 0, H * 0.04, W, H * 0.96);
+    }
+    aqCtx.restore();
 
-    // Chroma-key: erase pixels close to the background ocean blue,
-    // but only if the pixel is actually blue-dominant (protects reds, yellows, pinks)
-    const lo = 48, hi = 95;
-    for (let i = 0; i < px.length; i += 4) {
-      const r = px[i], g = px[i+1], b = px[i+2];
-      const dr = r - bgR, dg = g - bgG, db = b - bgB;
-      const dist = Math.sqrt(dr*dr + dg*dg + db*db);
-      // Only key pixels that are blue-dominant — spares warm creature colors
-      const isBluish = b >= r * 0.95 && b >= g * 0.82;
-      if (!isBluish) continue;
-      if (dist < lo) {
-        px[i+3] = 0;
-      } else if (dist < hi) {
-        px[i+3] = Math.round(((dist - lo) / (hi - lo)) * 255);
-      }
+    aqCtx.save();
+    aqCtx.globalCompositeOperation = 'lighten';
+    if (AQ_REF1 && AQ_REF1.complete && AQ_REF1.naturalWidth) {
+      aqCtx.globalAlpha = 0.28;
+      aqCtx.drawImage(
+        AQ_REF1,
+        AQ_REF1.naturalWidth * 0.18, AQ_REF1.naturalHeight * 0.02,
+        AQ_REF1.naturalWidth * 0.64, AQ_REF1.naturalHeight * 0.68,
+        W * 0.04, H * 0.03, W * 0.52, H * 0.62
+      );
     }
-    ctx.putImageData(imgData, 0, 0);
-    AQ_SPRITE_CACHE[species] = { canvas: c, w: dw, h: dh };
+    if (AQ_REF2 && AQ_REF2.complete && AQ_REF2.naturalWidth) {
+      aqCtx.globalAlpha = 0.22;
+      aqCtx.drawImage(
+        AQ_REF2,
+        AQ_REF2.naturalWidth * 0.02, AQ_REF2.naturalHeight * 0.52,
+        AQ_REF2.naturalWidth * 0.96, AQ_REF2.naturalHeight * 0.42,
+        0, H * 0.58, W, H * 0.36
+      );
+    }
+    aqCtx.restore();
   }
-}
 
-// Neon line helper — thick dim + thin bright, no shadowBlur needed
-function neonLine(x0,y0,x1,y1,hue,alpha,thick) {
-  aqCtx.lineWidth = thick * 3;
-  aqCtx.strokeStyle = `hsla(${hue},100%,55%,${alpha*0.35})`;
-  aqCtx.beginPath(); aqCtx.moveTo(x0,y0); aqCtx.lineTo(x1,y1); aqCtx.stroke();
-  aqCtx.lineWidth = thick;
-  aqCtx.strokeStyle = `hsla(${hue},100%,88%,${alpha})`;
-  aqCtx.beginPath(); aqCtx.moveTo(x0,y0); aqCtx.lineTo(x1,y1); aqCtx.stroke();
-}
-
-function drawCoral(c, H) {
-  const base = H - 28;
-  const sway = Math.sin(aqFrame * 0.013 + c.wobble) * 5;
   aqCtx.save();
-  aqCtx.translate(c.x, base);
+  aqCtx.globalCompositeOperation = 'screen';
+  for (let i = 0; i < AQ_MOTES.length; i++) {
+    const m = AQ_MOTES[i];
+    const pulse = 0.55 + 0.45 * Math.sin(aqFrame * 0.008 + i * 0.7);
+    aqCtx.beginPath();
+    aqCtx.arc(m.x, m.y, m.r * pulse, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${m.hue},70%,40%,${m.a})`;
+    aqCtx.fill();
+  }
+  aqCtx.restore();
 
-  if (c.type === 'branch') {
-    // Red/orange branching coral — like left side of painting 1
-    function paintBranch(len, depth, angle) {
-      if (depth === 0 || len < 3) return;
-      const ex = Math.cos(angle + sway * 0.028) * len;
-      const ey = -Math.abs(Math.sin(angle)) * len;
-      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.lineTo(ex, ey);
-      aqCtx.strokeStyle = `hsla(${c.hue},75%,22%,0.75)`;
-      aqCtx.lineWidth = depth * 2.0; aqCtx.stroke();
-      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.lineTo(ex, ey);
-      aqCtx.strokeStyle = `hsla(${c.hue},80%,58%,0.65)`;
-      aqCtx.lineWidth = depth * 0.7; aqCtx.stroke();
-      aqCtx.beginPath(); aqCtx.arc(ex, ey, depth * 0.9, 0, Math.PI * 2);
-      aqCtx.fillStyle = `hsla(${(c.hue+15)%360},85%,70%,0.75)`; aqCtx.fill();
-      aqCtx.save(); aqCtx.translate(ex, ey);
-      paintBranch(len*0.64, depth-1, angle+0.48+Math.sin(aqFrame*0.013+depth)*0.10);
-      paintBranch(len*0.64, depth-1, angle-0.48-Math.sin(aqFrame*0.013+depth)*0.10);
-      aqCtx.restore();
-    }
-    paintBranch(c.h * 0.56, Math.min(c.branches, 4), Math.PI / 2);
-
-  } else if (c.type === 'fan') {
-    // Purple sea fan — right side of painting 1
-    const spokes = c.branches * 4;
-    for (let i = 0; i <= spokes; i++) {
-      const a = -Math.PI * 0.78 + (i / spokes) * Math.PI * 1.56;
-      const ex = Math.cos(a + sway * 0.035) * c.h;
-      const ey = Math.sin(a) * c.h * 0.78;
-      const cpx = ex * 0.38 + Math.sin(aqFrame * 0.018 + i) * 7;
-      const cpy = ey * 0.42 - 14;
-      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.quadraticCurveTo(cpx, cpy, ex + sway*0.6, ey);
-      aqCtx.strokeStyle = `hsla(${c.hue},55%,28%,0.55)`;
-      aqCtx.lineWidth = 2.2; aqCtx.stroke();
-      aqCtx.beginPath(); aqCtx.moveTo(0, 0); aqCtx.quadraticCurveTo(cpx, cpy, ex + sway*0.6, ey);
-      aqCtx.strokeStyle = `hsla(${c.hue},70%,68%,0.55)`;
-      aqCtx.lineWidth = 0.9; aqCtx.stroke();
-    }
-    // Horizontal webbing lines
-    for (let j = 1; j <= 4; j++) {
-      const jy = -(c.h * j * 0.22);
-      const jw = c.h * (0.55 - j * 0.05);
-      aqCtx.beginPath(); aqCtx.moveTo(-jw, jy); aqCtx.lineTo(jw, jy);
-      aqCtx.strokeStyle = `hsla(${c.hue},55%,55%,0.18)`;
-      aqCtx.setLineDash([3, 5]); aqCtx.lineWidth = 0.7; aqCtx.stroke(); aqCtx.setLineDash([]);
-    }
-
-  } else if (c.type === 'tube') {
-    // Yellow-green tube coral — painting 1 bottom center
-    const count = 3 + Math.floor(c.branches * 0.9);
-    for (let i = 0; i < count; i++) {
-      const tx = (i - count / 2 + 0.5) * 13;
-      const th = c.h * (0.55 + i * 0.11 + Math.sin(aqFrame * 0.018 + i * 1.4 + c.wobble) * 0.05);
-      const tw = 3.5 + Math.sin(i * 2.1) * 1.2;
-      aqCtx.beginPath();
-      aqCtx.moveTo(tx - tw, 0); aqCtx.lineTo(tx - tw, -th);
-      aqCtx.arc(tx, -th, tw, Math.PI, 0);
-      aqCtx.lineTo(tx + tw, 0);
-      aqCtx.fillStyle = `hsla(${c.hue + i*12},65%,20%,0.85)`; aqCtx.fill();
-      aqCtx.strokeStyle = `hsla(${c.hue + i*12},70%,60%,0.65)`;
-      aqCtx.lineWidth = 0.9; aqCtx.stroke();
-      // Rim glow at opening
-      aqCtx.beginPath(); aqCtx.arc(tx, -th, tw * 0.75, 0, Math.PI * 2);
-      aqCtx.fillStyle = `hsla(${c.hue},85%,72%,0.35)`; aqCtx.fill();
-    }
-
-  } else if (c.type === 'anemone') {
-    // Green sea anemone — painting 2 right side
-    const tentCount = 18;
-    aqCtx.beginPath(); aqCtx.ellipse(0, -c.h * 0.28, c.h * 0.11, c.h * 0.30, 0, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsla(${c.hue},55%,18%,0.85)`; aqCtx.fill();
-    for (let i = 0; i < tentCount; i++) {
-      const ta = (i / tentCount) * Math.PI * 2;
-      const wave = Math.sin(aqFrame * 0.035 + i * 0.85 + c.wobble) * 0.28;
-      const endX = Math.cos(ta + wave) * c.h * 0.42;
-      const endY = -c.h * 0.58 + Math.sin(ta + wave) * c.h * 0.18;
-      aqCtx.beginPath();
-      aqCtx.moveTo(Math.cos(ta) * c.h * 0.07, -c.h * 0.56);
-      aqCtx.quadraticCurveTo(endX * 0.5 + Math.sin(aqFrame * 0.025 + i) * 6, endY * 0.5 - 8, endX, endY);
-      aqCtx.strokeStyle = `hsla(${c.hue},65%,22%,0.55)`;
-      aqCtx.lineWidth = 2; aqCtx.stroke();
-      aqCtx.strokeStyle = `hsla(${c.hue},70%,60%,0.65)`;
-      aqCtx.lineWidth = 0.85; aqCtx.stroke();
-      aqCtx.beginPath(); aqCtx.arc(endX, endY, 1.6, 0, Math.PI * 2);
-      aqCtx.fillStyle = `hsla(${(c.hue+45)%360},85%,78%,0.8)`; aqCtx.fill();
-    }
-
-  } else if (c.type === 'bubble') {
-    // Bubble/brain coral — white clusters, painting 2 left
-    const positions = [
-      [0,-c.h*0.1],[c.h*0.28,-c.h*0.22],[-c.h*0.28,-c.h*0.22],
-      [c.h*0.18,-c.h*0.42],[-c.h*0.18,-c.h*0.42],[0,-c.h*0.55],
-      [c.h*0.32,-c.h*0.38],[-c.h*0.32,-c.h*0.38],[0,-c.h*0.32],
-    ];
-    for (const [bx, by] of positions) {
-      const br = c.h * (0.13 + Math.sin(bx * 0.1 + c.wobble) * 0.03);
-      aqCtx.beginPath(); aqCtx.arc(bx, by, br * 1.25, 0, Math.PI * 2);
-      aqCtx.fillStyle = `hsla(${c.hue},30%,16%,0.65)`; aqCtx.fill();
-      const bg2 = aqCtx.createRadialGradient(bx - br*0.3, by - br*0.3, 0, bx, by, br);
-      bg2.addColorStop(0, `hsla(${c.hue},35%,88%,0.92)`);
-      bg2.addColorStop(0.6,`hsla(${c.hue},25%,68%,0.60)`);
-      bg2.addColorStop(1,  `hsla(${c.hue},20%,45%,0.30)`);
-      aqCtx.beginPath(); aqCtx.arc(bx, by, br, 0, Math.PI * 2);
-      aqCtx.fillStyle = bg2; aqCtx.fill();
-      aqCtx.strokeStyle = `hsla(${c.hue},35%,50%,0.45)`;
-      aqCtx.lineWidth = 0.7; aqCtx.stroke();
-    }
+  for (let i = 0; i < 3; i++) {
+    const beam = aqCtx.createLinearGradient(W * (0.18 + i * 0.24), 0, W * (0.3 + i * 0.24), H);
+    beam.addColorStop(0, `rgba(170,255,210,${0.04 - i * 0.008})`);
+    beam.addColorStop(1, 'rgba(0,0,0,0)');
+    aqCtx.fillStyle = beam;
+    aqCtx.fillRect(0, 0, W, H);
   }
 
+  if (AQ_STATE.sepia > 0.01) {
+    aqCtx.fillStyle = `rgba(120, 88, 46, ${0.16 * AQ_STATE.sepia})`;
+    aqCtx.fillRect(0, 0, W, H);
+  }
+}
+
+function drawTeaRuin(ruin, H) {
+  const sway = Math.sin(aqFrame * 0.01 + ruin.x * 0.01) * 2;
+  aqCtx.save();
+  aqCtx.translate(ruin.x, ruin.y + sway);
+  aqCtx.rotate(ruin.tilt);
+  aqCtx.scale(ruin.scale, ruin.scale);
+
+  aqCtx.fillStyle = 'rgba(38, 40, 54, 0.9)';
+  aqCtx.strokeStyle = 'rgba(185, 196, 214, 0.35)';
+  aqCtx.lineWidth = 2;
+
+  if (ruin.type === 'cup') {
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, 0, 24, 14, 0, 0, Math.PI * 2);
+    aqCtx.fill(); aqCtx.stroke();
+    aqCtx.beginPath();
+    aqCtx.arc(21, -2, 8, -Math.PI / 2, Math.PI / 2);
+    aqCtx.stroke();
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, 12, 34, 8, 0, 0, Math.PI * 2);
+    aqCtx.stroke();
+  } else {
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, 0, 22, 18, 0, 0, Math.PI * 2);
+    aqCtx.fill(); aqCtx.stroke();
+    aqCtx.beginPath();
+    aqCtx.moveTo(-9, -10); aqCtx.quadraticCurveTo(0, -28, 9, -10);
+    aqCtx.stroke();
+    aqCtx.beginPath();
+    aqCtx.moveTo(16, -4); aqCtx.quadraticCurveTo(30, -18, 22, -1);
+    aqCtx.stroke();
+  }
+
+  for (let i = 0; i < 8; i++) {
+    const a = i / 8 * Math.PI * 2;
+    const len = 12 + Math.sin(aqFrame * 0.03 + i + ruin.x * 0.01) * 4;
+    aqCtx.beginPath();
+    aqCtx.moveTo(Math.cos(a) * 10, Math.sin(a) * 8 - 4);
+    aqCtx.quadraticCurveTo(Math.cos(a) * 18, -20 - len * 0.2, Math.cos(a) * (18 + len), -18 - len);
+    aqCtx.strokeStyle = `hsla(${110 + i * 11},85%,62%,0.55)`;
+    aqCtx.lineWidth = 1.2;
+    aqCtx.stroke();
+  }
+  aqCtx.restore();
+}
+
+function drawReef(reef, H) {
+  const baseY = H - 28;
+  const pulse = 0.8 + 0.2 * Math.sin(aqFrame * 0.02 + reef.pulse);
+  aqCtx.save();
+  aqCtx.translate(reef.x, baseY);
+
+  if (reef.kind === 'fungal') {
+    for (let i = 0; i < 4; i++) {
+      const off = (i - 1.5) * reef.w * 0.28;
+      const capR = reef.w * (0.34 + i * 0.04);
+      const stemH = reef.h * (0.34 + i * 0.08);
+      aqCtx.beginPath();
+      aqCtx.moveTo(off - capR * 0.18, 0);
+      aqCtx.quadraticCurveTo(off - capR * 0.12, -stemH * 0.4, off, -stemH);
+      aqCtx.quadraticCurveTo(off + capR * 0.12, -stemH * 0.4, off + capR * 0.18, 0);
+      aqCtx.closePath();
+      aqCtx.fillStyle = `hsla(${reef.hue},38%,18%,0.95)`;
+      aqCtx.fill();
+      aqCtx.beginPath();
+      aqCtx.ellipse(off, -stemH, capR, capR * 0.42, 0, Math.PI, 0);
+      aqCtx.fillStyle = `hsla(${reef.hue},52%,${34 + i * 5}%,0.88)`;
+      aqCtx.fill();
+      aqCtx.strokeStyle = `hsla(${reef.hue + 18},82%,64%,0.38)`;
+      aqCtx.lineWidth = 1.2;
+      aqCtx.stroke();
+    }
+  } else if (reef.kind === 'anemone') {
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, -reef.h * 0.12, reef.w * 0.24, reef.h * 0.18, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${reef.hue},48%,16%,0.9)`;
+    aqCtx.fill();
+    for (let i = 0; i < 22; i++) {
+      const a = i / 22 * Math.PI * 2;
+      const reach = reef.w * (0.28 + Math.sin(i * 0.7 + aqFrame * 0.03) * 0.06);
+      const topY = -reef.h * (0.42 + Math.sin(aqFrame * 0.03 + i) * 0.04);
+      aqCtx.beginPath();
+      aqCtx.moveTo(Math.cos(a) * reef.w * 0.08, -reef.h * 0.2);
+      aqCtx.quadraticCurveTo(Math.cos(a) * reef.w * 0.16, -reef.h * 0.34, Math.cos(a + pulse * 0.08) * reach, topY + Math.sin(a) * reef.h * 0.1);
+      aqCtx.strokeStyle = `hsla(${reef.hue},82%,${52 + (i % 3) * 7}%,0.55)`;
+      aqCtx.lineWidth = 1.4;
+      aqCtx.stroke();
+    }
+  } else {
+    for (let i = 0; i < 7; i++) {
+      const off = (i - 3) * reef.w * 0.12;
+      const top = -reef.h * (0.48 + Math.sin(aqFrame * 0.02 + i + reef.pulse) * 0.08);
+      aqCtx.beginPath();
+      aqCtx.moveTo(off, 0);
+      aqCtx.lineTo(off + Math.sin(i + aqFrame * 0.03) * 10, top);
+      aqCtx.strokeStyle = `hsla(${reef.hue},55%,40%,0.7)`;
+      aqCtx.lineWidth = 4 - i * 0.28;
+      aqCtx.stroke();
+      aqCtx.beginPath();
+      aqCtx.arc(off + Math.sin(i + aqFrame * 0.03) * 10, top, 3 + (i % 2), 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${reef.hue + 24},86%,66%,0.5)`;
+      aqCtx.fill();
+    }
+  }
+  aqCtx.restore();
+}
+
+function drawGlitterDust(W, H) {
+  aqCtx.save();
+  aqCtx.globalCompositeOperation = 'screen';
+  for (let i = 0; i < AQ_GLITTER.length; i++) {
+    const g = AQ_GLITTER[i];
+    const x = (g.x + Math.sin(aqFrame * 0.01 + g.phase) * 14 + W) % W;
+    const y = (g.y - aqFrame * (0.12 + g.z * 0.24) + H * 20) % H;
+    const alpha = 0.08 + 0.16 * (0.5 + 0.5 * Math.sin(aqFrame * 0.05 + g.phase));
+    aqCtx.beginPath();
+    aqCtx.arc(x, y, g.z * 1.6, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${g.hue},95%,62%,${alpha})`;
+    aqCtx.fill();
+  }
   aqCtx.restore();
 }
 
 function drawCreature(cr) {
   const sp = SPECIES[cr.species];
-  const cached = AQ_SPRITE_CACHE[cr.species];
+  const bob = Math.sin(cr.wobble + aqFrame * 0.035) * 4;
+  const pulse = 0.75 + 0.25 * Math.sin(aqFrame * 0.04 + cr.wobble);
+  const facing = Math.cos(cr.angle) >= 0 ? 1 : -1;
+  const graveyard = inGraveyard();
 
-  if (!cached) {
-    // Plain fallback while sprites build
-    aqCtx.save();
-    aqCtx.globalAlpha = 0.55;
+  aqCtx.save();
+  aqCtx.translate(cr.x, cr.y + bob);
+  aqCtx.scale(facing * cr.depth, cr.depth);
+
+  aqCtx.save();
+  aqCtx.globalCompositeOperation = 'screen';
+  aqCtx.beginPath();
+  aqCtx.arc(0, 0, sp.r * (2.2 + pulse * 0.5), 0, Math.PI * 2);
+  aqCtx.fillStyle = graveyard
+    ? `rgba(220,220,220,${sp.tier === 0 ? 0.06 : 0.035})`
+    : `hsla(${sp.hue},80%,45%,${cr.species === 'plankton' ? 0.18 : 0.08})`;
+  aqCtx.fill();
+  aqCtx.restore();
+
+  if (graveyard) {
+    aqCtx.strokeStyle = 'rgba(220, 228, 230, 0.42)';
+    aqCtx.lineWidth = 1.1;
     aqCtx.beginPath();
-    aqCtx.arc(cr.x, cr.y, sp.r * 1.2, 0, Math.PI * 2);
-    aqCtx.fillStyle = sp.color;
-    aqCtx.fill();
+    aqCtx.moveTo(-sp.r * 1.1, 0);
+    aqCtx.lineTo(sp.r * 1.1, 0);
+    aqCtx.stroke();
+    for (let i = -1; i <= 1; i++) {
+      aqCtx.beginPath();
+      aqCtx.moveTo(i * sp.r * 0.5, -sp.r * 0.7);
+      aqCtx.lineTo(i * sp.r * 0.2, sp.r * 0.7);
+      aqCtx.stroke();
+    }
     aqCtx.restore();
     return;
   }
 
-  const { canvas, w, h } = cached;
-  const bob     = Math.sin(cr.wobble + aqFrame * 0.05) * 2.5;
-  const breathe = 1 + Math.sin(aqFrame * 0.06 + cr.wobble) * 0.04;
-  const indV    = 0.85 + (Math.sin(cr.id * 7.13) * 0.5 + 0.5) * 0.30;
-  const facing  = Math.cos(cr.angle) >= 0 ? 1 : -1;
-
-  aqCtx.save();
-  aqCtx.translate(cr.x, cr.y + bob);
-  aqCtx.scale(facing * breathe * indV, breathe * indV);
-  aqCtx.drawImage(canvas, -w / 2, -h / 2, w, h);
-  aqCtx.restore();
-
-  // Hunger glow ring
-  if (cr.hunger > 0.7 && sp.tier > 0) {
-    const a  = (cr.hunger - 0.7) * 2.2;
-    const rR = sp.r * 2.2 + Math.sin(aqFrame * 0.18 + cr.wobble) * 3;
-    const fH = (aqFrame * 3 + cr.wobble * 50) % 60;
-    aqCtx.save();
-    aqCtx.globalCompositeOperation = 'screen'; aqCtx.globalAlpha = a * 0.35;
-    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, rR * 1.3, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsl(${fH},100%,40%)`; aqCtx.fill();
-    aqCtx.restore();
-    aqCtx.save(); aqCtx.globalAlpha = a * 0.7;
-    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, rR, 0, Math.PI * 2);
-    aqCtx.strokeStyle = `hsl(${fH},100%,75%)`; aqCtx.lineWidth = 2; aqCtx.stroke();
-    aqCtx.restore();
-  }
-}
-
-function _drawCreature_UNUSED(cr) {
-  const sp = SPECIES[cr.species];
-  // Species-locked natural hue with tiny individual variation — painterly, not rainbow
-  const hue  = (SPECIES_HUE[cr.species] + Math.sin(cr.id * 7.3) * 14 + 360) % 360;
-  const hue2 = (hue + 35) % 360;   // warm analogous
-  const hue3 = (hue - 28 + 360) % 360;
-  const pulse = 0.75 + 0.25 * Math.sin(aqFrame * 0.07 + cr.wobble);
-
-  aqCtx.save();
-  aqCtx.translate(cr.x, cr.y);
-  const facingRight = Math.cos(cr.angle) >= 0;
-  aqCtx.scale(facingRight ? 1 : -1, 1);
-  const bob = Math.sin(cr.wobble + aqFrame * 0.05) * 1.8;
-  aqCtx.translate(0, bob);
-
-  // Soft organic aura matching species color (not neon)
-  aqCtx.save(); aqCtx.globalCompositeOperation = 'screen';
-  aqCtx.beginPath(); aqCtx.arc(0,0,sp.r*2.4,0,Math.PI*2);
-  aqCtx.fillStyle = `hsla(${hue},55%,40%,${0.07*pulse})`; aqCtx.fill();
-  aqCtx.beginPath(); aqCtx.arc(0,0,sp.r*1.3,0,Math.PI*2);
-  aqCtx.fillStyle = `hsla(${hue},60%,55%,${0.10*pulse})`; aqCtx.fill();
-  aqCtx.restore();
-
-  if (cr.species === 'jellyfish') {
-    // Painting 1 jellyfish — dome bell, radial pink ribs, hair-thin trailing tentacles
-    const bellW = sp.r * 1.6;
-    const pulseFrac = Math.sin(aqFrame * 0.065 + cr.wobble);
-    const bellH = sp.r * (0.72 + pulseFrac * 0.10);  // gentle breath
-
-    // Long hair tentacles BEHIND bell (draw first)
-    const tentCount = 14;
-    for (let i = 0; i < tentCount; i++) {
-      const tx = (i / (tentCount - 1) - 0.5) * 2 * bellW * 0.88;
-      const drift = Math.sin(aqFrame * 0.03 + i * 0.68 + cr.wobble) * sp.r * 0.55;
-      const tlen = sp.r * (3.2 + Math.sin(i * 0.9 + cr.wobble) * 0.8);
-      aqCtx.beginPath(); aqCtx.moveTo(tx, 0);
-      aqCtx.bezierCurveTo(
-        tx + drift * 0.4,   tlen * 0.28,
-        tx + drift * 0.75,  tlen * 0.60,
-        tx + drift,         tlen
-      );
-      aqCtx.strokeStyle = `hsla(${hue},42%,72%,${0.18 + Math.abs(Math.sin(i)) * 0.12})`;
-      aqCtx.lineWidth = 0.7; aqCtx.stroke();
-    }
-    // A few thick frilly inner arms (like the featured red jellyfish in painting 1)
-    for (let i = 0; i < 5; i++) {
-      const fx = (i / 4 - 0.5) * bellW * 0.55;
-      const flen = sp.r * (1.8 + Math.sin(aqFrame * 0.05 + i * 1.2 + cr.wobble) * 0.4);
-      const fwave = Math.sin(aqFrame * 0.045 + i * 0.9) * sp.r * 0.28;
-      aqCtx.beginPath(); aqCtx.moveTo(fx, 0);
-      aqCtx.bezierCurveTo(fx + fwave, flen * 0.35, fx - fwave, flen * 0.68, fx + fwave * 0.5, flen);
-      aqCtx.strokeStyle = `hsla(${(hue + 30) % 360},55%,65%,0.40)`;
-      aqCtx.lineWidth = 2.5; aqCtx.stroke();
-    }
-
-    // Bell dome — radial gradient from white centre outward
+  if (cr.species === 'plankton') {
     aqCtx.beginPath();
-    // Dome shape: draw as half-ellipse arc
-    aqCtx.arc(0, 0, bellW, Math.PI, 0);
-    aqCtx.closePath();
-    const jg = aqCtx.createRadialGradient(-bellW * 0.15, -bellH * 0.3, 0, 0, 0, bellW * 1.05);
-    jg.addColorStop(0,    `hsla(${hue},30%,96%,0.72)`);
-    jg.addColorStop(0.38, `hsla(${hue},38%,84%,0.45)`);
-    jg.addColorStop(0.72, `hsla(${hue},48%,68%,0.22)`);
-    jg.addColorStop(1,    `hsla(${hue},55%,55%,0.05)`);
-    aqCtx.fillStyle = jg; aqCtx.fill();
-
-    // Radial ribs visible through translucent bell (painting 1 internal structure)
-    const ribCount = 8;
-    for (let i = 0; i < ribCount; i++) {
-      const ra = Math.PI + (i / (ribCount - 1)) * Math.PI;  // fan across top half
-      aqCtx.beginPath(); aqCtx.moveTo(0, 0);
-      aqCtx.lineTo(Math.cos(ra) * bellW * 0.92, Math.sin(ra) * bellW * 0.92);
-      aqCtx.strokeStyle = `hsla(${(hue + 15) % 360},50%,80%,0.22)`;
-      aqCtx.lineWidth = 1; aqCtx.stroke();
-    }
-    // Pink/rose central oral arms cluster — painting 1 detail
-    for (let i = 0; i < 3; i++) {
-      const ox = (i - 1) * sp.r * 0.22;
-      aqCtx.beginPath(); aqCtx.ellipse(ox, -sp.r * 0.1, sp.r * 0.06, sp.r * 0.18, 0, 0, Math.PI * 2);
-      aqCtx.fillStyle = `hsla(${(hue - 20 + 360) % 360},60%,72%,0.50)`; aqCtx.fill();
-    }
-    // Scalloped bell rim
-    for (let i = 0; i <= 10; i++) {
-      const sa = Math.PI + (i / 10) * Math.PI;
-      const sx = Math.cos(sa) * bellW; const sy = Math.sin(sa) * bellW;
-      aqCtx.beginPath(); aqCtx.arc(sx, sy, sp.r * 0.09, 0, Math.PI * 2);
-      aqCtx.fillStyle = `hsla(${hue},40%,92%,0.50)`; aqCtx.fill();
-    }
-    // Bell edge stroke
-    aqCtx.beginPath(); aqCtx.arc(0, 0, bellW, Math.PI, 0);
-    aqCtx.strokeStyle = `hsla(${hue},40%,88%,0.40)`; aqCtx.lineWidth = 1; aqCtx.stroke();
-
-  } else if (cr.species === 'octopus') {
-    // Shifting mantle
-    aqCtx.beginPath(); aqCtx.ellipse(0, -2, sp.r * 0.7, sp.r * 0.6, 0, 0, Math.PI * 2);
-    const mg = aqCtx.createRadialGradient(-sp.r*0.2,-sp.r*0.3,0,0,0,sp.r*0.7);
-    mg.addColorStop(0, `hsla(${hue},90%,80%,0.9)`);
-    mg.addColorStop(0.5,`hsla(${hue2},80%,55%,0.7)`);
-    mg.addColorStop(1,  `hsla(${hue3},70%,35%,0.5)`);
-    aqCtx.fillStyle = mg;
+    aqCtx.arc(0, 0, 2.6, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${sp.hue},100%,72%,0.9)`;
     aqCtx.fill();
-    // Mantle screen-blend aura
-    aqCtx.save(); aqCtx.globalCompositeOperation = 'screen';
-    aqCtx.beginPath(); aqCtx.ellipse(0, -2, sp.r * 1.0, sp.r * 0.9, 0, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsla(${hue},100%,50%,0.20)`; aqCtx.fill();
-    aqCtx.restore();
-    // Psychedelic writhing arms — double-stroke neon, no shadowBlur
-    for (let i = 0; i < 8; i++) {
-      const h = (hue + i * 45) % 360;
-      const baseAng = (i / 8) * Math.PI * 2;
-      const len = sp.r * 1.8;
-      const t1 = aqFrame * 0.06 + i * 0.9 + cr.wobble;
-      const x0 = Math.cos(baseAng) * sp.r * 0.4, y0 = Math.sin(baseAng) * sp.r * 0.3;
-      const cx1 = Math.cos(baseAng + 0.5) * len * 0.5 + Math.sin(t1) * 15;
-      const cy1 = Math.sin(baseAng + 0.5) * len * 0.5 + Math.cos(t1) * 15;
-      const cx2 = Math.cos(baseAng + 0.8) * len * 0.85 + Math.sin(t1 * 1.3) * 12;
-      const cy2 = Math.sin(baseAng + 0.8) * len * 0.85 + Math.cos(t1 * 1.3) * 12;
-      const ex = Math.cos(baseAng + 1.1) * len + Math.sin(t1 * 0.7) * 10;
-      const ey = Math.sin(baseAng + 1.1) * len + Math.cos(t1 * 0.7) * 10;
-      // thick dim
-      aqCtx.beginPath(); aqCtx.moveTo(x0, y0); aqCtx.bezierCurveTo(cx1,cy1,cx2,cy2,ex,ey);
-      aqCtx.strokeStyle = `hsla(${h},100%,50%,0.28)`;
-      aqCtx.lineWidth = (3.5 - i * 0.2) * 2.5; aqCtx.stroke();
-      // thin bright
-      aqCtx.beginPath(); aqCtx.moveTo(x0, y0); aqCtx.bezierCurveTo(cx1,cy1,cx2,cy2,ex,ey);
-      aqCtx.strokeStyle = `hsla(${h},95%,82%,0.75)`;
-      aqCtx.lineWidth = 3.5 - i * 0.2; aqCtx.stroke();
-    }
-    // Hypnotic eye
-    aqCtx.beginPath(); aqCtx.arc(0, -4, sp.r * 0.22, 0, Math.PI * 2);
-    const eg = aqCtx.createRadialGradient(0,-4,0,0,-4,sp.r*0.22);
-    eg.addColorStop(0, '#fff'); eg.addColorStop(0.4, `hsl(${hue},100%,60%)`); eg.addColorStop(1,'#000');
-    aqCtx.fillStyle = eg; aqCtx.fill();
-
-  } else if (cr.species === 'plankton') {
-    // Tiny bioluminescent dot — natural ocean plankton
-    const flicker = 0.6 + 0.4 * Math.sin(aqFrame * 0.12 + cr.wobble);
-    const pg = aqCtx.createRadialGradient(0,0,0,0,0,sp.r*1.2);
-    pg.addColorStop(0,   `hsla(${hue},80%,92%,${0.85*flicker})`);
-    pg.addColorStop(0.5, `hsla(${hue},75%,65%,${0.55*flicker})`);
-    pg.addColorStop(1,   `hsla(${hue},70%,45%,0)`);
-    aqCtx.beginPath(); aqCtx.arc(0, 0, sp.r * 1.2, 0, Math.PI * 2);
-    aqCtx.fillStyle = pg; aqCtx.fill();
-    // Soft glow halo
-    aqCtx.save(); aqCtx.globalCompositeOperation = 'screen';
-    aqCtx.beginPath(); aqCtx.arc(0, 0, sp.r * 2.0, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsla(${hue},65%,50%,${0.15*flicker})`; aqCtx.fill();
-    aqCtx.restore();
-    // 4 tiny cilia hairs
-    for (let i = 0; i < 4; i++) {
-      const sa = (i / 4) * Math.PI * 2 + aqFrame * 0.03 + cr.wobble;
-      const sl = sp.r * (1.6 + Math.sin(aqFrame * 0.09 + i + cr.wobble) * 0.4);
-      aqCtx.beginPath();
-      aqCtx.moveTo(Math.cos(sa) * sp.r * 0.5, Math.sin(sa) * sp.r * 0.5);
-      aqCtx.lineTo(Math.cos(sa) * sl, Math.sin(sa) * sl);
-      aqCtx.strokeStyle = `hsla(${hue},70%,75%,0.45)`;
-      aqCtx.lineWidth = 0.6; aqCtx.stroke();
-    }
-
-  } else if (cr.species === 'shark') {
-    // Sleek torpedo silhouette — like distant shark in painting 2
-    const bodyW = sp.r * 2.4, bodyH = sp.r * 0.65;
-    const tailWag = Math.sin(aqFrame * 0.14 + cr.wobble) * 0.3;
-    // Torpedo body
     aqCtx.beginPath();
-    aqCtx.moveTo(bodyW * 0.55, 0);
-    aqCtx.quadraticCurveTo(bodyW * 0.25, -bodyH * 0.85, -bodyW * 0.30, -bodyH * 0.55);
-    aqCtx.quadraticCurveTo(-bodyW * 0.52, 0, -bodyW * 0.30, bodyH * 0.55);
-    aqCtx.quadraticCurveTo(bodyW * 0.25, bodyH * 0.85, bodyW * 0.55, 0);
-    const sg = aqCtx.createLinearGradient(0, -bodyH, 0, bodyH);
-    sg.addColorStop(0,   `hsla(${hue},25%,45%,0.90)`);
-    sg.addColorStop(0.5, `hsla(${hue},20%,32%,0.95)`);
-    sg.addColorStop(1,   `hsla(${hue},18%,25%,0.90)`);
-    aqCtx.fillStyle = sg; aqCtx.fill();
-    aqCtx.strokeStyle = `hsla(${hue},30%,65%,0.35)`;
-    aqCtx.lineWidth = 0.8; aqCtx.stroke();
-    // Pectoral fin
-    aqCtx.beginPath();
-    aqCtx.moveTo(bodyW*0.05, bodyH*0.2);
-    aqCtx.lineTo(-bodyW*0.08, bodyH*1.4);
-    aqCtx.lineTo(-bodyW*0.28, bodyH*0.45);
+    aqCtx.moveTo(-3, 0);
+    aqCtx.lineTo(-10, -3);
+    aqCtx.lineTo(-8, 4);
     aqCtx.closePath();
-    aqCtx.fillStyle = `hsla(${hue},22%,30%,0.85)`; aqCtx.fill();
-    // Dorsal fin
+    aqCtx.fillStyle = 'rgba(230,255,140,0.28)';
+    aqCtx.fill();
+  } else if (cr.species === 'sardine') {
     aqCtx.beginPath();
-    aqCtx.moveTo(bodyW*0.12, -bodyH*0.5);
-    aqCtx.lineTo(bodyW*0.22, -bodyH*1.7);
-    aqCtx.lineTo(bodyW*0.45, -bodyH*0.5);
+    aqCtx.moveTo(15, 0);
+    aqCtx.lineTo(-2, -7);
+    aqCtx.lineTo(-14, 0);
+    aqCtx.lineTo(-2, 7);
     aqCtx.closePath();
-    aqCtx.fillStyle = `hsla(${hue},22%,28%,0.90)`; aqCtx.fill();
-    // Tail
+    aqCtx.fillStyle = 'rgba(215, 219, 230, 0.9)';
+    aqCtx.fill();
+    aqCtx.strokeStyle = 'rgba(255, 220, 140, 0.45)';
+    aqCtx.lineWidth = 1;
+    aqCtx.stroke();
     aqCtx.beginPath();
-    aqCtx.moveTo(-bodyW*0.30, 0);
-    aqCtx.lineTo(-bodyW*0.82, -bodyH*0.75 + tailWag*bodyH);
-    aqCtx.lineTo(-bodyW*0.82,  bodyH*0.75 + tailWag*bodyH);
-    aqCtx.closePath();
-    aqCtx.fillStyle = `hsla(${hue},22%,30%,0.85)`; aqCtx.fill();
-    // Eye
-    aqCtx.beginPath(); aqCtx.arc(bodyW*0.26, -bodyH*0.22, sp.r*0.11, 0, Math.PI*2);
-    aqCtx.fillStyle = '#000'; aqCtx.fill();
-    aqCtx.beginPath(); aqCtx.arc(bodyW*0.27, -bodyH*0.24, sp.r*0.04, 0, Math.PI*2);
-    aqCtx.fillStyle = 'rgba(255,255,255,0.6)'; aqCtx.fill();
-
+    aqCtx.arc(9, -1.5, 1.8, 0, Math.PI * 2);
+    aqCtx.fillStyle = 'rgba(30,20,10,0.9)';
+    aqCtx.fill();
   } else if (cr.species === 'clownfish') {
-    // Yellow butterfly fish — exact match to painting 2's dominant yellow fish
-    const bodyW = sp.r * 1.75, bodyH = sp.r * 0.85;
-    const tailWag = Math.sin(aqFrame * 0.15 + cr.wobble) * 0.35;
-    // Tail
     aqCtx.beginPath();
-    aqCtx.moveTo(-bodyW*0.28, 0);
-    aqCtx.lineTo(-bodyW*0.68, -bodyH*0.82 + tailWag*bodyH);
-    aqCtx.lineTo(-bodyW*0.68,  bodyH*0.82 + tailWag*bodyH);
-    aqCtx.closePath();
-    aqCtx.fillStyle = `hsla(${hue},88%,55%,0.80)`; aqCtx.fill();
-    // Body — rounded disc shape (butterfly fish are deep-bodied)
-    aqCtx.beginPath();
-    aqCtx.moveTo(bodyW*0.45, 0);
-    aqCtx.quadraticCurveTo(bodyW*0.30, -bodyH, -bodyW*0.12, -bodyH*0.88);
-    aqCtx.quadraticCurveTo(-bodyW*0.32, -bodyH*0.50, -bodyW*0.28, 0);
-    aqCtx.quadraticCurveTo(-bodyW*0.32,  bodyH*0.50, -bodyW*0.12,  bodyH*0.88);
-    aqCtx.quadraticCurveTo(bodyW*0.30,  bodyH, bodyW*0.45, 0);
-    const cfg = aqCtx.createLinearGradient(0, -bodyH, 0, bodyH);
-    cfg.addColorStop(0,   `hsla(${hue},92%,65%,0.94)`);
-    cfg.addColorStop(0.5, `hsla(${hue},88%,58%,0.90)`);
-    cfg.addColorStop(1,   `hsla(${hue},82%,50%,0.85)`);
-    aqCtx.fillStyle = cfg; aqCtx.fill();
-    // Black eye-stripe — the distinctive mark of butterfly fish
-    aqCtx.save(); aqCtx.clip();
-    aqCtx.beginPath();
-    aqCtx.moveTo(bodyW*0.42, -bodyH*0.9);
-    aqCtx.quadraticCurveTo(bodyW*0.36, 0, bodyW*0.42, bodyH*0.9);
-    aqCtx.quadraticCurveTo(bodyW*0.26, 0, bodyW*0.42, -bodyH*0.9);
-    aqCtx.fillStyle = 'rgba(15,10,5,0.75)'; aqCtx.fill();
-    aqCtx.restore();
-    // Outline
-    aqCtx.beginPath();
-    aqCtx.moveTo(bodyW*0.45, 0);
-    aqCtx.quadraticCurveTo(bodyW*0.30, -bodyH, -bodyW*0.12, -bodyH*0.88);
-    aqCtx.quadraticCurveTo(-bodyW*0.32, -bodyH*0.50, -bodyW*0.28, 0);
-    aqCtx.quadraticCurveTo(-bodyW*0.32,  bodyH*0.50, -bodyW*0.12,  bodyH*0.88);
-    aqCtx.quadraticCurveTo(bodyW*0.30,  bodyH, bodyW*0.45, 0);
-    aqCtx.strokeStyle = 'rgba(40,22,0,0.55)'; aqCtx.lineWidth = 1; aqCtx.stroke();
-    // Eye (inside the black stripe area)
-    aqCtx.beginPath(); aqCtx.arc(bodyW*0.32, -bodyH*0.18, sp.r*0.13, 0, Math.PI*2);
-    aqCtx.fillStyle = '#050505'; aqCtx.fill();
-    aqCtx.beginPath(); aqCtx.arc(bodyW*0.33, -bodyH*0.20, sp.r*0.045, 0, Math.PI*2);
-    aqCtx.fillStyle = 'rgba(255,255,255,0.65)'; aqCtx.fill();
-
-  } else {
-    // Painted fish — matches the natural brushstroke fish of painting 2
-    // Species-specific body proportions
-    const isTuna = cr.species === 'tuna';
-    const bodyW = sp.r * (isTuna ? 1.7 : 2.0), bodyH = sp.r * (isTuna ? 0.88 : 0.68);
-    const tailWag = Math.sin(aqFrame * 0.13 + cr.wobble) * 0.38;
-    // Tail — forked for tuna, plain for sardine
-    if (isTuna) {
-      // Forked tail like painting 2 blue angelfish
+    aqCtx.ellipse(0, 0, 16, 11, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${sp.hue},62%,34%,0.92)`;
+    aqCtx.fill();
+    aqCtx.strokeStyle = `hsla(${sp.hue + 18},92%,72%,0.65)`;
+    aqCtx.lineWidth = 1.2;
+    aqCtx.stroke();
+    for (let i = 0; i < 6; i++) {
       aqCtx.beginPath();
-      aqCtx.moveTo(-bodyW*0.28, 0);
-      aqCtx.lineTo(-bodyW*0.72, -bodyH*0.95 + tailWag*bodyH);
-      aqCtx.lineTo(-bodyW*0.52, 0);
-      aqCtx.lineTo(-bodyW*0.72,  bodyH*0.95 + tailWag*bodyH);
-      aqCtx.closePath();
-    } else {
-      aqCtx.beginPath();
-      aqCtx.moveTo(-bodyW*0.30, 0);
-      aqCtx.lineTo(-bodyW*0.78, -bodyH*0.80 + tailWag*bodyH);
-      aqCtx.lineTo(-bodyW*0.78,  bodyH*0.80 + tailWag*bodyH);
-      aqCtx.closePath();
+      aqCtx.moveTo(-8 + i * 3.2, 8);
+      aqCtx.quadraticCurveTo(-6 + i * 3.2, 18 + Math.sin(aqFrame * 0.06 + i) * 3, -4 + i * 3.2, 22);
+      aqCtx.strokeStyle = `hsla(${sp.hue},90%,76%,0.45)`;
+      aqCtx.lineWidth = 1;
+      aqCtx.stroke();
     }
-    aqCtx.fillStyle = `hsla(${hue},65%,50%,0.75)`; aqCtx.fill();
-    // Body — layered fills for painterly depth
-    const bodyPath = () => {
-      aqCtx.beginPath();
-      aqCtx.moveTo(bodyW * 0.52, 0);
-      aqCtx.quadraticCurveTo(bodyW * 0.22, -bodyH, -bodyW * 0.28, -bodyH * 0.62);
-      aqCtx.quadraticCurveTo(-bodyW * 0.48, 0, -bodyW * 0.28, bodyH * 0.62);
-      aqCtx.quadraticCurveTo(bodyW * 0.22, bodyH, bodyW * 0.52, 0);
-    };
-    // Shadow layer
-    bodyPath();
-    aqCtx.fillStyle = `hsla(${hue},55%,28%,0.45)`; aqCtx.fill();
-    // Mid layer
-    bodyPath();
-    const fg2 = aqCtx.createLinearGradient(bodyW*0.3, -bodyH*0.8, -bodyW*0.2, bodyH*0.7);
-    fg2.addColorStop(0,   `hsla(${hue},70%,72%,0.90)`);
-    fg2.addColorStop(0.45,`hsla(${hue},68%,56%,0.85)`);
-    fg2.addColorStop(1,   `hsla(${hue},62%,40%,0.80)`);
-    aqCtx.fillStyle = fg2; aqCtx.fill();
-    // Highlight — painterly bright stroke on dorsal area
     aqCtx.beginPath();
-    aqCtx.moveTo(bodyW * 0.45, 0);
-    aqCtx.quadraticCurveTo(bodyW * 0.15, -bodyH * 0.85, -bodyW * 0.18, -bodyH * 0.50);
-    aqCtx.quadraticCurveTo(bodyW * 0.10, -bodyH * 0.60, bodyW * 0.45, 0);
-    aqCtx.fillStyle = `hsla(${hue},55%,80%,0.22)`; aqCtx.fill();
-    // Soft outline
-    bodyPath();
-    aqCtx.strokeStyle = `hsla(${hue},50%,22%,0.45)`; aqCtx.lineWidth = 1; aqCtx.stroke();
-    // Eye with iris
-    aqCtx.beginPath(); aqCtx.arc(bodyW*0.22, -bodyH*0.28, sp.r*0.15, 0, Math.PI*2);
-    aqCtx.fillStyle = `hsla(${hue},30%,12%,0.90)`; aqCtx.fill();
-    aqCtx.beginPath(); aqCtx.arc(bodyW*0.23, -bodyH*0.30, sp.r*0.055, 0, Math.PI*2);
-    aqCtx.fillStyle = 'rgba(255,255,255,0.60)'; aqCtx.fill();
+    aqCtx.moveTo(7, -1);
+    aqCtx.quadraticCurveTo(0, 6, -9, 2);
+    aqCtx.quadraticCurveTo(-1, 8, 8, 2);
+    aqCtx.strokeStyle = 'rgba(245,255,220,0.8)';
+    aqCtx.lineWidth = 1.3;
+    aqCtx.stroke();
+    for (let i = 0; i < 5; i++) {
+      aqCtx.beginPath();
+      aqCtx.moveTo(6 - i * 3, 0.5);
+      aqCtx.lineTo(4.7 - i * 3, 3.5 + (i % 2) * 1.4);
+      aqCtx.stroke();
+    }
+    aqCtx.beginPath();
+    aqCtx.arc(8, -4, 2.2, 0, Math.PI * 2);
+    aqCtx.fillStyle = 'rgba(250,255,245,0.9)';
+    aqCtx.fill();
+    aqCtx.beginPath();
+    aqCtx.arc(8.6, -4, 0.9, 0, Math.PI * 2);
+    aqCtx.fillStyle = '#091014';
+    aqCtx.fill();
+  } else if (cr.species === 'tuna') {
+    aqCtx.beginPath();
+    aqCtx.moveTo(18, 0);
+    aqCtx.quadraticCurveTo(6, -14, -12, -10);
+    aqCtx.quadraticCurveTo(-22, 0, -12, 10);
+    aqCtx.quadraticCurveTo(6, 14, 18, 0);
+    aqCtx.fillStyle = 'rgba(120, 150, 190, 0.2)';
+    aqCtx.fill();
+    aqCtx.strokeStyle = 'rgba(190, 210, 255, 0.42)';
+    aqCtx.lineWidth = 1.4;
+    aqCtx.stroke();
+    for (let i = 0; i < 4; i++) {
+      aqCtx.beginPath();
+      aqCtx.ellipse(-8 + i * 6, 0, 4, 8, 0, 0, Math.PI * 2);
+      aqCtx.stroke();
+    }
+    for (let i = 0; i < 3; i++) {
+      aqCtx.beginPath();
+      aqCtx.arc(7 - i * 6, -3 + (i % 2) * 6, 2, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${sp.hue + 20 * i},85%,78%,0.8)`;
+      aqCtx.fill();
+    }
+  } else if (cr.species === 'shark') {
+    aqCtx.beginPath();
+    aqCtx.moveTo(30, 0);
+    aqCtx.bezierCurveTo(18, -12, -8, -15, -30, -4);
+    aqCtx.bezierCurveTo(-38, 0, -30, 4, -18, 8);
+    aqCtx.bezierCurveTo(-4, 15, 16, 12, 30, 0);
+    aqCtx.fillStyle = 'rgba(90, 110, 124, 0.95)';
+    aqCtx.fill();
+    aqCtx.strokeStyle = 'rgba(160, 220, 220, 0.22)';
+    aqCtx.lineWidth = 1.4;
+    aqCtx.stroke();
+    for (let i = 0; i < 5; i++) {
+      aqCtx.beginPath();
+      aqCtx.arc(12 - i * 8, -3 + Math.sin(aqFrame * 0.04 + i) * 2, 2.2, 0, Math.PI * 2);
+      aqCtx.fillStyle = 'rgba(220,255,245,0.75)';
+      aqCtx.fill();
+      aqCtx.beginPath();
+      aqCtx.arc(12.5 - i * 8, -3 + Math.sin(aqFrame * 0.04 + i) * 2, 0.9, 0, Math.PI * 2);
+      aqCtx.fillStyle = '#071014';
+      aqCtx.fill();
+    }
+    for (let i = 0; i < 8; i++) {
+      aqCtx.beginPath();
+      aqCtx.moveTo(-6 - i * 2, 6);
+      aqCtx.quadraticCurveTo(-14 - i * 5, 16 + Math.sin(aqFrame * 0.05 + i) * 8, -18 - i * 7, 24 + Math.sin(aqFrame * 0.05 + i) * 8);
+      aqCtx.strokeStyle = `hsla(${sp.hue + i * 8},85%,68%,0.36)`;
+      aqCtx.lineWidth = 1.1;
+      aqCtx.stroke();
+    }
+  } else if (cr.species === 'jellyfish') {
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, -2, 11, 13, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${sp.hue},75%,42%,0.88)`;
+    aqCtx.fill();
+    for (let i = 0; i < 12; i++) {
+      const x = (i - 5.5) * 1.8;
+      aqCtx.beginPath();
+      aqCtx.moveTo(x, 7);
+      aqCtx.bezierCurveTo(x + Math.sin(aqFrame * 0.04 + i) * 4, 15, x - Math.sin(aqFrame * 0.03 + i) * 5, 22, x + Math.sin(aqFrame * 0.04 + i) * 6, 28);
+      aqCtx.strokeStyle = `hsla(${sp.hue + 12},90%,70%,0.55)`;
+      aqCtx.lineWidth = 1;
+      aqCtx.stroke();
+    }
+  } else if (cr.species === 'octopus') {
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, -4, 15, 11, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${sp.hue},42%,28%,0.94)`;
+    aqCtx.fill();
+    aqCtx.strokeStyle = `hsla(${sp.hue + 22},70%,68%,0.35)`;
+    aqCtx.lineWidth = 1.2;
+    aqCtx.stroke();
+    for (let i = 0; i < 7; i++) {
+      aqCtx.beginPath();
+      aqCtx.moveTo(-10 + i * 3, 2);
+      aqCtx.bezierCurveTo(-14 + i * 3, 12, -18 + i * 5 + Math.sin(aqFrame * 0.05 + i) * 8, 18, -14 + i * 4 + Math.sin(aqFrame * 0.05 + i) * 10, 28);
+      aqCtx.strokeStyle = `hsla(${sp.hue - 18},84%,64%,0.42)`;
+      aqCtx.lineWidth = 1.1;
+      aqCtx.stroke();
+    }
   }
-  aqCtx.restore();
 
-  // Hunger fire ring — screen-blend glow, no shadowBlur
-  if (cr.hunger > 0.7 && sp.tier > 0) {
-    const a = (cr.hunger - 0.7) * 2.2;
-    const ringR = sp.r * 1.7 + Math.sin(aqFrame * 0.18 + cr.wobble) * 3;
-    const fireH = (aqFrame * 3 + cr.wobble * 50) % 60;
-    aqCtx.save();
-    aqCtx.globalCompositeOperation = 'screen'; aqCtx.globalAlpha = a * 0.4;
-    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, ringR * 1.3, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsl(${fireH},100%,40%)`; aqCtx.fill();
-    aqCtx.restore();
-    aqCtx.save(); aqCtx.globalAlpha = a;
-    aqCtx.beginPath(); aqCtx.arc(cr.x, cr.y, ringR, 0, Math.PI * 2);
-    aqCtx.strokeStyle = `hsl(${fireH},100%,70%)`;
-    aqCtx.lineWidth = 2; aqCtx.stroke();
-    aqCtx.restore();
-  }
+  aqCtx.restore();
 }
 
 function updateCreature(cr, W, H, dt) {
   const sp = SPECIES[cr.species];
-  cr.wobble += 0.04;
+  const graveyard = inGraveyard();
+  cr.wobble += 0.04 * dt;
   cr.age += dt;
-  cr.hunger = Math.min(1, cr.hunger + dt * (sp.tier === 0 ? 0.002 : 0.004));
-  cr.energy = Math.max(0, cr.energy - dt * (sp.tier === 0 ? 0.0005 : 0.0012));
+  cr.hunger = Math.min(1, cr.hunger + dt * (sp.tier === 0 ? 0.0012 : 0.0022));
+  cr.energy = Math.max(0, cr.energy - dt * (graveyard ? 0.0014 : (sp.tier === 0 ? 0.00015 : 0.0006)));
 
-  const floorY = H - 60;
-  const ceilY  = 40;
+  const floorY = H - 84;
+  const ceilY = 46;
 
-  // Hunting: find nearest prey
   let target = null, targetDist = Infinity;
-  if (sp.tier > 0) {
+  if (sp.prey.length) {
     for (const other of AQ_CREATURES) {
       if (other === cr || !sp.prey.includes(other.species)) continue;
       const d = Math.hypot(other.x - cr.x, other.y - cr.y);
-      if (d < targetDist) { targetDist = d; target = other; }
+      if (d < targetDist) { target = other; targetDist = d; }
     }
   }
 
-  // Flee: look for predators
   let flee = null, fleeDist = Infinity;
   for (const other of AQ_CREATURES) {
     if (other === cr) continue;
-    const oSp = SPECIES[other.species];
-    if (!oSp.prey.includes(cr.species)) continue;
+    if (!SPECIES[other.species].prey.includes(cr.species)) continue;
     const d = Math.hypot(other.x - cr.x, other.y - cr.y);
-    const senseRange = oSp.r * 14;
-    if (d < senseRange && d < fleeDist) { fleeDist = d; flee = other; }
+    if (d < fleeDist) { flee = other; fleeDist = d; }
   }
 
   let desiredAngle = cr.angle;
-
-  if (flee) {
-    // Flee away from predator
+  if (flee && fleeDist < sp.r * 16) {
     desiredAngle = Math.atan2(cr.y - flee.y, cr.x - flee.x);
-  } else if (target && cr.hunger > 0.25) {
-    // Hunt prey
-    const huntRange = sp.r * 18;
-    if (targetDist < huntRange) {
-      desiredAngle = Math.atan2(target.y - cr.y, target.x - cr.x);
-      // Eat if close enough
-      if (targetDist < sp.r * 1.6 + SPECIES[target.species].r) {
-        cr.hunger = Math.max(0, cr.hunger - 0.6);
-        cr.energy = Math.min(1, cr.energy + 0.4);
-        const idx = AQ_CREATURES.indexOf(target);
-        if (idx !== -1) AQ_CREATURES.splice(idx, 1);
-      }
+  } else if (target && cr.hunger > 0.18 && targetDist < sp.r * 22) {
+    desiredAngle = Math.atan2(target.y - cr.y, target.x - cr.x);
+    if (targetDist < sp.r * 1.5 + SPECIES[target.species].r) {
+      cr.hunger = Math.max(0, cr.hunger - 0.55);
+      cr.energy = Math.min(1, cr.energy + 0.25);
+      const idx = AQ_CREATURES.indexOf(target);
+      if (idx !== -1) AQ_CREATURES.splice(idx, 1);
     }
   } else {
-    // Wander — gentle curves
     desiredAngle += (Math.random() - 0.5) * sp.turnRate;
-    // Plankton drift upward gently
-    if (cr.species === 'plankton') desiredAngle += Math.sin(aqFrame * 0.02 + cr.wobble) * 0.05;
+    desiredAngle += Math.sin(aqFrame * 0.008 + cr.id * 6) * 0.01;
   }
 
-  // Avoid walls
-  const margin = 80;
-  if (cr.x < margin)  desiredAngle += sp.turnRate * 3;
-  if (cr.x > W - margin) desiredAngle -= sp.turnRate * 3;
-  if (cr.y < ceilY + 20) desiredAngle += sp.turnRate * 2;
-  if (cr.y > floorY - 20) desiredAngle -= sp.turnRate * 2;
+  const margin = 90;
+  if (cr.x < margin) desiredAngle += sp.turnRate * 2.6;
+  if (cr.x > W - margin) desiredAngle -= sp.turnRate * 2.6;
+  if (cr.y < ceilY + 30) desiredAngle += sp.turnRate * 1.7;
+  if (cr.y > floorY - 18) desiredAngle -= sp.turnRate * 1.7;
 
-  // Smooth angle
   let diff = desiredAngle - cr.angle;
   while (diff > Math.PI) diff -= Math.PI * 2;
   while (diff < -Math.PI) diff += Math.PI * 2;
-  cr.angle += diff * Math.min(sp.turnRate * 4, 0.18);
+  cr.angle += diff * Math.min(sp.turnRate * 3.2, 0.14);
 
-  // Speed modulation
-  const spd = sp.speed * (flee ? 1.6 : target && cr.hunger > 0.25 ? 1.2 : 0.7 + Math.sin(cr.wobble * 0.3) * 0.3);
-  cr.vx += (Math.cos(cr.angle) * spd - cr.vx) * 0.12;
-  cr.vy += (Math.sin(cr.angle) * spd - cr.vy) * 0.12;
+  const huntBoost = target && cr.hunger > 0.18 ? 1.15 : 0.8 + Math.sin(cr.wobble * 0.4) * 0.12;
+  const fleeBoost = flee && fleeDist < sp.r * 16 ? 1.45 : 1;
+  const speed = sp.speed * huntBoost * fleeBoost;
+  cr.vx += (Math.cos(cr.angle) * speed - cr.vx) * 0.08 * dt;
+  cr.vy += (Math.sin(cr.angle) * speed - cr.vy) * 0.08 * dt;
   cr.x += cr.vx;
   cr.y += cr.vy;
-
-  // Hard clamp
-  cr.x = Math.max(20, Math.min(W - 20, cr.x));
+  cr.x = Math.max(24, Math.min(W - 24, cr.x));
   cr.y = Math.max(ceilY, Math.min(floorY, cr.y));
 }
 
 function drawAquarium() {
   if (!aqRunning) return;
-  aqFrame++;
+  aqFrame += AQ_STATE.flow;
   const W = aqCanvas.width, H = aqCanvas.height;
   aqCtx.clearRect(0, 0, W, H);
 
-  // ── BACKGROUND: deep blue ocean + coral strips from paintings ──
-  {
-    // Base gradient — deep sea blue
-    const bg = aqCtx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0,    'hsl(200, 72%, 20%)');
-    bg.addColorStop(0.60, 'hsl(210, 80%, 10%)');
-    bg.addColorStop(1,    'hsl(218, 88%, 5%)');
-    aqCtx.fillStyle = bg;
-    aqCtx.fillRect(0, 0, W, H);
-  }
-  if (AQ_IMGS_READY > 0) {
-    buildSprites();
-    const blend = Math.sin(aqFrame * 0.0006) * 0.5 + 0.5;  // slow 0→1 oscillation
-    const coralH = Math.round(H * 0.34);
-    const coralY = H - coralH;
-    aqCtx.save();
-    // Coral strip from painting 1 (bottom 28% = pure reef, no faces)
-    if (AQ_IMG1.complete && AQ_IMG1.naturalWidth) {
-      const iw = AQ_IMG1.naturalWidth, ih = AQ_IMG1.naturalHeight;
-      aqCtx.globalAlpha = 0.92 - blend * 0.25;
-      aqCtx.drawImage(AQ_IMG1, 0, ih * 0.72, iw, ih * 0.28, 0, coralY, W, coralH);
-    }
-    // Coral strip from painting 2 (bottom 22% = reef only, avoids central face)
-    if (AQ_IMG2 && AQ_IMG2.complete && AQ_IMG2.naturalWidth) {
-      const iw = AQ_IMG2.naturalWidth, ih = AQ_IMG2.naturalHeight;
-      aqCtx.globalAlpha = blend * 0.75;
-      aqCtx.drawImage(AQ_IMG2, 0, ih * 0.78, iw, ih * 0.22, 0, coralY, W, coralH);
-    }
-    aqCtx.restore();
+  AQ_STATE.sepia += ((AQ_STATE.teaParty ? 1 : 0) - AQ_STATE.sepia) * 0.06;
+  if (AQ_STATE.cleanse > 0) AQ_STATE.cleanse--;
+  if (AQ_STATE.frenzy > 0) AQ_STATE.frenzy--;
+  if (AQ_STATE.ritualCooldown > 0) AQ_STATE.ritualCooldown--;
+
+  if (!AQ_STATE.teaParty && AQ_STATE.ritualCooldown === 0 && !inGraveyard() && aqFrame % 900 < AQ_STATE.flow && Math.random() < 0.45) {
+    triggerMadTeaParty();
   }
 
-  // Subtle ripple sheen — animates over the static painting for life
-  aqCtx.save(); aqCtx.globalCompositeOperation = 'overlay'; aqCtx.globalAlpha = 0.04;
-  for (let i = 0; i < 3; i++) {
-    const cy = H * (0.2 + i * 0.28) + Math.sin(aqFrame * 0.003 + i * 2.1) * H * 0.04;
-    const cx = W * 0.5 + Math.cos(aqFrame * 0.0025 + i * 1.7) * W * 0.22;
-    aqCtx.beginPath(); aqCtx.arc(cx, cy, W * (0.30 + i * 0.09), 0, Math.PI * 2);
-    aqCtx.strokeStyle = 'rgba(180,220,240,1)'; aqCtx.lineWidth = 2; aqCtx.stroke();
-  }
-  aqCtx.restore();
-
-  // Small rising bubbles from painting (painting 1 has them near center jellyfish)
-  if (Math.random() < 0.06) {
-    AQ_BUBBLES_AQ.push({ x: 20 + Math.random() * (W - 40), y: H - 80, r: 1.5 + Math.random() * 4, life: 1 });
-  }
-  for (let i = AQ_BUBBLES_AQ.length - 1; i >= 0; i--) {
-    const b = AQ_BUBBLES_AQ[i];
-    b.y -= 0.35 + b.r * 0.09; b.x += Math.sin(aqFrame * 0.035 + i * 1.2) * 0.4;
-    b.life -= 0.004;
-    if (b.y < -10 || b.life <= 0) { AQ_BUBBLES_AQ.splice(i, 1); continue; }
-    const a = b.life * 0.55;
-    aqCtx.beginPath(); aqCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-    aqCtx.strokeStyle = `rgba(200,225,240,${a * 0.7})`; aqCtx.lineWidth = 0.8; aqCtx.stroke();
-    aqCtx.fillStyle = `rgba(210,235,250,${a * 0.18})`; aqCtx.fill();
+  if (AQ_STATE.flow > 3.4 && !inGraveyard()) {
+    AQ_STATE.decay = clamp(AQ_STATE.decay + (AQ_STATE.flow - 3.4) * 0.00035, 0, 1.2);
+    if (AQ_STATE.decay > 1) triggerGraveyard();
+  } else if (!inGraveyard()) {
+    AQ_STATE.decay = clamp(AQ_STATE.decay - 0.0015, 0, 1);
   }
 
-  // Creatures
+  drawAqBackdrop(W, H);
+  drawGlitterDust(W, H);
+
+  for (const ruin of AQ_RUINS) drawTeaRuin(ruin, H);
+  for (const reef of AQ_REEFS) drawReef(reef, H);
+
   for (let i = AQ_CREATURES.length - 1; i >= 0; i--) {
     const cr = AQ_CREATURES[i];
-    updateCreature(cr, W, H, 1);
-    // Die of old age or starvation
-    if (cr.energy <= 0 || cr.age > 8000) { AQ_CREATURES.splice(i, 1); continue; }
+    updateCreature(cr, W, H, AQ_STATE.flow);
+    if (cr.energy <= 0 || cr.age > 9000) { AQ_CREATURES.splice(i, 1); continue; }
     drawCreature(cr);
   }
 
-  // ── Count populations ──
   const counts = {};
   AQ_CREATURES.forEach(c => counts[c.species] = (counts[c.species] || 0) + 1);
+  if (!inGraveyard()) {
+    if (aqFrame % 180 < AQ_STATE.flow && (counts.plankton || 0) < 24) for (let i = 0; i < 4; i++) addCreature('plankton', W, H);
+    if (aqFrame % 360 < AQ_STATE.flow && (counts.sardine || 0) < 8) addCreature('sardine', W, H);
+    if (aqFrame % 520 < AQ_STATE.flow && (counts.clownfish || 0) < 4) addCreature('clownfish', W, H);
+    if (aqFrame % 700 < AQ_STATE.flow && (counts.jellyfish || 0) < 4) addCreature('jellyfish', W, H);
+    if (aqFrame % 900 < AQ_STATE.flow && (counts.tuna || 0) < 2) addCreature('tuna', W, H);
+  }
 
-  // ── Auto-respawn — constant gentle inflow keeps ecosystem alive ──
-  if (aqFrame % 180 === 0 && (counts['plankton'] || 0) < 22)
-    for (let i = 0; i < 3; i++) addCreature('plankton', W, H);
-  if (aqFrame % 360 === 0 && (counts['sardine'] || 0) < 10)
-    addCreature('sardine', W, H);
-  if (aqFrame % 540 === 0 && (counts['clownfish'] || 0) < 6)
-    addCreature('clownfish', W, H);
+  AQ_STATE.biomass = clamp(AQ_CREATURES.length / 42, 0, 1);
+  AQ_STATE.stability = clamp(0.72 - AQ_STATE.toxicity * 0.46 + AQ_STATE.biomass * 0.22 + AQ_STATE.insight * 0.08 - AQ_STATE.decay * 0.28, 0, 1);
+  if (AQ_STATE.frenzy > 0 && aqFrame % 40 < AQ_STATE.flow) cullByFraction(0.02, c => SPECIES[c.species].tier > 0 && SPECIES[c.species].tier < 3);
 
-  // ── Unify digital + paint with a light oil-paint glaze ──
-  // Screen-blend vignette darkens edges like oil-painted corners
   aqCtx.save();
-  const vg = aqCtx.createRadialGradient(W/2, H/2, H*0.28, W/2, H/2, Math.max(W,H)*0.75);
-  vg.addColorStop(0, 'rgba(0,0,0,0)');
-  vg.addColorStop(1, 'rgba(0,8,28,0.55)');
-  aqCtx.fillStyle = vg; aqCtx.fillRect(0, 0, W, H);
+  aqCtx.globalCompositeOperation = 'multiply';
+  const glaze = aqCtx.createRadialGradient(W / 2, H * 0.45, H * 0.1, W / 2, H * 0.55, Math.max(W, H) * 0.82);
+  glaze.addColorStop(0, 'rgba(0,0,0,0)');
+  glaze.addColorStop(1, 'rgba(5,2,10,0.62)');
+  aqCtx.fillStyle = glaze;
+  aqCtx.fillRect(0, 0, W, H);
   aqCtx.restore();
 
-  // Population label
-  const parts = Object.entries(counts).map(([s, n]) => `${SPECIES[s].label}: ${n}`);
-  if (parts.length) {
+  const label = Object.entries(counts).map(([key, n]) => `${SPECIES[key].label}: ${n}`).join('  ·  ');
+  if (label) {
     aqCtx.save();
-    aqCtx.fillStyle = 'rgba(200,230,255,0.35)';
-    aqCtx.font = `italic ${Math.max(10, Math.min(12, W * 0.010))}px Georgia`;
+    aqCtx.fillStyle = 'rgba(214, 232, 240, 0.42)';
+    aqCtx.font = `italic ${Math.max(11, Math.min(14, W * 0.011))}px Georgia`;
     aqCtx.textAlign = 'center';
-    aqCtx.fillText(parts.join('  ·  '), W / 2, 26);
+    aqCtx.fillText(label, W / 2, 30);
     aqCtx.restore();
   }
+
+  if (AQ_STATE.cleanse > 0 || AQ_STATE.cracks > 0) {
+    aqCtx.save();
+    aqCtx.strokeStyle = `rgba(230, 236, 245, ${AQ_STATE.cleanse > 0 ? 0.22 : 0.12})`;
+    aqCtx.lineWidth = 1.2;
+    const crackSeed = [
+      [W * 0.08, H * 0.22, W * 0.22, H * 0.11, W * 0.28, H * 0.24],
+      [W * 0.72, H * 0.08, W * 0.62, H * 0.22, W * 0.78, H * 0.32],
+      [W * 0.84, H * 0.54, W * 0.72, H * 0.62, W * 0.76, H * 0.8]
+    ];
+    for (const seg of crackSeed) {
+      aqCtx.beginPath();
+      aqCtx.moveTo(seg[0], seg[1]);
+      aqCtx.lineTo(seg[2], seg[3]);
+      aqCtx.lineTo(seg[4], seg[5]);
+      aqCtx.stroke();
+    }
+    aqCtx.restore();
+  }
+
+  updateAquariumStatus();
 
   requestAnimationFrame(drawAquarium);
 }
 
 function openAquarium() {
   aqOverlay.classList.add('visible');
-  loadAqImages();
+  loadAquariumReferences();
   const W = aqCanvas.width, H = aqCanvas.height;
   if (!aqRunning) {
-    initCorals(W, H);
-    // Seed with a balanced starter ecosystem
-    for (let i = 0; i < 12; i++) addCreature('plankton', W, H);
-    for (let i = 0; i < 6;  i++) addCreature('sardine',  W, H);
-    for (let i = 0; i < 3;  i++) addCreature('clownfish',W, H);
+    seedAquarium(W, H);
+    updateAquariumStatus();
     aqRunning = true;
     drawAquarium();
   }
@@ -3196,10 +3904,18 @@ aqOverlay.addEventListener('click', e => { if (e.target === aqOverlay) closeAqua
 
 document.querySelectorAll('.aq-add-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const W = aqCanvas.width, H = aqCanvas.height;
-    addCreature(btn.dataset.species, W, H);
+    favorSpecies(btn.dataset.species);
   });
 });
+aqFlow.addEventListener('input', () => {
+  AQ_STATE.flow = parseFloat(aqFlow.value);
+  AQ_STATE.whisper = AQ_STATE.flow > 3.4
+    ? 'The Flow strains the flesh of the reef. Push harder and the giants will rot in place.'
+    : 'Chronos bends. Evolution quickens, but the reef still remembers your touch.';
+  updateAquariumStatus();
+});
+document.getElementById('aq-pour-tea').addEventListener('click', () => resolveTeaParty('pour'));
+document.getElementById('aq-break-cup').addEventListener('click', () => resolveTeaParty('break'));
 
 /* ═══ NAVIGATION ARROWS ═══ */
 const navPrev = document.getElementById('nav-prev');

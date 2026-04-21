@@ -631,7 +631,6 @@ document.addEventListener('touchmove', e => {
 }, {passive: false});
 document.addEventListener('touchend', padEnd);
 </script>
-<script src="miniplayer.js"></script>
 <script>
 /* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
 (function() {
@@ -646,7 +645,7 @@ document.addEventListener('touchend', padEnd);
 
   let mx = window.innerWidth / 2, my = window.innerHeight / 2;
   let prevMx = mx, prevMy = my;
-  let shipAngle = 0, smoothAngle = 0, speed = 0, frame = 0;
+  let shipAngle = 0, smoothAngle = 0, smoothPitch = 0, speed = 0, lastDy = 0, frame = 0;
   const WARP = [], RIPPLES = [];
 
   document.addEventListener('mousemove', e => {
@@ -654,12 +653,12 @@ document.addEventListener('touchend', padEnd);
     mx = e.clientX; my = e.clientY;
     const dx = mx - prevMx, dy = my - prevMy;
     speed = Math.sqrt(dx*dx + dy*dy);
-    if (speed > 1.5) shipAngle = Math.atan2(dy, dx);
+    lastDy = dy;
+    if (speed > 5.0) shipAngle = Math.atan2(dy, dx);
 
-    // Warp exhaust particles from stern
     const sternX = mx - Math.cos(shipAngle) * 20;
     const sternY = my - Math.sin(shipAngle) * 20;
-    const count = Math.min(Math.floor(speed / 3) + 1, 9);
+    const count = Math.min(Math.floor(speed / 6) + 1, 5);
     const COLORS = ['#00ffff','#8844ff','#ffffff','#4488ff','#00aaff'];
     for (let i = 0; i < count; i++) {
       const spread = (Math.random() - 0.5) * 9;
@@ -675,7 +674,6 @@ document.addEventListener('touchend', padEnd);
       });
     }
 
-    // Subtle move ripple
     if (Math.random() < 0.12)
       RIPPLES.push({x: mx, y: my, r: 2, alpha: 0.3, maxR: 28, expand: 2.2, lw: 1});
   });
@@ -684,7 +682,6 @@ document.addEventListener('touchend', padEnd);
     for (let i = 0; i < 5; i++)
       RIPPLES.push({x: e.clientX, y: e.clientY, r: 3 + i*7, alpha: 0.75 - i*0.1,
                     maxR: 55 + i*28, expand: 3 + i*0.5, lw: 2 - i*0.25});
-    // Warp burst on click
     for (let i = 0; i < 20; i++) {
       const a = Math.random() * Math.PI * 2;
       WARP.push({x: e.clientX, y: e.clientY,
@@ -696,111 +693,239 @@ document.addEventListener('touchend', padEnd);
     }
   });
 
-  function drawShip(x, y, angle, bob) {
+  function drawShip(x, y, angle, pitch, bob) {
     cc.save();
-    cc.translate(x, y);
-    cc.rotate(angle + Math.sin(frame * 0.035) * 0.04);
-    cc.translate(0, bob);
+    cc.translate(x, y + bob);
+
+    // Side-view: flip horizontally based on direction
+    const facingRight = Math.cos(angle) >= 0;
+    const flip = facingRight ? 1 : -1;
+    const sway = Math.sin(frame * 0.025) * 0.028;
+    cc.rotate(sway);
+    cc.scale(flip * 0.40, 0.40);
+    // Apply pitch AFTER flip so bow always tilts toward movement direction
+    cc.rotate(pitch);
 
     // Warp engine glow at stern
-    const eg = cc.createRadialGradient(-20, 0, 0, -20, 0, 16);
-    eg.addColorStop(0,   'rgba(0,200,255,0.95)');
-    eg.addColorStop(0.3, 'rgba(80,40,255,0.6)');
+    const eg = cc.createRadialGradient(-32, 4, 0, -32, 4, 20);
+    eg.addColorStop(0,   'rgba(0,200,255,0.85)');
+    eg.addColorStop(0.4, 'rgba(60,30,255,0.45)');
     eg.addColorStop(1,   'rgba(0,0,80,0)');
-    cc.beginPath(); cc.arc(-20, 0, 16, 0, Math.PI*2);
+    cc.beginPath(); cc.arc(-32, 4, 20, 0, Math.PI*2);
     cc.fillStyle = eg; cc.fill();
 
-    // Hull glow
-    cc.shadowColor = '#00aaff'; cc.shadowBlur = 12;
-
-    // Hull
+    // ── HULL (Blackbeard — dark, high stern castle) ──
+    cc.shadowColor = '#00aaff'; cc.shadowBlur = 6;
     cc.beginPath();
-    cc.moveTo(22, 0);
-    cc.quadraticCurveTo(16, -9, -12, -8);
-    cc.lineTo(-20, 0);
-    cc.lineTo(-12, 8);
-    cc.quadraticCurveTo(16, 9, 22, 0);
-    cc.fillStyle = '#1c0900'; cc.fill();
-    cc.strokeStyle = '#8B4513'; cc.lineWidth = 1.5; cc.stroke();
+    cc.moveTo(36, -1);       // bow tip
+    cc.lineTo(30, -11);      // bow rail
+    cc.lineTo(18, -13);      // foredeck
+    cc.lineTo(4,  -11);      // main deck
+    cc.lineTo(-10, -11);     // deck aft
+    cc.lineTo(-16, -16);     // stern castle step
+    cc.lineTo(-26, -16);     // stern castle top
+    cc.lineTo(-32, -10);     // stern rail
+    cc.lineTo(-32,  9);      // stern bottom
+    cc.lineTo(-22, 11);      // stern keel
+    cc.quadraticCurveTo(4, 15, 28, 9);  // curved keel
+    cc.lineTo(36, -1);
+    cc.closePath();
+    cc.fillStyle = '#080402'; cc.fill();
+    cc.strokeStyle = '#3e2006'; cc.lineWidth = 1.4; cc.stroke();
     cc.shadowBlur = 0;
 
-    // Red waterline stripe
+    // Stern castle face (vertical wall detail)
     cc.beginPath();
-    cc.moveTo(18, -1);
-    cc.quadraticCurveTo(2, -8, -12, -7);
-    cc.strokeStyle = 'rgba(200,40,40,0.75)'; cc.lineWidth = 1; cc.stroke();
+    cc.moveTo(-16, -16); cc.lineTo(-16, -11);
+    cc.strokeStyle = '#3e2006'; cc.lineWidth = 0.9; cc.stroke();
 
-    // Port sail (top side)
+    // Copper/red waterline stripe
     cc.beginPath();
-    cc.moveTo(-3, -8); cc.lineTo(10, -8); cc.lineTo(14, -21); cc.lineTo(-1, -19);
+    cc.moveTo(32, 5); cc.quadraticCurveTo(2, 13, -26, 8);
+    cc.strokeStyle = 'rgba(110,20,20,0.85)'; cc.lineWidth = 1.6; cc.stroke();
+
+    // Gun ports (5, rectangular)
+    cc.fillStyle = '#040201';
+    [22, 11, 0, -9, -19].forEach(cx => {
+      cc.beginPath(); cc.rect(cx - 3, -7, 6, 4); cc.fill();
+      cc.strokeStyle = '#2e1604'; cc.lineWidth = 0.5; cc.stroke();
+    });
+
+    // Deck planking lines (subtle)
+    cc.strokeStyle = 'rgba(62,32,6,0.35)'; cc.lineWidth = 0.5;
+    [-2, 6, 14].forEach(lx => {
+      cc.beginPath(); cc.moveTo(lx, -13); cc.lineTo(lx, -11); cc.stroke();
+    });
+
+    // ── BOWSPRIT ──
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 2.0;
+    cc.beginPath(); cc.moveTo(32, -9); cc.lineTo(56, -28); cc.stroke();
+    // Bobstay (thin line under bowsprit)
+    cc.lineWidth = 0.7;
+    cc.beginPath(); cc.moveTo(34, -3); cc.lineTo(56, -28); cc.stroke();
+
+    // ── MASTS ──
+    cc.strokeStyle = '#4a2c10';
+    // Foremast
+    cc.lineWidth = 2.0;
+    cc.beginPath(); cc.moveTo(18, -12); cc.lineTo(18, -42); cc.stroke();
+    // Mainmast
+    cc.lineWidth = 2.6;
+    cc.beginPath(); cc.moveTo(-2, -12); cc.lineTo(-2, -64); cc.stroke();
+    // Mizzenmast (stern castle)
+    cc.lineWidth = 1.6;
+    cc.beginPath(); cc.moveTo(-24, -15); cc.lineTo(-24, -37); cc.stroke();
+
+    // ── RIGGING (stays) ──
+    cc.strokeStyle = 'rgba(74,44,16,0.5)'; cc.lineWidth = 0.6;
+    cc.beginPath(); cc.moveTo(18, -16); cc.lineTo(54, -27); cc.stroke();
+    cc.beginPath(); cc.moveTo(18, -22); cc.lineTo(54, -27); cc.stroke();
+    cc.beginPath(); cc.moveTo(18, -40); cc.lineTo(-2, -62); cc.stroke();
+    cc.beginPath(); cc.moveTo(18, -28); cc.lineTo(-2, -44); cc.stroke();
+    cc.beginPath(); cc.moveTo(-2, -44); cc.lineTo(-24, -35); cc.stroke();
+    cc.beginPath(); cc.moveTo(-2, -62); cc.lineTo(-24, -35); cc.stroke();
+
+    const billow = Math.sin(frame * 0.018) * 6;
+    const tatter = Math.sin(frame * 0.031) * 1.8;
+
+    // ── MAIN SAIL (two panels, tattered tops) ──
+    // Left panel (windward)
+    cc.beginPath();
+    cc.moveTo(-2, -14); cc.lineTo(-22, -14);
+    cc.quadraticCurveTo(-28 + billow, -37, -22, -58);
+    cc.lineTo(-18, -57 + tatter); cc.lineTo(-13, -59);
+    cc.lineTo(-8,  -57 + tatter*0.6); cc.lineTo(-4, -59); cc.lineTo(-2, -58);
     cc.closePath();
-    cc.fillStyle = 'rgba(238,218,148,0.9)'; cc.fill();
-    cc.strokeStyle = 'rgba(100,80,30,0.55)'; cc.lineWidth = 0.5; cc.stroke();
-    cc.font = '7px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
-    cc.fillStyle = 'rgba(0,0,0,0.85)'; cc.fillText('☠', 6, -14);
-
-    // Starboard sail (bottom side)
+    cc.fillStyle = 'rgba(195,170,95,0.82)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.5)'; cc.lineWidth = 0.5; cc.stroke();
+    // Right panel (leeward)
     cc.beginPath();
-    cc.moveTo(-3, 8); cc.lineTo(10, 8); cc.lineTo(14, 21); cc.lineTo(-1, 19);
+    cc.moveTo(-2, -14); cc.lineTo(18, -14);
+    cc.quadraticCurveTo(24 - billow, -37, 18, -58);
+    cc.lineTo(14, -57 + tatter); cc.lineTo(9, -59);
+    cc.lineTo(4,  -57 + tatter*0.6); cc.lineTo(0, -59); cc.lineTo(-2, -58);
     cc.closePath();
-    cc.fillStyle = 'rgba(238,218,148,0.9)'; cc.fill();
-    cc.strokeStyle = 'rgba(100,80,30,0.55)'; cc.lineWidth = 0.5; cc.stroke();
-    cc.fillStyle = 'rgba(0,0,0,0.85)'; cc.fillText('☠', 6, 14);
+    cc.fillStyle = 'rgba(178,154,82,0.80)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.5)'; cc.lineWidth = 0.5; cc.stroke();
+    // Yards
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.5;
+    cc.beginPath(); cc.moveTo(-22, -14); cc.lineTo(18, -14); cc.stroke();
+    cc.beginPath(); cc.moveTo(-22, -58); cc.lineTo(18, -58); cc.stroke();
+    cc.lineWidth = 1.1;
+    cc.beginPath(); cc.moveTo(-14, -36); cc.lineTo(10, -36); cc.stroke();
 
-    // Mast (top-down = circle)
-    cc.beginPath(); cc.arc(3, 0, 2.5, 0, Math.PI*2);
-    cc.fillStyle = '#555'; cc.fill();
-    cc.strokeStyle = '#999'; cc.lineWidth = 0.8; cc.stroke();
-
-    // Jolly Roger on deck
-    cc.font = '9px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
-    cc.fillStyle = 'rgba(255,255,255,0.72)'; cc.fillText('☠', -8, 0);
-
-    // Cannon ports
-    cc.fillStyle = '#2a2a2a';
-    for (let i = -1; i <= 1; i++) {
-      cc.beginPath(); cc.arc(i*7, -8, 1.3, 0, Math.PI*2); cc.fill();
-      cc.beginPath(); cc.arc(i*7, 8,  1.3, 0, Math.PI*2); cc.fill();
-    }
-
-    // Warp nozzle at stern
+    // ── TOPSAIL ──
     cc.beginPath();
-    cc.moveTo(-18, -3); cc.lineTo(-25, -2); cc.lineTo(-25, 2); cc.lineTo(-18, 3);
+    cc.moveTo(-2, -58); cc.lineTo(-12, -58);
+    cc.quadraticCurveTo(-16 + billow*0.5, -65, -11, -72);
+    cc.lineTo(-2, -72); cc.closePath();
+    cc.fillStyle = 'rgba(185,162,88,0.70)'; cc.fill();
+    cc.beginPath();
+    cc.moveTo(-2, -58); cc.lineTo(9, -58);
+    cc.quadraticCurveTo(12 - billow*0.5, -65, 8, -72);
+    cc.lineTo(-2, -72); cc.closePath();
+    cc.fillStyle = 'rgba(170,148,76,0.68)'; cc.fill();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.0;
+    cc.beginPath(); cc.moveTo(-12, -58); cc.lineTo(9, -58); cc.stroke();
+    cc.beginPath(); cc.moveTo(-11, -72); cc.lineTo(8, -72); cc.stroke();
+
+    // ── FORE SAIL ──
+    cc.beginPath();
+    cc.moveTo(18, -13); cc.lineTo(5, -13);
+    cc.quadraticCurveTo(1 + billow*0.7, -26, 6, -40);
+    cc.lineTo(18, -40); cc.closePath();
+    cc.fillStyle = 'rgba(192,168,90,0.76)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.4)'; cc.lineWidth = 0.5; cc.stroke();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.1;
+    cc.beginPath(); cc.moveTo(5, -13); cc.lineTo(18, -13); cc.stroke();
+    cc.beginPath(); cc.moveTo(6, -40); cc.lineTo(18, -40); cc.stroke();
+
+    // ── JIB ──
+    cc.beginPath();
+    cc.moveTo(32, -10); cc.lineTo(54, -27); cc.lineTo(18, -40); cc.closePath();
+    cc.fillStyle = 'rgba(215,192,118,0.62)'; cc.fill();
+    cc.strokeStyle = 'rgba(70,50,14,0.4)'; cc.lineWidth = 0.5; cc.stroke();
+
+    // ── MIZZEN SAIL ──
+    cc.beginPath();
+    cc.moveTo(-24, -16); cc.lineTo(-34, -16);
+    cc.quadraticCurveTo(-38 + billow*0.35, -26, -34, -36);
+    cc.lineTo(-24, -36); cc.closePath();
+    cc.fillStyle = 'rgba(185,162,85,0.72)'; cc.fill();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 1.0;
+    cc.beginPath(); cc.moveTo(-34, -16); cc.lineTo(-24, -16); cc.stroke();
+    cc.beginPath(); cc.moveTo(-34, -36); cc.lineTo(-24, -36); cc.stroke();
+
+    // ── CROW'S NEST (mainmast) ──
+    cc.fillStyle = '#1e1008';
+    cc.beginPath(); cc.rect(-7, -54, 11, 5); cc.fill();
+    cc.strokeStyle = '#4a2c10'; cc.lineWidth = 0.8; cc.stroke();
+    // Foremast crow's nest
+    cc.beginPath(); cc.rect(14, -37, 9, 4); cc.fill(); cc.stroke();
+
+    // ── JOLLY ROGER ──
+    const fw = Math.sin(frame * 0.085) * 4;
+    cc.beginPath();
+    cc.moveTo(-2, -76);
+    cc.lineTo(-2 + 14 + fw, -76);
+    cc.lineTo(-2 + 12 + fw*0.6, -70);
+    cc.lineTo(-2, -70);
     cc.closePath();
-    cc.fillStyle = '#1a1a1a'; cc.fill();
-    cc.strokeStyle = '#00aaff'; cc.lineWidth = 0.8; cc.stroke();
-    // Inner flame
+    cc.fillStyle = '#0a0a0a'; cc.fill();
+    cc.font = '6px sans-serif'; cc.textAlign = 'center'; cc.textBaseline = 'middle';
+    cc.fillStyle = 'rgba(255,255,255,0.88)';
+    cc.fillText('☠', -2 + 7 + fw*0.5, -73);
+
+    // ── STERN LANTERN ──
+    const lp = 0.5 + 0.5 * Math.sin(frame * 0.07);
+    cc.shadowColor = `rgba(255,190,60,${0.5 + lp*0.4})`;
+    cc.shadowBlur = 5 + lp * 5;
+    cc.beginPath(); cc.arc(-30, -18, 2.8, 0, Math.PI*2);
+    cc.fillStyle = `rgba(255,210,90,${0.55 + lp*0.35})`; cc.fill();
+    cc.shadowBlur = 0;
+
+    // ── WARP NOZZLE ──
     cc.beginPath();
-    cc.moveTo(-18, -2); cc.lineTo(-23, 0); cc.lineTo(-18, 2); cc.closePath();
-    cc.fillStyle = `rgba(0,${180+Math.floor(Math.sin(frame*0.15)*50)},255,0.95)`;
-    cc.fill();
+    cc.moveTo(-24, -5); cc.lineTo(-32, -3); cc.lineTo(-32, 7); cc.lineTo(-24, 9);
+    cc.closePath();
+    cc.fillStyle = '#111'; cc.fill();
+    cc.strokeStyle = '#00aaff'; cc.lineWidth = 0.9; cc.stroke();
+    const fl = 180 + Math.floor(Math.sin(frame * 0.15) * 55);
+    cc.beginPath();
+    cc.moveTo(-24, -2); cc.lineTo(-31, 2); cc.lineTo(-24, 8); cc.closePath();
+    cc.fillStyle = `rgba(0,${fl},255,0.95)`; cc.fill();
 
     cc.restore();
   }
 
   function drawFrame() {
+    const inEditMode = document.body.classList.contains('edit-mode');
+    cc_canvas.style.display = inEditMode ? 'none' : 'block';
+    if (inEditMode) { requestAnimationFrame(drawFrame); return; }
     cc.clearRect(0, 0, cc_canvas.width, cc_canvas.height);
     frame++;
 
-    // Smooth angle
     let diff = shipAngle - smoothAngle;
     while (diff > Math.PI) diff -= Math.PI*2;
     while (diff < -Math.PI) diff += Math.PI*2;
-    smoothAngle += diff * 0.18;
+    smoothAngle += diff * 0.035;
+
+    // Pitch: vertical tilt based on dy — smoothed slowly for heavy ship feel
+    if (speed > 0.5) {
+      const targetPitch = (lastDy / Math.max(speed, 1)) * 1.4;
+      smoothPitch += (targetPitch - smoothPitch) * 0.06;
+    }
 
     const bob = Math.sin(frame * 0.038) * 1.8;
 
-    // Warp particles
     for (let i = WARP.length - 1; i >= 0; i--) {
       const p = WARP[i];
       const len = Math.sqrt(p.vx*p.vx + p.vy*p.vy + 0.001);
-      // Streak
       cc.beginPath();
       cc.moveTo(p.x, p.y);
       cc.lineTo(p.x - (p.vx/len) * len * 2.5, p.y - (p.vy/len) * len * 2.5);
       cc.strokeStyle = p.color; cc.globalAlpha = p.life * 0.55;
       cc.lineWidth = p.size * 0.55; cc.stroke();
-      // Dot
       cc.beginPath(); cc.arc(p.x, p.y, p.size * p.life * 0.8, 0, Math.PI*2);
       cc.fillStyle = p.color; cc.globalAlpha = p.life * 0.85; cc.fill();
       cc.globalAlpha = 1;
@@ -811,7 +936,6 @@ document.addEventListener('touchend', padEnd);
     }
     cc.globalAlpha = 1;
 
-    // Ripples
     for (let i = RIPPLES.length - 1; i >= 0; i--) {
       const r = RIPPLES[i];
       cc.beginPath(); cc.arc(r.x, r.y, r.r, 0, Math.PI*2);
@@ -826,12 +950,12 @@ document.addEventListener('touchend', padEnd);
       if (r.r > r.maxR || r.alpha < 0.01) RIPPLES.splice(i, 1);
     }
 
-    // Ship
-    drawShip(mx, my, smoothAngle, bob);
+    drawShip(mx, my, smoothAngle, smoothPitch, bob);
     requestAnimationFrame(drawFrame);
   }
   drawFrame();
 })();
 </script>
+<script src="miniplayer.js"></script>
 </body>
 </html>
