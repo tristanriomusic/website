@@ -176,6 +176,53 @@
       transition: color 0.3s;
     }
     #back:hover { color: rgba(255,255,255,0.8); }
+
+    /* ── Mood panel ── */
+    #mood-panel {
+      position: fixed;
+      right: 2vw;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    #mood-label {
+      color: rgba(255,255,255,0.3);
+      font-size: clamp(7px, 0.75vw, 10px);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 0.3rem;
+    }
+    .mood-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 3px;
+      color: rgba(255,255,255,0.4);
+      font-family: 'Georgia', serif;
+      font-size: clamp(9px, 0.9vw, 12px);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.5em 1em;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+      min-width: 64px;
+    }
+    .mood-btn:hover {
+      border-color: rgba(180,100,255,0.6);
+      color: rgba(255,255,255,0.85);
+      box-shadow: 0 0 10px rgba(160,80,255,0.2);
+    }
+    .mood-btn.active {
+      border-color: rgba(180,100,255,0.85);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(160,80,255,0.35);
+      text-shadow: 0 0 10px rgba(180,100,255,0.6);
+    }
   </style>
 </head>
 <body>
@@ -196,6 +243,14 @@
   </div>
 
   <div id="back" onclick="window.location.href='../'">&#8592; Return</div>
+</div>
+
+<div id="mood-panel">
+  <div id="mood-label">How do<br>you feel<br>today?</div>
+  <button class="mood-btn active" data-mode="up">Up</button>
+  <button class="mood-btn" data-mode="down">Down</button>
+  <button class="mood-btn" data-mode="in">In</button>
+  <button class="mood-btn" data-mode="out">Out</button>
 </div>
 
 <script>
@@ -244,21 +299,25 @@ function drawBg() {
 }
 drawBg();
 
-/* ═══ E LYDIAN AUDIO ═══ */
-const E_LYDIAN = [0, 2, 4, 6, 7, 9, 11];
-const ROOT_E = 82.41; // E2
+/* ═══ MODES ═══ */
+const MODES = {
+  up:   { intervals: [0,2,4,6,7,9,11], rootHz: 82.41, bpm: 65  }, // E Lydian
+  down: { intervals: [0,2,3,5,7,8,10], rootHz: 73.42, bpm: 60  }, // D natural minor
+  in:   { intervals: [0,2,3,5,7,9,10], rootHz: 58.27, bpm: 65  }, // Bb Dorian
+  out:  { intervals: [0,2,4,5,7,9,11], rootHz: 98.00, bpm: 120 }, // G major
+};
+let currentMode = MODES.up;
 
-function lydianHz(degree) {
+function scaleHz(degree) {
+  const m = currentMode;
   const oct = Math.floor(degree / 7);
   const step = degree % 7;
-  return ROOT_E * Math.pow(2, oct) * Math.pow(2, E_LYDIAN[step] / 12);
+  return m.rootHz * Math.pow(2, oct) * Math.pow(2, m.intervals[step] / 12);
 }
 
-// Map a letter (a-z) to a stable E Lydian degree
 function charToDegree(ch) {
   const c = ch.toLowerCase().charCodeAt(0);
   if (c < 97 || c > 122) return 0;
-  // Map a-z (26) across 2 octaves of 14 Lydian pitches
   return Math.round((c - 97) / 25 * 13);
 }
 
@@ -381,7 +440,7 @@ journal.addEventListener('keydown', e => {
   const line = text.substring(0, pos).split('\n').length;
   const degree = col % 14;
   const octShift = Math.min(line-1, 2);
-  const hz = lydianHz(degree) * Math.pow(2, octShift);
+  const hz = scaleHz(degree) * Math.pow(2, octShift);
   scheduleNote(hz, ac.currentTime, 1.2);
   spawnParticle(null);
 });
@@ -400,8 +459,6 @@ function spawnParticle(el) {
 }
 
 /* ═══ PLAYBACK ENGINE ═══ */
-const BPM = 65;
-const BAR_SEC = 60 / BPM; // 1 word = 1 beat at 65 BPM
 
 const playView = document.getElementById('playback-view');
 const barFill  = document.getElementById('bar-fill');
@@ -480,26 +537,27 @@ function startPlayback() {
   totalBars = wordCount;
   playStartAC   = ac.currentTime + 0.1;
   playStartWall = performance.now() + 100;
+  const barSec = 60 / currentMode.bpm;
 
   // ── Schedule 4-on-the-floor drums ──
   for (let beat = 0; beat < totalBars; beat++) {
-    const beatT = playStartAC + beat * BAR_SEC;
-    scheduleKick(beatT);                        // kick every beat
-    scheduleHihat(beatT);                       // hihat on beat
-    scheduleHihat(beatT + BAR_SEC * 0.5);       // hihat on off-beat (8th)
-    if (beat % 2 === 1) scheduleSnare(beatT);   // snare on beats 2, 4, 6…
+    const beatT = playStartAC + beat * barSec;
+    scheduleKick(beatT);
+    scheduleHihat(beatT);
+    scheduleHihat(beatT + barSec * 0.5);
+    if (beat % 2 === 1) scheduleSnare(beatT);
   }
 
   // ── Schedule audio & visual timers per letter ──
   for (let wi = 0; wi < wordCount; wi++) {
-    const barStart = wi * BAR_SEC;
+    const barStart = wi * barSec;
     const letters = allLetterSpans.filter(l => l.wordIdx === wi);
     const n = letters.length;
-    const noteInterval = BAR_SEC / n;
+    const noteInterval = barSec / n;
 
     // Highlight current bar wrapper
     const barT = barStart * 1000;
-    const barEndT = (barStart + BAR_SEC) * 1000;
+    const barEndT = (barStart + barSec) * 1000;
     playTimers.push(setTimeout(() => {
       wordWrappers.forEach(w => w.classList.remove('bar-active'));
       if (wordWrappers[wi]) wordWrappers[wi].classList.add('bar-active');
@@ -511,11 +569,9 @@ function startPlayback() {
       const acT = playStartAC + noteOffset;
       const wallDelay = noteOffset * 1000;
 
-      // Map letter to E Lydian pitch
       const degree = charToDegree(char);
-      // Higher letters in longer words = higher octave register
       const octShift = Math.floor(li / 7) % 3;
-      const hz = lydianHz(degree) * Math.pow(2, octShift);
+      const hz = scaleHz(degree) * Math.pow(2, octShift);
       const vol = 0.12 + (degree / 13) * 0.1;
 
       // Audio — precisely scheduled
@@ -536,7 +592,7 @@ function startPlayback() {
   }
 
   // ── Progress bar animation via rAF ──
-  const totalDur = totalBars * BAR_SEC * 1000;
+  const totalDur = totalBars * barSec * 1000;
   function animBar() {
     if (!playing) return;
     const elapsed = performance.now() - playStartWall;
@@ -562,12 +618,24 @@ function stopPlayback() {
   journal.focus();
 }
 
+const bpmLabel = document.getElementById('bpm-label');
+bpmLabel.textContent = `${currentMode.bpm} BPM · 1 word = 1 beat`;
+
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentMode = MODES[btn.dataset.mode];
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    bpmLabel.textContent = `${currentMode.bpm} BPM · 1 word = 1 beat`;
+    if (playing) stopPlayback();
+  });
+});
+
 btnPlay.addEventListener('click', startPlayback);
 btnStop.addEventListener('click', stopPlayback);
 
 window.addEventListener('load', () => journal.focus());
 </script>
-<script>
 <script>
 /* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
 (function() {

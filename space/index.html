@@ -542,20 +542,20 @@
       border-radius: 12px;
       box-shadow: 0 0 60px rgba(255,170,0,0.2), 0 0 120px rgba(255,170,0,0.1);
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: space-between;
       position: relative;
       overflow: hidden;
-      padding: 1rem;
-      gap: 2rem;
+      padding: 0;
+      gap: 0;
     }
     .gods-artwork-container {
       flex: 1;
-      background: url('../The Gods Told Me To Relax.jpeg') center/contain no-repeat;
-      background-size: contain;
+      background: url('../The Gods Told Me To Relax.jpeg') center/cover no-repeat;
       min-height: 300px;
       aspect-ratio: 1;
-      border-radius: 8px;
+      border-radius: 0;
+      align-self: stretch;
     }
     .gods-streaming-links {
       display: flex;
@@ -564,6 +564,7 @@
       align-items: center;
       flex-shrink: 0;
       width: 200px;
+      padding: 1.5rem 1rem;
     }
     .gods-stream-link {
       display: block;
