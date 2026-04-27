@@ -469,6 +469,104 @@
       z-index: 64; pointer-events: none;
       mix-blend-mode: screen;
     }
+
+    /* ── Gods Popup ── */
+    #gods-popup {
+      position: fixed; inset: 0; z-index: 60;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      flex-direction: column;
+      gap: 2rem;
+      padding: 2rem 0;
+    }
+    #gods-popup.visible { display: flex; animation: fadeM 0.5s ease; }
+    .gods-header {
+      text-align: center;
+      margin-bottom: 0;
+    }
+    .gods-header h2 {
+      color: #fff;
+      font-size: clamp(20px, 2.5vw, 28px);
+      margin: 0;
+      text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 40px rgba(255,170,0,0.4);
+      letter-spacing: 0.05em;
+    }
+    .gods-popup-content {
+      width: min(90vw, 800px);
+      max-height: 70vh;
+      background: rgba(10, 5, 15, 0.2);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,170,0,0.3);
+      border-radius: 12px;
+      box-shadow: 0 0 60px rgba(255,170,0,0.2), 0 0 120px rgba(255,170,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      padding: 1rem;
+      gap: 2rem;
+    }
+    .gods-artwork-container {
+      flex: 1;
+      background: url('../The Gods Told Me To Relax.jpeg') center/contain no-repeat;
+      background-size: contain;
+      min-height: 300px;
+      aspect-ratio: 1;
+      border-radius: 8px;
+    }
+    .gods-streaming-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      align-items: center;
+      flex-shrink: 0;
+      width: 200px;
+    }
+    .gods-stream-link {
+      display: block;
+      width: 100%;
+      max-width: 280px;
+      padding: 0.6rem 1rem;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 6px;
+      color: #fff;
+      text-decoration: none;
+      font-size: clamp(12px, 1.3vw, 14px);
+      transition: all 0.3s ease;
+      text-align: center;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 20px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.7);
+    }
+    .gods-stream-link:hover {
+      background: transparent;
+      border-color: rgba(255,255,255,0.5);
+      box-shadow: 0 0 25px rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+      color: #fff;
+      text-shadow: 0 0 25px rgba(0,0,0,0.9), 0 0 35px rgba(0,0,0,0.8);
+    }
+    .gods-close {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.9);
+      padding: 0.5rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: clamp(10px, 1vw, 12px);
+      text-shadow: 0 0 15px rgba(0,0,0,0.8), 0 0 25px rgba(0,0,0,0.6);
+    }
+    .gods-close:hover {
+      background: transparent;
+      border-color: rgba(255,255,255,0.5);
+      color: #fff;
+      text-shadow: 0 0 20px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,0.7);
+    }
     /* Hidden caret mirror for position tracking */
     #love-caret-mirror {
       position: fixed; visibility: hidden; pointer-events: none; z-index: -1;
@@ -792,6 +890,36 @@
   </div>
 </div>
 
+<!-- Gods Told Me To Relax popup -->
+<div id="gods-popup" style="display:none">
+  <div class="gods-header">
+    <h2>The Gods Told Me To Relax</h2>
+  </div>
+  <div class="gods-popup-content">
+    <div class="gods-artwork-container">
+      <!-- Artwork background -->
+    </div>
+    <div class="gods-streaming-links">
+      <a href="https://tristanrio.bandcamp.com/album/the-gods-told-me-to-relax" target="_blank" class="gods-stream-link">
+        Bandcamp
+      </a>
+      <a href="https://tidal.com/album/350002816" target="_blank" class="gods-stream-link">
+        Tidal
+      </a>
+      <a href="https://music.apple.com/us/album/the-gods-told-me-to-relax/1734421858?uo=4" target="_blank" class="gods-stream-link">
+        Apple Music
+      </a>
+      <a href="https://open.spotify.com/intl-fr/album/0qPVZdF4LIxFSKXCxHKYep?referral=labelaffiliate&utm_source=1110l3RcrCpw&utm_medium=Indie_Distrokid&utm_campaign=labelaffiliate" target="_blank" class="gods-stream-link">
+        Spotify
+      </a>
+      <a href="https://www.deezer.com/fr/album/556385872" target="_blank" class="gods-stream-link">
+        Deezer
+      </a>
+    </div>
+  </div>
+  <button class="gods-close">Close</button>
+</div>
+
 <!-- Truth writing overlay -->
 <div id="truth-overlay">
   <div id="truth-ui">
@@ -801,13 +929,11 @@
     <div id="truth-sound-systems">
       <div class="truth-system-label">Sound System:</div>
       <div class="truth-system-buttons">
-        <button class="truth-system-btn" data-system="lydian">Lydian Notes</button>
-        <button class="truth-system-btn" data-system="organ">Organ</button>
-        <button class="truth-system-btn" data-system="organ">Organ</button>
-        <button class="truth-system-btn" data-system="drone">Drone</button>
+        <button class="truth-system-btn" data-system="chord">Chord</button>
         <button class="truth-system-btn" data-system="rhythm">Rhythm</button>
         <button class="truth-system-btn" data-system="ambient">Ambient</button>
         <button class="truth-system-btn" data-system="sequence">Sequences</button>
+        <button class="truth-system-btn" data-system="all">All</button>
       </div>
     </div>
     
@@ -817,7 +943,7 @@
     <div id="truth-controls">
       <button class="ctrl-btn" id="truth-btn-play">&#9654; Play</button>
       <button class="ctrl-btn" id="truth-btn-stop" style="display:none">&#9632; Stop</button>
-      <span id="truth-bpm-label">60 BPM · 1 word = 1 beat</span>
+      <span id="truth-bpm-label">90 BPM · 1 word = 1 beat</span>
     </div>
     <div id="truth-back">&#8592; Return</div>
   </div>
@@ -908,7 +1034,7 @@ img.src = 'artwork.jpeg';
 const ZONES = [
   { nx:0.2352, ny:0.3111, nrx:0.1452, nry:0.1657,
     name:'The Gods Told Me To Relax', hoverText:'Listen to the full album',
-    baseH:40,  label:'#ffaa00', type:'bandcamp', bcUrl:'https://bandcamp.com/EmbeddedPlayer/album=2211761745/size=large/bgcol=000000/linkcol=ffffff/artwork=small/transparent=true/' },
+    baseH:40,  label:'#ffaa00', type:'popup', content:'gods-popup' },
 
   { nx:0.5779, ny:0.5707, nrx:0.0563, nry:0.0643,
     name:'Rituelles', hoverText:'New Song: Check it out',
@@ -1295,9 +1421,23 @@ back.addEventListener('click', () => {
 });
 mClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+// Gods popup close button
+document.querySelector('.gods-close').addEventListener('click', (e) => {
+  e.preventDefault();
+  const popup = document.getElementById('gods-popup');
+  popup.classList.remove('visible');
+  popup.style.display = 'none';
+});
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (modal.classList.contains('visible')) { closeModal(); return; }
+    if (document.getElementById('gods-popup').classList.contains('visible')) { 
+      const popup = document.getElementById('gods-popup');
+      popup.classList.remove('visible'); 
+      popup.style.display = 'none';
+      return; 
+    }
     if (document.getElementById('truth-overlay').classList.contains('visible')) { closeTruthOverlay(); return; }
     if (document.getElementById('love-overlay').classList.contains('visible')) { closeLoveOverlay(); return; }
     if (document.getElementById('aquarium-overlay').classList.contains('visible')) { closeAquarium(); return; }
@@ -1948,10 +2088,29 @@ function openZoneContent(zone) {
     window.location.href = zone.url;
     return;
   }
+  if (zone.type === 'iframe') {
+    showFrame(zone.url);
+    return;
+  }
   if (zone.type === 'external') {
     window.open(zone.url, '_blank');
     // stay zoomed in — user exits manually
-    back.textContent = `↑ ${zone.name} — click or ESC to return`;
+    back.textContent = `^ ${zone.name} - click or ESC to return`;
+    return;
+  }
+  if (zone.type === 'popup-window') {
+    // Open in a popup window with specific dimensions
+    const width = 900;
+    const height = 700;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+    window.open(zone.url, 'godsPopup', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
+    // stay zoomed in - user exits manually
+    back.textContent = `^ ${zone.name} - click or ESC to return`;
+    return;
+  }
+  if (zone.type === 'popup') {
+    showPopup(zone.content);
     return;
   }
   if (zone.type === 'bandcamp') {
@@ -1969,6 +2128,9 @@ function openZoneContent(zone) {
   }
   if (zone.type === 'truth') {
     document.getElementById('truth-overlay').classList.add('visible');
+    // Set 'All' button as active by default
+    document.querySelectorAll('.truth-system-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-system="all"]').classList.add('active');
     setTimeout(() => document.getElementById('truth-journal').focus(), 300);
     return;
   }
@@ -2002,6 +2164,26 @@ function showFrame(src) {
   mAudio.style.display = 'none';
   mPlace.style.display = 'none';
   modal.classList.add('visible');
+}
+
+function showPopup(popupId) {
+  console.log('showPopup called with:', popupId);
+  const popup = document.getElementById(popupId);
+  if (popup) {
+    console.log('Popup element found:', popup);
+    popup.style.display = 'flex';
+    popup.classList.add('visible');
+    console.log('Popup classes after adding visible:', popup.className);
+    // Close popup on background click
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.classList.remove('visible');
+        popup.style.display = 'none';
+      }
+    });
+  } else {
+    console.log('Popup element not found:', popupId);
+  }
 }
 
 function showVideo(src) {
@@ -2350,71 +2532,286 @@ function toggleSynth() {
 /* ═══ TRUTH OVERLAY ═══ */
 const TRUTH_LYDIAN = [0, 2, 4, 6, 7, 9, 11];
 const TRUTH_ROOT   = 164.82; // E3 (one octave higher)
-const TRUTH_BPM    = 60;
+const TRUTH_BPM    = 90;
 const TRUTH_BAR    = 60 / TRUTH_BPM;
 const TRUTH_SYMS   = ['', '', '', ''];
 
-// Fixed note mapping for each letter using E Lydian scale with third-based structure
-// Letters mapped to scale degrees in thirds: 1, 3, 5, 7, 2, 4, 6, 1, 3, 5, 7, 2, 4, 6, etc.
-const TRUTH_LETTER_NOTES = {
-  'a': 0, 'b': 2, 'c': 4, 'd': 6, 'e': 1, 'f': 3, 'g': 5, 'h': 0, 'i': 2, 'j': 4, 'k': 6, 'l': 1, 'm': 3,
-  'n': 5, 'o': 0, 'p': 2, 'q': 4, 'r': 6, 's': 1, 't': 3, 'u': 5, 'v': 0, 'w': 2, 'x': 4, 'y': 6, 'z': 1,
-  ' ': 3 // Space gets a neutral note
+// Comprehensive keyboard mapping with unique octaves and special behaviors
+// Each key gets a different octave using E Lydian scale
+const TRUTH_KEY_MAPPING = {
+  // Letters with different octaves (QWERTY layout consideration)
+  'q': { degree: 0, octave: 0 }, 'w': { degree: 2, octave: 0 }, 'e': { degree: 4, octave: 0 }, 'r': { degree: 6, octave: 0 }, 't': { degree: 1, octave: 1 },
+  'y': { degree: 3, octave: 1 }, 'u': { degree: 5, octave: 1 }, 'i': { degree: 0, octave: 1 }, 'o': { degree: 2, octave: 1 }, 'p': { degree: 4, octave: 1 },
+  'a': { degree: 6, octave: 1 }, 's': { degree: 1, octave: 2 }, 'd': { degree: 3, octave: 2 }, 'f': { degree: 5, octave: 2 }, 'g': { degree: 0, octave: 2 },
+  'h': { degree: 2, octave: 2 }, 'j': { degree: 4, octave: 2 }, 'k': { degree: 6, octave: 2 }, 'l': { degree: 1, octave: 3 },
+  'z': { degree: 3, octave: 3 }, 'x': { degree: 5, octave: 3 }, 'c': { degree: 0, octave: 3 }, 'v': { degree: 2, octave: 3 }, 'b': { degree: 4, octave: 3 },
+  'n': { degree: 6, octave: 3 }, 'm': { degree: 1, octave: 4 },
+  
+  // Special keys with musical behaviors
+  ' ': { type: 'pause', duration: 0.3 }, // Space = pause
+  ',': { type: 'short_pause', duration: 0.15 }, // Comma = short pause
+  '.': { type: 'long_pause', duration: 0.5 }, // Period = longer pause
+  '!': { type: 'accent', volume: 2.0, speed: 1.5 }, // Exclamation = louder and faster
+  '?': { type: 'question', pitchDrop: true }, // Question mark = pitch drop at end
+  ';': { type: 'phrase_end', decay: 0.8 }, // Semicolon = phrase end with decay
+  ':': { type: 'section_end', decay: 0.9 }, // Colon = section end
+  '-': { type: 'glissando', direction: 'down' }, // Dash = glissando down
+  '—': { type: 'glissando', direction: 'up' }, // Em dash = glissando up
+  '"': { type: 'staccato', duration: 0.1 }, // Quote = staccato
+  "'": { type: 'staccato', duration: 0.1 }, // Apostrophe = staccato
+  '(': { type: 'swell', direction: 'up' }, // Open paren = swell up
+  ')': { type: 'swell', direction: 'down' }, // Close paren = swell down
+  '[': { type: 'tremolo', rate: 8 }, // Open bracket = tremolo
+  ']': { type: 'tremolo', rate: 12 }, // Close bracket = faster tremolo
+  '\n': { type: 'line_break', pause: 0.8 } // Newline = longer pause
 };
 
+// Default mapping for unmapped keys
+const DEFAULT_MAPPING = { degree: 3, octave: 2 }; // Neutral middle note
+
 let truth_mGain = null, truth_merger = null, truth_revNode = null, truth_revWet = null, truth_delay = null, truth_delayWet = null;
+let truth_allRevNode = null, truth_allRevLowPass = null, truth_allRevHighPass = null, truth_allRevWet = null;
 let truth_playing = false, truth_timers = [], truth_rafId = null;
 let truth_startAC = null, truth_startWall = null, truth_totalBars = 0;
-let truth_currentSystem = 'lydian'; // Default to Lydian Notes system
+let truth_currentSystem = 'all'; // Default to All system
 
-function truth_hz(degree) {
-  const oct = Math.floor(degree / 7), step = degree % 7;
-  return TRUTH_ROOT * Math.pow(2, oct) * Math.pow(2, TRUTH_LYDIAN[step] / 12);
+function truth_hz(degree, octave = 0) {
+  const step = degree % 7;
+  return TRUTH_ROOT * Math.pow(2, octave) * Math.pow(2, TRUTH_LYDIAN[step] / 12);
 }
-function truth_charDeg(ch) {
+
+function truth_getKeyInfo(ch) {
   const c = ch.toLowerCase();
-  return TRUTH_LETTER_NOTES[c] !== undefined ? TRUTH_LETTER_NOTES[c] : 3; // Default to neutral note
+  return TRUTH_KEY_MAPPING[c] || DEFAULT_MAPPING;
 }
+
 function truth_fixedNoteHz(ch) {
-  const degree = truth_charDeg(ch);
-  return TRUTH_ROOT * Math.pow(2, TRUTH_LYDIAN[degree] / 12);
+  const keyInfo = truth_getKeyInfo(ch);
+  if (keyInfo.type) return null; // Special behavior keys
+  return truth_hz(keyInfo.degree, keyInfo.octave);
 }
 
-function truth_charDeg(ch) {
-  const c = ch.toLowerCase();
-  return TRUTH_LETTER_NOTES[c] !== undefined ? TRUTH_LETTER_NOTES[c] : 3; // Default to neutral note
+function truth_isSpecialKey(ch) {
+  const keyInfo = truth_getKeyInfo(ch);
+  return keyInfo.type !== undefined;
 }
 
-// System 1: Lydian Notes - Simple and magical
-function truth_noteLydian(ch, t, durS, vol=0.25) {
-  truth_initAudio();
-  const hz = truth_fixedNoteHz(ch);
+// Special behavior functions for punctuation keys
+function truth_handleSpecialKey(ch, t, durS, vol) {
+  const keyInfo = truth_getKeyInfo(ch);
+  if (!keyInfo.type) return false;
   
-  // Pure sine for serenity
+  truth_initAudio();
+  
+  switch (keyInfo.type) {
+    case 'pause':
+    case 'short_pause':
+    case 'long_pause':
+    case 'line_break':
+      // Just a pause - no sound
+      return true;
+      
+    case 'accent':
+      // Play the last note with increased volume and speed
+      truth_playAccentNote(t, durS / keyInfo.speed, vol * keyInfo.volume);
+      return true;
+      
+    case 'question':
+      // Play a note with pitch drop
+      truth_playQuestionNote(t, durS, vol);
+      return true;
+      
+    case 'phrase_end':
+    case 'section_end':
+      // Play a decaying note
+      truth_playDecayNote(t, durS, vol, keyInfo.decay);
+      return true;
+      
+    case 'glissando':
+      // Play a glissando
+      truth_playGlissando(t, durS, vol, keyInfo.direction);
+      return true;
+      
+    case 'staccato':
+      // Play a very short note
+      truth_playStaccato(t, keyInfo.duration, vol);
+      return true;
+      
+    case 'swell':
+      // Play a swelling note
+      truth_playSwell(t, durS, vol, keyInfo.direction);
+      return true;
+      
+    case 'tremolo':
+      // Play a tremolo note
+      truth_playTremolo(t, durS, vol, keyInfo.rate);
+      return true;
+  }
+  
+  return false;
+}
+
+// Special sound effect functions
+function truth_playAccentNote(t, durS, vol) {
+  const hz = truth_hz(3, 2); // Middle note
   const osc = ac.createOscillator();
-  osc.type = 'sine';
+  osc.type = 'sawtooth';
   osc.frequency.value = hz;
   
-  // Gentle stereo positioning
-  const panner = ac.createStereoPanner();
-  panner.pan.value = (ch.charCodeAt(0) % 20 - 10) / 30; // Subtle character-based pan
-  
-  // Soft envelope for beauty
   const env = ac.createGain();
   env.gain.setValueAtTime(0, t);
-  env.gain.linearRampToValueAtTime(vol, t + 0.03);
+  env.gain.linearRampToValueAtTime(vol, t + 0.01);
   env.gain.linearRampToValueAtTime(0, t + durS);
   
   osc.connect(env);
-  env.connect(panner);
-  panner.connect(truth_merger, 0, 0);
-  panner.connect(truth_merger, 0, 1);
+  env.connect(truth_merger, 0, 0);
+  env.connect(truth_merger, 0, 1);
   
   osc.start(t);
   osc.stop(t + durS);
 }
 
-function truth_noteChord(word, t, durS, vol=0.2) {
+function truth_playQuestionNote(t, durS, vol) {
+  const startHz = truth_hz(5, 2);
+  const endHz = truth_hz(0, 1); // Drop down
+  
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(startHz, t);
+  osc.frequency.linearRampToValueAtTime(endHz, t + durS);
+  
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.1);
+  env.gain.linearRampToValueAtTime(vol * 0.3, t + durS * 0.8);
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  osc.connect(env);
+  env.connect(truth_merger, 0, 0);
+  env.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  osc.stop(t + durS);
+}
+
+function truth_playDecayNote(t, durS, vol, decay) {
+  const hz = truth_hz(3, 2);
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = hz;
+  
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.05);
+  env.gain.exponentialRampToValueAtTime(vol * decay, t + durS * 0.5);
+  env.gain.exponentialRampToValueAtTime(0.001, t + durS);
+  
+  osc.connect(env);
+  env.connect(truth_merger, 0, 0);
+  env.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  osc.stop(t + durS);
+}
+
+function truth_playGlissando(t, durS, vol, direction) {
+  const startDegree = direction === 'up' ? 0 : 6;
+  const endDegree = direction === 'up' ? 6 : 0;
+  const startHz = truth_hz(startDegree, 2);
+  const endHz = truth_hz(endDegree, 2);
+  
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(startHz, t);
+  osc.frequency.linearRampToValueAtTime(endHz, t + durS);
+  
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.1);
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  osc.connect(env);
+  env.connect(truth_merger, 0, 0);
+  env.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  osc.stop(t + durS);
+}
+
+function truth_playStaccato(t, durS, vol) {
+  const hz = truth_hz(4, 2);
+  const osc = ac.createOscillator();
+  osc.type = 'square';
+  osc.frequency.value = hz;
+  
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.005);
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  osc.connect(env);
+  env.connect(truth_merger, 0, 0);
+  env.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  osc.stop(t + durS);
+}
+
+function truth_playSwell(t, durS, vol, direction) {
+  const hz = truth_hz(3, 2);
+  const osc = ac.createOscillator();
+  osc.type = 'triangle';
+  osc.frequency.value = hz;
+  
+  const env = ac.createGain();
+  if (direction === 'up') {
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(vol, t + durS * 0.8);
+    env.gain.linearRampToValueAtTime(0, t + durS);
+  } else {
+    env.gain.setValueAtTime(vol, t);
+    env.gain.linearRampToValueAtTime(vol * 0.3, t + durS * 0.7);
+    env.gain.linearRampToValueAtTime(0, t + durS);
+  }
+  
+  osc.connect(env);
+  env.connect(truth_merger, 0, 0);
+  env.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  osc.stop(t + durS);
+}
+
+function truth_playTremolo(t, durS, vol, rate) {
+  const hz = truth_hz(3, 2);
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = hz;
+  
+  const tremolo = ac.createOscillator();
+  tremolo.frequency.value = rate;
+  const tremoloGain = ac.createGain();
+  tremoloGain.gain.value = vol * 0.5;
+  
+  const env = ac.createGain();
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + 0.05);
+  env.gain.linearRampToValueAtTime(0, t + durS);
+  
+  tremolo.connect(tremoloGain);
+  tremoloGain.connect(env.gain);
+  osc.connect(env);
+  env.connect(truth_merger, 0, 0);
+  env.connect(truth_merger, 0, 1);
+  
+  osc.start(t);
+  tremolo.start(t);
+  osc.stop(t + durS);
+  tremolo.stop(t + durS);
+}
+
+// System 1: Chord - 80s pad with word-length based sustain
+function truth_noteChord(word, t, durS, vol=0.7) {
   if (!word || word.trim() === '') return;
   
   truth_initAudio();
@@ -2424,119 +2821,99 @@ function truth_noteChord(word, t, durS, vol=0.2) {
   
   const hz = truth_fixedNoteHz(ch);
   
-  // Simple beautiful chord
-  const root = ac.createOscillator();
-  root.type = 'sine';
-  root.frequency.value = hz;
+  // Calculate sustain based on word length (quarter notes)
+  const letterCount = word.replace(/[^a-zA-Z]/g, '').length;
+  const quarterNoteDuration = TRUTH_BAR; // Quarter note at 90 BPM
+  const sustainDuration = letterCount * quarterNoteDuration;
   
-  // Gentle fifth for warmth
+  // Make first note an octave lower
+  const rootHz = hz * 0.5; // Octave lower
+  
+  // 80s pad - lush multi-oscillator chord
+  const root = ac.createOscillator();
+  root.type = 'sawtooth';
+  root.frequency.value = rootHz;
+  
   const fifth = ac.createOscillator();
-  fifth.type = 'sine';
+  fifth.type = 'sawtooth';
   fifth.frequency.value = hz * 1.5; // Perfect fifth
   
-  // Centered for serenity
+  const octave = ac.createOscillator();
+  octave.type = 'sawtooth';
+  octave.frequency.value = hz * 2; // Octave up
+  
+  const third = ac.createOscillator();
+  third.type = 'triangle';
+  third.frequency.value = hz * 1.25; // Major third
+  
+  // Sub oscillator for depth
+  const sub = ac.createOscillator();
+  sub.type = 'sine';
+  sub.frequency.value = hz * 0.5; // Sub octave
+  
+  // Filter for 80s pad character
+  const filter = ac.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 2000;
+  filter.Q.value = 2; // Resonance for that 80s sound
+  
+  // Stereo spread for pad width
   const panner = ac.createStereoPanner();
-  panner.pan.value = 0;
+  panner.pan.value = 0; // Centered
   
-  // Soft envelope for beauty
+  // Slow attack and long release for pad character
   const env = ac.createGain();
+  const attackTime = 0.3; // Slow attack
+  const releaseTime = sustainDuration * 0.8; // Long release based on word length
+  
   env.gain.setValueAtTime(0, t);
-  env.gain.linearRampToValueAtTime(vol, t + 0.05);
-  env.gain.linearRampToValueAtTime(0, t + durS);
+  env.gain.linearRampToValueAtTime(vol, t + attackTime);
+  env.gain.linearRampToValueAtTime(vol, t + attackTime + sustainDuration); // Hold full volume for sustain duration
+  env.gain.exponentialRampToValueAtTime(0.001, t + attackTime + sustainDuration + releaseTime);
   
-  const fifthGain = ac.createGain();
-  fifthGain.gain.value = vol * 0.15; // Gentle warmth
+  // Individual oscillator gains for balance
+  const rootGain = ac.createGain(); rootGain.gain.value = 0.4;
+  const fifthGain = ac.createGain(); fifthGain.gain.value = 0.3;
+  const octaveGain = ac.createGain(); octaveGain.gain.value = 0.2;
+  const thirdGain = ac.createGain(); thirdGain.gain.value = 0.15;
+  const subGain = ac.createGain(); subGain.gain.value = 0.25;
   
-  root.connect(env);
+  // Connect oscillators through individual gains
+  root.connect(rootGain);
   fifth.connect(fifthGain);
-  fifthGain.connect(env);
+  octave.connect(octaveGain);
+  third.connect(thirdGain);
+  sub.connect(subGain);
+  
+  // Mix all oscillators into filter
+  rootGain.connect(filter);
+  fifthGain.connect(filter);
+  octaveGain.connect(filter);
+  thirdGain.connect(filter);
+  subGain.connect(filter);
+  
+  // Filter to envelope to panner
+  filter.connect(env);
   env.connect(panner);
   panner.connect(truth_merger, 0, 0);
   panner.connect(truth_merger, 0, 1);
   
+  // Start all oscillators
   root.start(t);
   fifth.start(t);
-  root.stop(t + durS);
-  fifth.stop(t + durS);
-}
-
-function truth_noteSequence(ch, t, durS, vol=0.25) {
-  truth_initAudio();
-  
-  const osc = ac.createOscillator();
-  osc.type = 'sine';
-  osc.frequency.value = truth_fixedNoteHz(ch);
-  
-  // Subtle third harmonic
-  const third = ac.createOscillator();
-  third.type = 'sine';
-  third.frequency.value = truth_fixedNoteHz(ch) * 1.25; // Major third
-  
-  // Character-based stereo position
-  const panner = ac.createStereoPanner();
-  panner.pan.value = (ch.charCodeAt(0) % 100 - 50) / 50;
-  
-  const env = ac.createGain();
-  env.gain.setValueAtTime(0, t);
-  env.gain.linearRampToValueAtTime(vol, t + 0.005);
-  env.gain.linearRampToValueAtTime(0, t + durS);
-  
-  const thirdGain = ac.createGain();
-  thirdGain.gain.value = vol * 0.12;
-  
-  osc.connect(env);
-  third.connect(thirdGain);
-  thirdGain.connect(env);
-  env.connect(panner);
-  panner.connect(truth_merger, 0, 0);
-  panner.connect(truth_merger, 0, 1);
-  
-  osc.start(t);
-  third.start(t);
-  osc.stop(t + durS);
-  third.stop(t + durS);
-}
-
-function truth_noteOrgan(ch, t, durS, vol=0.22) {
-  truth_initAudio();
-  
-  const hz = truth_fixedNoteHz(ch);
-  
-  // Magical organ sound
-  const osc = ac.createOscillator();
-  osc.type = 'sine';
-  osc.frequency.value = hz;
-  
-  // Gentle octave for organ warmth
-  const octave = ac.createOscillator();
-  octave.type = 'sine';
-  octave.frequency.value = hz * 2;
-  
-  // Soft stereo positioning
-  const panner = ac.createStereoPanner();
-  panner.pan.value = (ch.charCodeAt(0) % 10 - 5) / 20; // Gentle character-based pan
-  
-  // Smooth envelope for serenity
-  const env = ac.createGain();
-  env.gain.setValueAtTime(0, t);
-  env.gain.linearRampToValueAtTime(vol, t + 0.08); // Gentle organ swell
-  env.gain.linearRampToValueAtTime(0, t + durS);
-  
-  const octaveGain = ac.createGain();
-  octaveGain.gain.value = vol * 0.12; // Subtle warmth
-  
-  osc.connect(env);
-  octave.connect(octaveGain);
-  octaveGain.connect(env);
-  env.connect(panner);
-  panner.connect(truth_merger, 0, 0);
-  panner.connect(truth_merger, 0, 1);
-  
-  osc.start(t);
   octave.start(t);
-  osc.stop(t + durS);
-  octave.stop(t + durS);
+  third.start(t);
+  sub.start(t);
+  
+  // Stop all oscillators after full duration
+  const totalDuration = attackTime + sustainDuration + releaseTime;
+  root.stop(t + totalDuration);
+  fifth.stop(t + totalDuration);
+  octave.stop(t + totalDuration);
+  third.stop(t + totalDuration);
+  sub.stop(t + totalDuration);
 }
+
 function truth_initAudio() {
   initAudio();
   if (truth_mGain) return;
@@ -2544,16 +2921,16 @@ function truth_initAudio() {
   
   // Create serene audio processing chain
   truth_merger = ac.createChannelMerger(2);
-  truth_mGain = ac.createGain(); truth_mGain.gain.value = 0.4;
+  truth_mGain = ac.createGain(); truth_mGain.gain.value = 1.0; // Maxed out from 0.8 to 1.0
   
   // Gentle reverb for serenity
-  truth_revNode = ac.createConvolver(); truth_revNode.buffer = truth_buildIR(2.8);
-  truth_revWet = ac.createGain(); truth_revWet.gain.value = 0.3;
+  truth_revNode = ac.createConvolver(); truth_revNode.buffer = buildReverbIR(2.8, 0.6);
+  truth_revWet = ac.createGain(); truth_revWet.gain.value = 0.8; // Increased from 0.6 to 0.8
   
   // Subtle delay for magical space
   truth_delay = ac.createDelay(0.5);
   truth_delay.delayTime.value = 0.12;
-  truth_delayWet = ac.createGain(); truth_delayWet.gain.value = 0.15;
+  truth_delayWet = ac.createGain(); truth_delayWet.gain.value = 0.6; // Increased from 0.4 to 0.6
   
   // Connect serene processing chain
   truth_merger.connect(truth_delay);
@@ -2561,11 +2938,11 @@ function truth_initAudio() {
   truth_delay.connect(truth_delayWet);
   truth_revWet.connect(truth_mGain);
   truth_delayWet.connect(truth_mGain);
-  truth_mGain.connect(ac.destination);
+  truth_mGain.connect(masterEQ); // Connect to main audio chain instead of directly to destination
 }
 
 // System 4: Drone - Peaceful and deep
-function truth_noteDrone(ch, t, durS, vol=0.18) {
+function truth_noteDrone(ch, t, durS, vol=0.6) {
   truth_initAudio();
   
   const hz = truth_fixedNoteHz(ch);
@@ -2595,7 +2972,7 @@ function truth_noteDrone(ch, t, durS, vol=0.18) {
 }
 
 // System 5: Rhythm - Holographic percussive matrix
-function truth_noteRhythm(ch, t, durS, vol=0.35) {
+function truth_noteRhythm(ch, t, durS, vol=1.0) {
   truth_initAudio();
   
   const hz = truth_fixedNoteHz(ch);
@@ -2662,7 +3039,7 @@ function truth_noteRhythm(ch, t, durS, vol=0.35) {
 }
 
 // System 6: Ambient - Tranquil and magical
-function truth_noteAmbient(ch, t, durS, vol=0.15) {
+function truth_noteAmbient(ch, t, durS, vol=0.5) {
   truth_initAudio();
   
   const hz = truth_fixedNoteHz(ch);
@@ -2703,6 +3080,256 @@ function truth_noteAmbient(ch, t, durS, vol=0.15) {
   shimmer.stop(t + durS);
 }
 
+// System 7: Sequence - Original simple chord sound
+function truth_noteSequence(ch, t, durS, vol=0.15) {
+  truth_initAudio();
+  
+  const hz = truth_fixedNoteHz(ch);
+  
+  const env = ac.createGain();
+  const atk = Math.min(0.05, durS * 0.2);
+  const rel = Math.min(0.5, durS * 0.7);
+  
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(vol, t + atk);
+  env.gain.exponentialRampToValueAtTime(0.0001, t + atk + rel);
+  
+  env.connect(truth_mGain);
+  env.connect(truth_revNode);
+  
+  // Original three-oscillator chord with detuning
+  for (const det of [-4, 0, 5]) {
+    const osc = ac.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = hz;
+    osc.detune.value = det;
+    
+    const g = ac.createGain();
+    g.gain.value = det === 0 ? 0.6 : 0.2;
+    
+    osc.connect(g);
+    g.connect(env);
+    osc.start(t);
+    osc.stop(t + atk + rel + 0.05);
+  }
+}
+
+// System 8: All - Combined all sound systems at once with smooth transitions and filtered reverb
+function truth_noteAll(ch, t, durS, vol=0.4) {
+  truth_initAudio();
+  
+  // Handle special keys first
+  if (truth_handleSpecialKey(ch, t, durS, vol)) return;
+  
+  const hz = truth_fixedNoteHz(ch);
+  if (!hz) return; // Skip special keys
+  
+  // === GET OR CREATE SHARED FILTERED REVERB FOR 'ALL' MODE ===
+  if (!truth_allRevNode) {
+    truth_allRevNode = ac.createConvolver();
+    truth_allRevNode.buffer = buildReverbIR(3.5, 0.7); // Longer, richer reverb
+    
+    // Reverb filtering to prevent muddiness
+    truth_allRevLowPass = ac.createBiquadFilter();
+    truth_allRevLowPass.type = 'lowpass';
+    truth_allRevLowPass.frequency.value = 4000; // Cut high frequencies to prevent harshness
+    
+    truth_allRevHighPass = ac.createBiquadFilter();
+    truth_allRevHighPass.type = 'highpass';
+    truth_allRevHighPass.frequency.value = 150; // Cut low frequencies to prevent mud
+    
+    truth_allRevWet = ac.createGain();
+    truth_allRevWet.gain.value = 0.6; // More reverb wet signal
+    
+    // Connect reverb chain (only once)
+    truth_allRevLowPass.connect(truth_allRevHighPass);
+    truth_allRevHighPass.connect(truth_allRevNode);
+    truth_allRevNode.connect(truth_allRevWet);
+    truth_allRevWet.connect(truth_mGain);
+  }
+  
+  const allRevNode = truth_allRevNode;
+  const revLowPass = truth_allRevLowPass;
+  const revHighPass = truth_allRevHighPass;
+  const revWet = truth_allRevWet;
+  
+  // === CHORD MODE (80s pad style) - CENTERED, SMOOTH ===
+  const letterCount = ch.length || 1;
+  const quarterNoteDuration = TRUTH_BAR;
+  const sustainDuration = letterCount * quarterNoteDuration;
+  const rootHz = hz * 0.5; // Octave lower
+  
+  // 80s pad oscillators
+  const chordRoot = ac.createOscillator();
+  chordRoot.type = 'sawtooth';
+  chordRoot.frequency.value = rootHz;
+  
+  const chordFifth = ac.createOscillator();
+  chordFifth.type = 'sawtooth';
+  chordFifth.frequency.value = hz * 1.5;
+  
+  const chordOctave = ac.createOscillator();
+  chordOctave.type = 'sawtooth';
+  chordOctave.frequency.value = hz * 2;
+  
+  const chordThird = ac.createOscillator();
+  chordThird.type = 'triangle';
+  chordThird.frequency.value = hz * 1.25;
+  
+  const chordSub = ac.createOscillator();
+  chordSub.type = 'sine';
+  chordSub.frequency.value = hz * 0.25; // Deep sub
+  
+  // Chord processing with smoother filter
+  const chordFilter = ac.createBiquadFilter();
+  chordFilter.type = 'lowpass';
+  chordFilter.frequency.value = 1200; // Even lower for smoothness
+  chordFilter.Q.value = 1.0; // Less resonance for smoother sound
+  
+  const chordPanner = ac.createStereoPanner();
+  chordPanner.pan.value = 0; // Centered
+  
+  const chordEnv = ac.createGain();
+  const chordAttack = 0.5; // Slower attack for smoothness
+  const chordRelease = sustainDuration * 1.0; // Longer release
+  
+  chordEnv.gain.setValueAtTime(0, t);
+  chordEnv.gain.linearRampToValueAtTime(vol * 0.4, t + chordAttack);
+  chordEnv.gain.linearRampToValueAtTime(vol * 0.35, t + chordAttack + sustainDuration * 0.5);
+  chordEnv.gain.exponentialRampToValueAtTime(0.001, t + chordAttack + sustainDuration + chordRelease);
+  
+  // Chord gains
+  const chordRootGain = ac.createGain(); chordRootGain.gain.value = 0.35;
+  const chordFifthGain = ac.createGain(); chordFifthGain.gain.value = 0.25;
+  const chordOctaveGain = ac.createGain(); chordOctaveGain.gain.value = 0.12;
+  const chordThirdGain = ac.createGain(); chordThirdGain.gain.value = 0.08;
+  const chordSubGain = ac.createGain(); chordSubGain.gain.value = 0.25;
+  
+  // Connect chord components
+  chordRoot.connect(chordRootGain); chordRootGain.connect(chordFilter);
+  chordFifth.connect(chordFifthGain); chordFifthGain.connect(chordFilter);
+  chordOctave.connect(chordOctaveGain); chordOctaveGain.connect(chordFilter);
+  chordThird.connect(chordThirdGain); chordThirdGain.connect(chordFilter);
+  chordSub.connect(chordSubGain); chordSubGain.connect(chordFilter);
+  chordFilter.connect(chordEnv); chordEnv.connect(chordPanner);
+  chordPanner.connect(truth_merger, 0, 0); chordPanner.connect(truth_merger, 0, 1);
+  chordPanner.connect(revLowPass); // Send to reverb
+  
+  // === RHYTHM MODE - LEFT CHANNEL, SMOOTHER ===
+  const rhythmKick = ac.createOscillator();
+  rhythmKick.type = 'sine';
+  rhythmKick.frequency.value = hz * 0.5;
+  
+  const rhythmClick = ac.createOscillator();
+  rhythmClick.type = 'triangle'; // Softer than square
+  rhythmClick.frequency.value = hz * 6; // Lower, less harsh
+  
+  const rhythmPanner = ac.createStereoPanner();
+  rhythmPanner.pan.value = -0.6; // Less extreme left
+  
+  const rhythmEnv = ac.createGain();
+  rhythmEnv.gain.setValueAtTime(0, t);
+  rhythmEnv.gain.linearRampToValueAtTime(vol * 0.5, t + 0.01); // Slightly slower attack
+  rhythmEnv.gain.exponentialRampToValueAtTime(0.001, t + 0.2); // Slightly longer decay
+  
+  const clickGain = ac.createGain(); clickGain.gain.value = 0.15; // Quieter click
+  
+  rhythmKick.connect(rhythmEnv);
+  rhythmClick.connect(clickGain); clickGain.connect(rhythmEnv);
+  rhythmEnv.connect(rhythmPanner);
+  rhythmPanner.connect(truth_merger, 0, 0); rhythmPanner.connect(truth_merger, 0, 1);
+  rhythmPanner.connect(revLowPass); // Send to reverb
+  
+  // === AMBIENT MODE - RIGHT CHANNEL, SMOOTHER ===
+  const ambOsc = ac.createOscillator();
+  ambOsc.type = 'sine';
+  ambOsc.frequency.value = hz;
+  
+  const ambShimmer = ac.createOscillator();
+  ambShimmer.type = 'triangle';
+  ambShimmer.frequency.value = hz * 3; // Lower shimmer for smoothness
+  
+  const ambPanner = ac.createStereoPanner();
+  ambPanner.pan.value = 0.6; // Less extreme right
+  
+  const ambEnv = ac.createGain();
+  ambEnv.gain.setValueAtTime(0, t);
+  ambEnv.gain.linearRampToValueAtTime(vol * 0.35, t + 0.8); // Even slower attack
+  ambEnv.gain.linearRampToValueAtTime(0, t + durS + 1.5); // Even longer decay
+  
+  const shimmerGain = ac.createGain();
+  shimmerGain.gain.value = vol * 0.03; // Quieter shimmer
+  
+  ambOsc.connect(ambEnv);
+  ambShimmer.connect(shimmerGain); shimmerGain.connect(ambEnv);
+  ambEnv.connect(ambPanner);
+  ambPanner.connect(truth_merger, 0, 0); ambPanner.connect(truth_merger, 0, 1);
+  ambPanner.connect(revLowPass); // Send to reverb
+  
+  // === SEQUENCE MODE - CENTERED, SMOOTHER ===
+  const seqEnv = ac.createGain();
+  const seqAtk = 0.05; // Slower attack
+  const seqRel = 0.3; // Longer release
+  
+  seqEnv.gain.setValueAtTime(0, t);
+  seqEnv.gain.linearRampToValueAtTime(vol * 0.25, t + seqAtk);
+  seqEnv.gain.exponentialRampToValueAtTime(0.0001, t + seqAtk + seqRel);
+  
+  // Sequence oscillators with less detuning for smoother sound
+  for (const det of [-3, 0, 4]) {
+    const seqOsc = ac.createOscillator();
+    seqOsc.type = 'sine';
+    seqOsc.frequency.value = hz * 1.3; // Slightly lower register
+    seqOsc.detune.value = det;
+    
+    const seqG = ac.createGain();
+    seqG.gain.value = det === 0 ? 0.4 : 0.12;
+    
+    seqOsc.connect(seqG);
+    seqG.connect(seqEnv);
+    seqOsc.start(t);
+    seqOsc.stop(t + seqAtk + seqRel + 0.05);
+  }
+  
+  seqEnv.connect(truth_merger, 0, 0); seqEnv.connect(truth_merger, 0, 1);
+  seqEnv.connect(revLowPass); // Send to reverb
+  
+  // === START ALL OSCILLATORS ===
+  // Chord oscillators
+  chordRoot.start(t);
+  chordFifth.start(t);
+  chordOctave.start(t);
+  chordThird.start(t);
+  chordSub.start(t);
+  
+  // Rhythm oscillators
+  rhythmKick.start(t);
+  rhythmClick.start(t);
+  
+  // Ambient oscillators
+  ambOsc.start(t);
+  ambShimmer.start(t);
+  
+  // === STOP ALL OSCILLATORS ===
+  const chordTotalDuration = chordAttack + sustainDuration + chordRelease;
+  
+  // Chord stops
+  chordRoot.stop(t + chordTotalDuration);
+  chordFifth.stop(t + chordTotalDuration);
+  chordOctave.stop(t + chordTotalDuration);
+  chordThird.stop(t + chordTotalDuration);
+  chordSub.stop(t + chordTotalDuration);
+  
+  // Rhythm stops
+  rhythmKick.stop(t + 0.2);
+  rhythmClick.stop(t + 0.2);
+  
+  // Ambient stops
+  ambOsc.stop(t + durS + 1.5);
+  ambShimmer.stop(t + durS + 1.5);
+  
+  }
+
 function truth_particle(el) {
   const ref = el || document.getElementById('truth-journal');
   const rect = ref.getBoundingClientRect();
@@ -2723,7 +3350,14 @@ document.getElementById('truth-journal').addEventListener('keydown', e => {
   if (e.key.length !== 1 && e.key !== 'Enter') return;
   truth_initAudio();
   
-  // Use current sound system
+  // Handle special keys first
+  if (truth_handleSpecialKey(e.key, ac.currentTime, 0.6, 0.15)) {
+    // Special key handled, just show particle
+    truth_particle(null);
+    return;
+  }
+  
+  // Use current sound system for regular keys
   switch (truth_currentSystem) {
     case 'chord':
       // For chord system, trigger chord on word boundaries
@@ -2742,13 +3376,6 @@ document.getElementById('truth-journal').addEventListener('keydown', e => {
         truth_currentWord += e.key;
       }
       break;
-    case 'drone':
-      // For drone system, trigger on each keypress
-      truth_noteDrone(e.key, ac.currentTime, 0.3);
-      break;
-    case 'lydian':
-      truth_noteLydian(e.key, ac.currentTime, 1.2);
-      break;
     case 'rhythm':
       truth_noteRhythm(e.key, ac.currentTime, 0.3);
       break;
@@ -2757,6 +3384,9 @@ document.getElementById('truth-journal').addEventListener('keydown', e => {
       break;
     case 'sequence':
       truth_noteSequence(e.key, ac.currentTime, 0.6);
+      break;
+    case 'all':
+      truth_noteAll(e.key, ac.currentTime, 0.8);
       break;
   }
   
@@ -2813,24 +3443,43 @@ function startTruthPlayback() {
     const barStart=wi*TRUTH_BAR, letters=spans.filter(l=>l.wordIdx===wi), n=letters.length, ni=TRUTH_BAR/n;
     truth_timers.push(setTimeout(()=>{ wraps.forEach(w=>w.classList.remove('bar-active')); if(wraps[wi]) wraps[wi].classList.add('bar-active'); }, barStart*1000));
     
+    // Handle chord system at word level
+    if (truth_currentSystem === 'chord') {
+      const word = letters.map(l => l.char).join('');
+      if (word.trim()) {
+        truth_noteChord(word, truth_startAC+barStart, TRUTH_BAR*0.8, 0.7);
+      }
+    }
+    
     for (let li=0;li<n;li++) {
       const {span,char}=letters[li], off=barStart+li*ni, vol=0.15;
-      // Use current sound system for playback
+      
+      // Handle special keys in playback
+      if (truth_isSpecialKey(char)) {
+        truth_timers.push(setTimeout(()=>{
+          truth_handleSpecialKey(char, truth_startAC+off, 0.6, vol);
+          span.classList.remove('decay'); span.classList.add('hit'); truth_particle(span);
+          setTimeout(()=>{ span.classList.remove('hit'); span.classList.add('decay'); },120);
+        }, off*1000));
+        continue;
+      }
+      
+      // Use current sound system for regular keys
       switch (truth_currentSystem) {
         case 'chord':
-          // Chords handled at word level
-          break;
-        case 'lydian':
-          truth_noteLydian(char, truth_startAC+off, ni*0.85, vol);
+          // Chords already handled at word level above
           break;
         case 'rhythm':
-          truth_noteRhythm(char, truth_startAC+off, ni*0.5, vol);
+          truth_noteRhythm(char, truth_startAC+off, ni*0.5, vol * 6.0);
           break;
         case 'ambient':
-          truth_noteAmbient(char, truth_startAC+off, ni*1.2, vol);
+          truth_noteAmbient(char, truth_startAC+off, Math.max(ni*1.2, 1.5), vol * 3.0);
           break;
         case 'sequence':
           truth_noteSequence(char, truth_startAC+off, ni*0.7, vol);
+          break;
+        case 'all':
+          truth_noteAll(char, truth_startAC+off, ni*1.0, vol * 2.0);
           break;
               }
       truth_timers.push(setTimeout(()=>{
