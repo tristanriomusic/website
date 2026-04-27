@@ -176,9 +176,6 @@
     #rituelles-video-layer.visible {
       display: flex;
       animation: rituellesVideoFadeIn 1.2s ease-out;
-      /* Outer light bleed beyond the mask */
-      filter: drop-shadow(0 0 60px rgba(100, 60, 255, 0.4))
-              drop-shadow(0 0 120px rgba(60, 20, 200, 0.2));
     }
     #rituelles-video-layer.fade-out {
       animation: rituellesVideoFadeOut 0.8s ease-in forwards;
@@ -188,13 +185,12 @@
       max-width: 900px;
       height: 90vh;
       border-radius: 0;
-      overflow: visible;
+      overflow: hidden;
       transform: scale(1);
       animation: rituellesVideoScaleIn 1.2s ease-out 0.3s forwards;
       aspect-ratio: 9/16;
-      /* Feather the edges into the background */
-      -webkit-mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, black 45%, rgba(0,0,0,0.6) 65%, transparent 100%);
-      mask-image: radial-gradient(ellipse 78% 82% at 50% 50%, black 45%, rgba(0,0,0,0.6) 65%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 75% at 50% 50%, black 30%, transparent 100%);
+      mask-image: radial-gradient(ellipse 70% 75% at 50% 50%, black 30%, transparent 100%);
     }
     #rituelles-video {
       width: 100%;
@@ -202,13 +198,6 @@
       object-fit: contain;
       background: transparent;
       opacity: 0.8;
-      border-radius: 0;
-      /* Soft glow that bleeds outward at the edges */
-      box-shadow:
-        0 0 40px  8px rgba(120, 80, 255, 0.35),
-        0 0 80px 20px rgba(80,  40, 200, 0.25),
-        0 0 140px 40px rgba(60,  20, 180, 0.15),
-        0 0 220px 60px rgba(30,  10, 120, 0.08);
     }
     
     @keyframes rituellesVideoFadeIn {
