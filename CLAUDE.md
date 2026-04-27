@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Dev Server
 
 ```bash
-/usr/bin/python3 -m http.server 3000 --directory /Users/tristanrio/VibeCode/website
+/usr/bin/python3 /Users/tristanrio/VibeCode/website/serve.py
 ```
 
 Preview server name (for `preview_start`): `Static Site (npx serve)` — config in `.claude/launch.json`

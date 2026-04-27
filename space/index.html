@@ -180,24 +180,64 @@
     #rituelles-video-layer.fade-out {
       animation: rituellesVideoFadeOut 0.8s ease-in forwards;
     }
-    #rituelles-video-shell {
-      width: 85vw;
-      max-width: 900px;
-      height: 90vh;
-      border-radius: 0;
+    /* Halo — perfect circle with geometric shard reflections */
+    #rituelles-halo {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 96vmin;
+      height: 96vmin;
+      border-radius: 50%;
       overflow: hidden;
-      transform: scale(1);
-      animation: rituellesVideoScaleIn 1.2s ease-out 0.3s forwards;
-      aspect-ratio: 9/16;
-      -webkit-mask-image: radial-gradient(ellipse 70% 75% at 50% 50%, black 30%, transparent 100%);
-      mask-image: radial-gradient(ellipse 70% 75% at 50% 50%, black 30%, transparent 100%);
+      z-index: 0;
+      pointer-events: none;
+      box-shadow:
+        0 0 60px 30px rgba(140, 80, 255, 0.35),
+        0 0 120px 70px rgba(90, 40, 210, 0.18),
+        0 0 220px 120px rgba(50, 15, 160, 0.08);
+      animation: projHalo 11s ease-in-out infinite;
+      opacity: 0;
+      transition: opacity 1.2s ease;
     }
+    #rituelles-halo.visible { opacity: 1; }
+    #rituelles-halo-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      opacity: 0.82;
+    }
+    @keyframes projHalo {
+      0%,100% { transform: translate(-50%,-50%) scale(1.0);  }
+      35%     { transform: translate(-50%,-50%) scale(1.08); }
+      65%     { transform: translate(-50%,-50%) scale(1.03); }
+    }
+
+    #rituelles-video-shell {
+      height: 76vh;
+      aspect-ratio: 9/16;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+      opacity: 0.82;
+      border-radius: 42% 38% 44% 36% / 32% 40% 34% 38%;
+      animation: rituellesVideoScaleIn 1.2s ease-out 0.3s forwards,
+                 shellMorph 13s ease-in-out 1.2s infinite;
+    }
+    @keyframes shellMorph {
+      0%,100% { border-radius: 42% 38% 44% 36% / 32% 40% 34% 38%; }
+      20%     { border-radius: 36% 44% 40% 42% / 38% 32% 40% 30%; }
+      45%     { border-radius: 44% 40% 36% 44% / 30% 38% 32% 42%; }
+      70%     { border-radius: 38% 42% 42% 38% / 40% 30% 38% 34%; }
+    }
+
     #rituelles-video {
       width: 100%;
       height: 100%;
       object-fit: contain;
       background: transparent;
       opacity: 0.8;
+      position: relative;
+      z-index: 1;
     }
     
     @keyframes rituellesVideoFadeIn {
@@ -825,7 +865,7 @@
     allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
     style="display:none"></iframe>
   <video id="modal-video" controls style="display:none"></video>
-  <audio id="modal-audio" controls style="display:none; width: min(80vw, 320px); height: 44px; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.8); color-scheme: dark; filter: grayscale(1) contrast(1.2); opacity: 0.9;"></audio>
+  <audio id="modal-audio" controls style="display:none; width: min(80vw, 320px); height: 44px; border-radius: 8px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.8); color-scheme: dark; opacity: 0.9;"></audio>
   <div id="modal-placeholder" style="display:none"></div>
   <div id="modal-close">&#x2715; Close</div>
 </div>
@@ -952,10 +992,25 @@
   </div>
 </div>
 
+<!-- SVG filter for organic wavy video edges -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <filter id="rituellesWave" x="-40%" y="-40%" width="180%" height="180%">
+      <feTurbulence type="turbulence" baseFrequency="0.010 0.007" numOctaves="4" seed="8" result="noise">
+        <animate attributeName="baseFrequency" values="0.010 0.007;0.014 0.010;0.008 0.012;0.013 0.006;0.010 0.007" dur="18s" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="40" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
 <!-- Rituelles Video Layer -->
 <div id="rituelles-video-layer">
+  <div id="rituelles-halo">
+    <canvas id="rituelles-halo-canvas"></canvas>
+  </div>
   <div id="rituelles-video-shell">
-    <video id="rituelles-video" muted playsinline preload="auto" src="../1776805285295033.mp4"></video>
+    <video id="rituelles-video" muted playsinline preload="auto" src="rituelles-video.mp4"></video>
   </div>
 </div>
 
@@ -978,8 +1033,114 @@ const mClose   = document.getElementById('modal-close');
 // Rituelles video elements
 const rituellesVideoLayer = document.getElementById('rituelles-video-layer');
 const rituellesVideo = document.getElementById('rituelles-video');
+const rituellesHalo = document.getElementById('rituelles-halo');
+const rituellesHaloCanvas = document.getElementById('rituelles-halo-canvas');
+const rituellesHaloCtx = rituellesHaloCanvas.getContext('2d');
+let rituellesHaloRaf = null;
 let rituellesVideoTimer = null;
 let rituellesVideoTriggered = false;
+
+// Pre-compute geometric shard pattern (runs once)
+const HALO_SHARDS = (() => {
+  const shards = [];
+  const N_OUTER = 16, N_INNER = 8;
+
+  // Outer ring angles with subtle jitter for organic geometry
+  const outerA = [];
+  for (let i = 0; i <= N_OUTER; i++) {
+    outerA.push((i / N_OUTER) * Math.PI * 2 + Math.sin(i * 13.7) * 0.055);
+  }
+  for (let i = 0; i < N_OUTER; i++) {
+    const a0 = outerA[i], a1 = outerA[i + 1];
+    const ir0 = 0.39 + 0.06 * Math.sin(i * 3.1);
+    const ir1 = 0.39 + 0.06 * Math.sin((i + 1) * 3.1);
+    const ix0 = 0.5 + ir0 * Math.cos(a0), iy0 = 0.5 + ir0 * Math.sin(a0);
+    const ix1 = 0.5 + ir1 * Math.cos(a1), iy1 = 0.5 + ir1 * Math.sin(a1);
+    const ox0 = 0.5 + 0.5 * Math.cos(a0), oy0 = 0.5 + 0.5 * Math.sin(a0);
+    const ox1 = 0.5 + 0.5 * Math.cos(a1), oy1 = 0.5 + 0.5 * Math.sin(a1);
+    shards.push({ pts: [[ix0,iy0],[ox0,oy0],[ix1,iy1]], mx: i%2===0, my: false });
+    shards.push({ pts: [[ix1,iy1],[ox0,oy0],[ox1,oy1]], mx: i%2!==0, my: i%4===0 });
+  }
+
+  // Inner segments (pie slices from center)
+  const innerA = [];
+  for (let i = 0; i <= N_INNER; i++) {
+    innerA.push((i / N_INNER) * Math.PI * 2 + Math.cos(i * 7.3) * 0.05);
+  }
+  for (let i = 0; i < N_INNER; i++) {
+    const a0 = innerA[i], a1 = innerA[i + 1];
+    const ir0 = 0.39 + 0.06 * Math.sin(i * 3.1);
+    const ir1 = 0.39 + 0.06 * Math.sin((i + 1) * 3.1);
+    shards.push({
+      pts: [[0.5,0.5],[0.5+ir0*Math.cos(a0),0.5+ir0*Math.sin(a0)],[0.5+ir1*Math.cos(a1),0.5+ir1*Math.sin(a1)]],
+      mx: i%2===0, my: i%3===0
+    });
+  }
+  return shards;
+})();
+
+function drawHaloShards() {
+  const W = rituellesHaloCanvas.width, H = rituellesHaloCanvas.height;
+  rituellesHaloCtx.clearRect(0, 0, W, H);
+
+  // Scale video to fill the square canvas (cover behavior)
+  const va = rituellesVideo.videoWidth / (rituellesVideo.videoHeight || 1) || (9/16);
+  let vw, vh, vx, vy;
+  if (va < 1) { vw = W; vh = W / va; vx = 0; vy = (H - vh) / 2; }
+  else        { vh = H; vw = H * va; vx = (W - vw) / 2; vy = 0; }
+
+  for (const { pts, mx, my } of HALO_SHARDS) {
+    let cx = 0, cy = 0;
+    for (const p of pts) { cx += p[0]; cy += p[1]; }
+    cx /= pts.length; cy /= pts.length;
+
+    rituellesHaloCtx.save();
+    rituellesHaloCtx.beginPath();
+    rituellesHaloCtx.moveTo(pts[0][0]*W, pts[0][1]*H);
+    for (let i = 1; i < pts.length; i++) rituellesHaloCtx.lineTo(pts[i][0]*W, pts[i][1]*H);
+    rituellesHaloCtx.closePath();
+    rituellesHaloCtx.clip();
+
+    if (mx || my) {
+      rituellesHaloCtx.translate(cx*W, cy*H);
+      rituellesHaloCtx.scale(mx ? -1 : 1, my ? -1 : 1);
+      rituellesHaloCtx.translate(-cx*W, -cy*H);
+    }
+    rituellesHaloCtx.filter = 'saturate(1.6) brightness(1.1)';
+    rituellesHaloCtx.drawImage(rituellesVideo, vx, vy, vw, vh);
+    rituellesHaloCtx.filter = 'none';
+    rituellesHaloCtx.restore();
+
+    // Shard separator lines — dark crack + subtle purple highlight
+    rituellesHaloCtx.save();
+    rituellesHaloCtx.beginPath();
+    rituellesHaloCtx.moveTo(pts[0][0]*W, pts[0][1]*H);
+    for (let i = 1; i < pts.length; i++) rituellesHaloCtx.lineTo(pts[i][0]*W, pts[i][1]*H);
+    rituellesHaloCtx.closePath();
+    rituellesHaloCtx.strokeStyle = 'rgba(0,0,0,0.75)';
+    rituellesHaloCtx.lineWidth = 2.5;
+    rituellesHaloCtx.stroke();
+    rituellesHaloCtx.strokeStyle = 'rgba(200,140,255,0.18)';
+    rituellesHaloCtx.lineWidth = 0.8;
+    rituellesHaloCtx.stroke();
+    rituellesHaloCtx.restore();
+  }
+}
+
+function startHaloCanvas() {
+  const size = rituellesHalo.clientWidth || 600;
+  rituellesHaloCanvas.width = size;
+  rituellesHaloCanvas.height = size;
+  const loop = () => {
+    drawHaloShards();
+    rituellesHaloRaf = requestAnimationFrame(loop);
+  };
+  loop();
+}
+
+function stopHaloCanvas() {
+  if (rituellesHaloRaf) { cancelAnimationFrame(rituellesHaloRaf); rituellesHaloRaf = null; }
+}
 let W, H;
 
 function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
@@ -1207,24 +1368,23 @@ function updateDesertDreamNeon(desertDreamActive) {
 
 /* ---- Rituelles Video Functions ---- */
 function startRituellesVideo() {
-  if (rituellesVideoTriggered) return; // Prevent multiple triggers
+  if (rituellesVideoTriggered) return;
   rituellesVideoTriggered = true;
-  
-  // Reset video to beginning
+
   rituellesVideo.currentTime = 0;
   rituellesVideo.play();
-  
-  // Show video layer with smooth animation
+  rituellesHalo.classList.add('visible');
   rituellesVideoLayer.classList.add('visible');
   rituellesVideoLayer.classList.remove('fade-out');
+  startHaloCanvas();
 }
 
 function endRituellesVideo() {
-  // Add fade-out animation
   rituellesVideoLayer.classList.add('fade-out');
   rituellesVideoLayer.classList.remove('visible');
-  
-  // Hide video after animation completes
+  rituellesHalo.classList.remove('visible');
+  stopHaloCanvas();
+
   setTimeout(() => {
     rituellesVideoLayer.classList.remove('fade-out');
     rituellesVideoLayer.classList.remove('visible');
