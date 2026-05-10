@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """Dev server with HTTP Range Request support (needed for audio/video seeking)."""
 import http.server
+import socketserver
 import os
+
+class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    """Handle each request in a new thread so large audio/video files don't block navigation."""
+    daemon_threads = True
 
 class RangeHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def send_head(self):
@@ -52,6 +57,6 @@ class RangeHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     os.chdir('/Users/tristanrio/VibeCode/website')
-    server = http.server.HTTPServer(('', 3000), RangeHTTPRequestHandler)
+    server = ThreadingHTTPServer(('', 3000), RangeHTTPRequestHandler)
     print('Serving at http://localhost:3000')
     server.serve_forever()

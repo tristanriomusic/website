@@ -435,6 +435,37 @@
       text-shadow: 0 0 12px rgba(180,100,255,0.4); transition: color 0.3s;
     }
     #truth-back:hover { color: rgba(255,255,255,0.8); }
+    #truth-mood-panel {
+      display: flex; flex-direction: row; align-items: center;
+      gap: 0.8vw; flex-wrap: wrap; justify-content: center;
+    }
+    #truth-mood-label {
+      color: rgba(255,255,255,0.3);
+      font-size: clamp(8px, 0.85vw, 11px);
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-right: 0.3rem;
+    }
+    .truth-mood-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 3px;
+      color: rgba(255,255,255,0.4);
+      font-family: 'Georgia', serif;
+      font-size: clamp(9px, 0.9vw, 12px);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.5em 1em; cursor: pointer;
+      transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+    }
+    .truth-mood-btn:hover {
+      border-color: rgba(180,100,255,0.6);
+      color: rgba(255,255,255,0.85);
+      box-shadow: 0 0 10px rgba(160,80,255,0.2);
+    }
+    .truth-mood-btn.active {
+      border-color: rgba(180,100,255,0.85); color: #fff;
+      box-shadow: 0 0 16px rgba(160,80,255,0.35);
+      text-shadow: 0 0 10px rgba(180,100,255,0.6);
+    }
 
     /* ── Love overlay ── */
     #love-overlay {
@@ -694,13 +725,20 @@
       display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
     }
     .aq-add-btn {
+      display: flex; align-items: center; gap: 8px;
       background: rgba(0,30,50,0.7);
       border: 1px solid rgba(0,180,255,0.25);
-      border-radius: 3px; padding: 6px 14px;
+      border-radius: 3px; padding: 4px 12px 4px 6px;
       color: rgba(150,230,255,0.65);
       font-family: 'Georgia', serif;
       font-size: clamp(10px,0.9vw,13px); letter-spacing: 0.2em;
       cursor: pointer; transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .aq-species-icon {
+      position: static;
+      width: 36px; height: 36px; flex-shrink: 0;
+      border-radius: 50%;
+      background: rgba(0,6,16,0.6);
     }
     .aq-add-btn:hover {
       color: rgba(200,245,255,0.95); border-color: rgba(0,200,255,0.6);
@@ -728,6 +766,50 @@
       text-shadow: 0 0 12px rgba(0,180,255,0.4); transition: color 0.3s;
     }
     #aquarium-back:hover { color: rgba(150,230,255,0.85); }
+
+    #aquarium-intro {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(2, 4, 14, 0.72);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+      cursor: pointer;
+      animation: fadeM 0.6s ease;
+      transition: opacity 0.5s ease;
+    }
+    #aquarium-intro.hidden { opacity: 0; pointer-events: none; }
+    #aquarium-intro-inner {
+      max-width: min(560px, 80vw);
+      text-align: center;
+      padding: 40px 36px;
+      border: 1px solid rgba(180, 100, 255, 0.25);
+      border-radius: 4px;
+      background: rgba(8, 4, 22, 0.7);
+      box-shadow: 0 0 60px rgba(160, 60, 255, 0.12);
+    }
+    #aquarium-intro-title {
+      font-family: 'Georgia', serif;
+      font-size: clamp(18px, 2.2vw, 28px);
+      letter-spacing: 0.22em;
+      color: rgba(220, 160, 255, 0.95);
+      margin-bottom: 22px;
+      text-shadow: 0 0 24px rgba(200, 100, 255, 0.5);
+    }
+    #aquarium-intro-body {
+      font-family: 'Georgia', serif;
+      font-size: clamp(12px, 1.1vw, 15px);
+      line-height: 1.85;
+      color: rgba(200, 220, 255, 0.75);
+      margin-bottom: 28px;
+    }
+    #aquarium-intro-dismiss {
+      font-size: clamp(9px, 0.9vw, 12px);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(180, 100, 255, 0.45);
+      animation: fadeInOut 2.2s ease-in-out infinite;
+    }
+    @keyframes fadeInOut { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
     /* ── Animation buttons ── */
     #anim-controls {
@@ -895,7 +977,7 @@
 <div id="aquarium-overlay">
   <canvas id="aquarium-canvas"></canvas>
   <div id="aquarium-ui">
-    <div id="aquarium-title">Seed the eldritch ecosystem</div>
+    <div id="aquarium-title">Seed the Dream Frequency</div>
     <div id="aquarium-status"></div>
     <label id="aquarium-flow-wrap">
       <span>The Flow</span>
@@ -903,23 +985,30 @@
       <span id="aquarium-flow-value">1.0x</span>
     </label>
     <div id="aquarium-event">
-      <div id="aquarium-event-title">Mad Tea Party</div>
+      <div id="aquarium-event-title">Acid Jam Session</div>
       <div id="aquarium-event-text"></div>
       <div id="aquarium-event-actions">
-        <button class="aq-ritual-btn" id="aq-pour-tea">Pour the Tea</button>
-        <button class="aq-ritual-btn" id="aq-break-cup">Break the Cup</button>
+        <button class="aq-ritual-btn" id="aq-pour-tea">Drop the Note</button>
+        <button class="aq-ritual-btn" id="aq-break-cup">Smash the Guitar</button>
       </div>
     </div>
     <div id="aquarium-fish-btns">
-      <button class="aq-add-btn" data-species="plankton">Toxic Glitter</button>
-      <button class="aq-add-btn" data-species="sardine">Tea Fry</button>
-      <button class="aq-add-btn" data-species="clownfish">Cheshire Cuttlefish</button>
-      <button class="aq-add-btn" data-species="tuna">Jabberwock Larva</button>
-      <button class="aq-add-btn" data-species="shark">Jabberwock Leviathan</button>
-      <button class="aq-add-btn" data-species="jellyfish">Sentient Anemone</button>
-      <button class="aq-add-btn" data-species="octopus">Caterpillar-Hydra</button>
+      <button class="aq-add-btn" data-species="plankton"><canvas class="aq-species-icon" data-species="plankton" width="72" height="72"></canvas>Phosphene Mote</button>
+      <button class="aq-add-btn" data-species="sardine"><canvas class="aq-species-icon" data-species="sardine" width="72" height="72"></canvas>Kaleidoscope Fry</button>
+      <button class="aq-add-btn" data-species="clownfish"><canvas class="aq-species-icon" data-species="clownfish" width="72" height="72"></canvas>Prism Wraith</button>
+      <button class="aq-add-btn" data-species="tuna"><canvas class="aq-species-icon" data-species="tuna" width="72" height="72"></canvas>Serpent Dreamer</button>
+      <button class="aq-add-btn" data-species="shark"><canvas class="aq-species-icon" data-species="shark" width="72" height="72"></canvas>Void Leviathan</button>
+      <button class="aq-add-btn" data-species="jellyfish"><canvas class="aq-species-icon" data-species="jellyfish" width="72" height="72"></canvas>Astral Veil</button>
+      <button class="aq-add-btn" data-species="octopus"><canvas class="aq-species-icon" data-species="octopus" width="72" height="72"></canvas>Fractal Hydra</button>
     </div>
     <div id="aquarium-back">← Return</div>
+  </div>
+  <div id="aquarium-intro">
+    <div id="aquarium-intro-inner">
+      <div id="aquarium-intro-title">The Dream Frequency</div>
+      <div id="aquarium-intro-body">A living psychedelic ecosystem tuned to guitar frequencies.<br><br>Add species with the buttons — each one bends the sonic balance of the food chain. Drag <em>The Flow</em> to warp time itself. Push it too far and the reef decays into a graveyard of giants.<br><br>An <em>Acid Jam Session</em> may erupt at any moment.</div>
+      <div id="aquarium-intro-dismiss">touch to enter</div>
+    </div>
   </div>
 </div>
 
@@ -988,6 +1077,13 @@
       <button class="ctrl-btn" id="truth-btn-play">&#9654; Play</button>
       <button class="ctrl-btn" id="truth-btn-stop" style="display:none">&#9632; Stop</button>
       <span id="truth-bpm-label">90 BPM · 1 word = 1 beat</span>
+    </div>
+    <div id="truth-mood-panel">
+      <span id="truth-mood-label">Mood:</span>
+      <button class="truth-mood-btn active" data-mood="up">Up</button>
+      <button class="truth-mood-btn" data-mood="down">Down</button>
+      <button class="truth-mood-btn" data-mood="in">In</button>
+      <button class="truth-mood-btn" data-mood="out">Out</button>
     </div>
     <div id="truth-back">&#8592; Return</div>
   </div>
@@ -1358,6 +1454,7 @@ mAudio.addEventListener('ended', () => {
 function updateDarknessStorm(darknessActive) {
   if (darknessActive === prevDarknessActive) return;
   prevDarknessActive = darknessActive;
+  window.parent?.dreamPlayer?.darknessMode?.(darknessActive);
   updateAnimButtonState();
 }
 
@@ -1579,9 +1676,11 @@ canvas.addEventListener('click', e => {
 });
 
 back.addEventListener('click', () => {
-  if (modal.classList.contains('visible')) { closeModal(); return; }
-  if (zoomed) zoomOut();
-  else window.location.href = '../';
+  if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) { closeModal(); return; }
+  if (modal.classList.contains('visible')) closeModal();
+  if (zoomed) { zoomOut(); return; }
+  window.parent?.dreamPlayer?.tryUnlock?.();
+  window.location.href = '../landing.html';
 });
 mClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
@@ -1595,8 +1694,9 @@ document.querySelector('.gods-close').addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    if (modal.classList.contains('visible')) { closeModal(); return; }
-    if (document.getElementById('gods-popup').classList.contains('visible')) { 
+    if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) { closeModal(); return; }
+    if (modal.classList.contains('visible')) closeModal();
+    if (document.getElementById('gods-popup').classList.contains('visible')) {
       const popup = document.getElementById('gods-popup');
       popup.classList.remove('visible'); 
       popup.style.display = 'none';
@@ -1605,7 +1705,7 @@ document.addEventListener('keydown', e => {
     if (document.getElementById('truth-overlay').classList.contains('visible')) { closeTruthOverlay(); return; }
     if (document.getElementById('love-overlay').classList.contains('visible')) { closeLoveOverlay(); return; }
     if (document.getElementById('aquarium-overlay').classList.contains('visible')) { closeAquarium(); return; }
-    if (zoomed) zoomOut(); else window.location.href='../';
+    if (zoomed) zoomOut(); else { window.parent?.dreamPlayer?.tryUnlock?.(); window.location.href='../landing.html'; }
   }
 });
 
@@ -2291,6 +2391,7 @@ function openZoneContent(zone) {
     return;
   }
   if (zone.type === 'truth') {
+    window.parent?.dreamPlayer?.pause();
     document.getElementById('truth-overlay').classList.add('visible');
     // Set 'All' button as active by default
     document.querySelectorAll('.truth-system-btn').forEach(b => b.classList.remove('active'));
@@ -2322,6 +2423,7 @@ function openZoneContent(zone) {
 }
 
 function showFrame(src) {
+  window.parent?.dreamPlayer?.pause();
   mFrame.src = src;
   mFrame.style.display = 'block';
   mVideo.style.display = 'none';
@@ -2351,6 +2453,7 @@ function showPopup(popupId) {
 }
 
 function showVideo(src) {
+  window.parent?.dreamPlayer?.pause();
   mVideo.src = src;
   mVideo.style.display = 'block';
   mFrame.style.display = 'none';
@@ -2361,6 +2464,7 @@ function showVideo(src) {
 }
 
 function showAudio(src) {
+  window.parent?.dreamPlayer?.pause();
   mAudio.src = src;
   mAudio.style.display = 'block';
   mFrame.style.display = 'none';
@@ -2396,7 +2500,7 @@ function closeModal() {
   mAudio.style.display = 'none';
   mPlace.style.display = 'none';
   if (wasRituellesAudio) {
-    endRituellesCompanionVideo(true);
+    endRituellesVideo();
     // Return to regular Rituelles universe view after closing playback.
     rituellesPlaying = false;
     animManual = false;
@@ -2406,6 +2510,7 @@ function closeModal() {
     lastUiActivityAt = performance.now();
   }
   if (wasBandcamp && window.miniPlayerShow) window.miniPlayerShow();
+  window.parent?.dreamPlayer?.resume();
 }
 
 /* ═══ XY GRANULAR SYNTH (NEBULA) ═══ */
@@ -2694,10 +2799,13 @@ function toggleSynth() {
 }
 
 /* ═══ TRUTH OVERLAY ═══ */
-const TRUTH_LYDIAN = [0, 2, 4, 6, 7, 9, 11];
-const TRUTH_ROOT   = 164.82; // E3 (one octave higher)
-const TRUTH_BPM    = 90;
-const TRUTH_BAR    = 60 / TRUTH_BPM;
+const TRUTH_MODES = {
+  up:   { intervals: [0, 2, 4, 6, 7, 9, 11], rootHz: 164.82, bpm: 90  }, // E Lydian
+  down: { intervals: [0, 2, 3, 5, 7, 8, 10], rootHz: 146.83, bpm: 72  }, // D natural minor
+  in:   { intervals: [0, 2, 3, 5, 7, 9, 10], rootHz: 116.54, bpm: 80  }, // Bb Dorian
+  out:  { intervals: [0, 2, 4, 5, 7, 9, 11], rootHz: 196.00, bpm: 110 }, // G major
+};
+let truth_currentMode = TRUTH_MODES.up;
 const TRUTH_SYMS   = ['', '', '', ''];
 
 // Comprehensive keyboard mapping with unique octaves and special behaviors
@@ -2741,7 +2849,7 @@ let truth_currentSystem = 'all'; // Default to All system
 
 function truth_hz(degree, octave = 0) {
   const step = degree % 7;
-  return TRUTH_ROOT * Math.pow(2, octave) * Math.pow(2, TRUTH_LYDIAN[step] / 12);
+  return truth_currentMode.rootHz * Math.pow(2, octave) * Math.pow(2, truth_currentMode.intervals[step] / 12);
 }
 
 function truth_getKeyInfo(ch) {
@@ -2987,7 +3095,7 @@ function truth_noteChord(word, t, durS, vol=0.7) {
   
   // Calculate sustain based on word length (quarter notes)
   const letterCount = word.replace(/[^a-zA-Z]/g, '').length;
-  const quarterNoteDuration = TRUTH_BAR; // Quarter note at 90 BPM
+  const quarterNoteDuration = (60 / truth_currentMode.bpm); // Quarter note at 90 BPM
   const sustainDuration = letterCount * quarterNoteDuration;
   
   // Make first note an octave lower
@@ -3319,7 +3427,7 @@ function truth_noteAll(ch, t, durS, vol=0.4) {
   
   // === CHORD MODE (80s pad style) - CENTERED, SMOOTH ===
   const letterCount = ch.length || 1;
-  const quarterNoteDuration = TRUTH_BAR;
+  const quarterNoteDuration = (60 / truth_currentMode.bpm);
   const sustainDuration = letterCount * quarterNoteDuration;
   const rootHz = hz * 0.5; // Octave lower
   
@@ -3566,6 +3674,17 @@ document.querySelectorAll('.truth-system-btn').forEach(btn => {
   });
 });
 
+// Mood button switching
+document.querySelectorAll('.truth-mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    truth_currentMode = TRUTH_MODES[btn.dataset.mood];
+    document.querySelectorAll('.truth-mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('truth-bpm-label').textContent = `${truth_currentMode.bpm} BPM · 1 word = 1 beat`;
+    if (truth_playing) stopTruthPlayback();
+  });
+});
+
 function truth_buildDOM(text) {
   const pv = document.getElementById('truth-playback-view');
   pv.innerHTML = '';
@@ -3604,14 +3723,14 @@ function startTruthPlayback() {
   const {spans,wraps,wordCount}=truth_buildDOM(text);
   truth_totalBars=wordCount; truth_startAC=ac.currentTime+0.1; truth_startWall=performance.now()+100;
     for (let wi=0;wi<wordCount;wi++) {
-    const barStart=wi*TRUTH_BAR, letters=spans.filter(l=>l.wordIdx===wi), n=letters.length, ni=TRUTH_BAR/n;
+    const barStart=wi*(60 / truth_currentMode.bpm), letters=spans.filter(l=>l.wordIdx===wi), n=letters.length, ni=(60 / truth_currentMode.bpm)/n;
     truth_timers.push(setTimeout(()=>{ wraps.forEach(w=>w.classList.remove('bar-active')); if(wraps[wi]) wraps[wi].classList.add('bar-active'); }, barStart*1000));
     
     // Handle chord system at word level
     if (truth_currentSystem === 'chord') {
       const word = letters.map(l => l.char).join('');
       if (word.trim()) {
-        truth_noteChord(word, truth_startAC+barStart, TRUTH_BAR*0.8, 0.7);
+        truth_noteChord(word, truth_startAC+barStart, (60 / truth_currentMode.bpm)*0.8, 0.7);
       }
     }
     
@@ -3652,7 +3771,7 @@ function startTruthPlayback() {
       }, off*1000));
     }
   }
-  const totalDur=wordCount*TRUTH_BAR*1000;
+  const totalDur=wordCount*(60 / truth_currentMode.bpm)*1000;
   (function animBar() {
     if (!truth_playing) return;
     const pct=Math.min((performance.now()-truth_startWall)/totalDur*100,100);
@@ -3675,6 +3794,7 @@ function stopTruthPlayback() {
 function closeTruthOverlay() {
   stopTruthPlayback();
   document.getElementById('truth-overlay').classList.remove('visible');
+  window.parent?.dreamPlayer?.resume();
 }
 
 document.getElementById('truth-btn-play').addEventListener('click', startTruthPlayback);
@@ -3921,13 +4041,13 @@ function resizeAq() { aqCanvas.width = window.innerWidth; aqCanvas.height = wind
 resizeAq(); window.addEventListener('resize', resizeAq);
 
 const SPECIES = {
-  plankton:  { tier:0, r:3,  speed:0.22, prey:[], label:'Toxic Glitter',        turnRate:0.08, hue:110 },
-  sardine:   { tier:1, r:6,  speed:1.15, prey:['plankton'], label:'Tea Fry',     turnRate:0.12, hue:42 },
-  clownfish: { tier:2, r:10, speed:1.0,  prey:['plankton','sardine'], label:'Cheshire Cuttlefish', turnRate:0.09, hue:168 },
-  tuna:      { tier:2, r:12, speed:1.25, prey:['plankton','sardine','jellyfish'], label:'Jabberwock Larva', turnRate:0.08, hue:274 },
-  shark:     { tier:4, r:22, speed:1.55, prey:['tuna','clownfish','octopus','jellyfish','sardine'], label:'Jabberwock Leviathan', turnRate:0.04, hue:196 },
-  jellyfish: { tier:1, r:9,  speed:0.5,  prey:['plankton'], label:'Sentient Anemone', turnRate:0.05, hue:130 },
-  octopus:   { tier:2, r:13, speed:0.85, prey:['plankton','sardine','jellyfish'], label:'Caterpillar-Hydra', turnRate:0.10, hue:314 },
+  plankton:  { tier:0, r:3,  speed:0.22, prey:[], label:'Phosphene Mote',        turnRate:0.08, hue:110 },
+  sardine:   { tier:1, r:6,  speed:1.15, prey:['plankton'], label:'Kaleidoscope Fry', turnRate:0.12, hue:42 },
+  clownfish: { tier:2, r:10, speed:1.0,  prey:['plankton','sardine'], label:'Prism Wraith', turnRate:0.09, hue:168 },
+  tuna:      { tier:2, r:12, speed:1.25, prey:['plankton','sardine','jellyfish'], label:'Serpent Dreamer', turnRate:0.08, hue:274 },
+  shark:     { tier:4, r:22, speed:1.55, prey:['tuna','clownfish','octopus','jellyfish','sardine'], label:'Void Leviathan', turnRate:0.04, hue:196 },
+  jellyfish: { tier:1, r:9,  speed:0.5,  prey:['plankton'], label:'Astral Veil', turnRate:0.05, hue:130 },
+  octopus:   { tier:2, r:13, speed:0.85, prey:['plankton','sardine','jellyfish'], label:'Fractal Hydra', turnRate:0.10, hue:314 },
 };
 
 const AQ_CREATURES = [];
@@ -3935,6 +4055,8 @@ let AQ_REEFS = [];
 let AQ_RUINS = [];
 let AQ_GLITTER = [];
 let AQ_MOTES = [];
+let AQ_EAT_EVENTS = [];
+let AQ_CORPSES = [];
 let AQ_REF1 = null;
 let AQ_REF2 = null;
 let AQ_REF_READY = 0;
@@ -3952,7 +4074,7 @@ const AQ_STATE = {
   decay: 0,
   graveyardUntil: 0,
   ritualCooldown: 0,
-  whisper: 'Favor a species to alter the equilibrium.'
+  whisper: 'Touch a species to bend the frequencies.'
 };
 
 function clamp(v, lo, hi) {
@@ -3995,14 +4117,14 @@ function cullByFraction(fraction, predicate) {
 
 function triggerLeviathanFrenzy() {
   AQ_STATE.frenzy = Math.max(AQ_STATE.frenzy, 260);
-  AQ_STATE.whisper = 'The Jabberwocky Leviathans scent the smoke and enter a feeding frenzy.';
+  AQ_STATE.whisper = 'The Void Leviathans scent dissolution in the water and enter a full ego-death frenzy.';
   addCreature('shark', aqCanvas.width, aqCanvas.height);
   cullByFraction(0.2, c => SPECIES[c.species].tier > 0 && SPECIES[c.species].tier < 3);
 }
 
 function favorSpecies(species) {
   if (inGraveyard()) {
-    AQ_STATE.whisper = 'The graveyard resists intervention. Time itself must heal the reef.';
+    AQ_STATE.whisper = 'The graveyard resists intervention. Let the feedback decay before you play again.';
     updateAquariumStatus();
     return;
   }
@@ -4013,28 +4135,28 @@ function favorSpecies(species) {
   if (species === 'octopus') {
     AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.16, 0, 1);
     AQ_STATE.stability = clamp(AQ_STATE.stability - 0.08, 0, 1);
-    AQ_STATE.whisper = 'The Caterpillar-Hydras bloom beautifully, but their smoke thickens the water.';
+    AQ_STATE.whisper = 'The Fractal Hydras bloom in recursive spirals — hypnotic, but their ink clouds the dreaming water.';
   } else if (species === 'plankton') {
     AQ_STATE.toxicity = clamp(AQ_STATE.toxicity - 0.03, 0, 1);
-    AQ_STATE.whisper = 'Toxic glitter settles into a shimmering equilibrium.';
+    AQ_STATE.whisper = 'Phosphene Motes drift across closed eyelids, leaving trails of colour behind.';
   } else if (species === 'clownfish') {
     AQ_STATE.insight = clamp(AQ_STATE.insight + 0.04, 0, 1);
-    AQ_STATE.whisper = 'The Cheshire Cuttlefish grin wider and teach the reef new hungers.';
+    AQ_STATE.whisper = 'Prism Wraiths scatter the light into spectra the reef has never seen before.';
   } else if (species === 'tuna') {
     AQ_STATE.insight = clamp(AQ_STATE.insight + 0.06, 0, 1);
     AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.04, 0, 1);
-    AQ_STATE.whisper = 'Jabberwock larvae molt into improbable, many-eyed futures.';
+    AQ_STATE.whisper = 'The Serpent Dreamers coil through the depths, trailing visions of impossible geometry.';
   } else if (species === 'shark') {
     AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.08, 0, 1);
     AQ_STATE.stability = clamp(AQ_STATE.stability - 0.06, 0, 1);
-    AQ_STATE.whisper = 'A leviathan circles the reef and every smaller mouth forgets its courage.';
+    AQ_STATE.whisper = 'A Void Leviathan surfaces from the black. Smaller minds dissolve in its wake.';
   } else if (species === 'jellyfish') {
     AQ_STATE.stability = clamp(AQ_STATE.stability + 0.04, 0, 1);
     AQ_STATE.toxicity = clamp(AQ_STATE.toxicity + 0.02, 0, 1);
-    AQ_STATE.whisper = 'The sentient anemones hum and the ruins answer in green fire.';
+    AQ_STATE.whisper = 'Astral Veils drift through the water like thought through sleep, trailing silk and starlight.';
   } else {
     AQ_STATE.stability = clamp(AQ_STATE.stability + 0.03, 0, 1);
-    AQ_STATE.whisper = 'Porcelain fry gather around the tea sets and calm the lower currents.';
+    AQ_STATE.whisper = 'Kaleidoscope Fry school in fractal formation, each one a mirror of the whole.';
   }
 
   addCreature(species, aqCanvas.width, aqCanvas.height);
@@ -4046,7 +4168,7 @@ function triggerMadTeaParty() {
   AQ_STATE.teaParty = true;
   AQ_STATE.sepia = 1;
   AQ_STATE.ritualCooldown = 2400;
-  aqEventText.textContent = 'Pour the Tea to sacrifice 20% of the aquarium biomass and gain Abyssal Insight, or Break the Cup to trigger a cleansing defiance that may crack the glass and enrage the old horrors.';
+  aqEventText.textContent = 'Drop the Note to sacrifice 20% of the ecosystem and unlock deeper psychedelic frequencies, or Smash the Guitar to trigger a cleansing feedback burst that may crack the glass and send the old ones into a frenzy.';
   updateAquariumStatus();
 }
 
@@ -4058,14 +4180,14 @@ function resolveTeaParty(choice) {
     AQ_STATE.insight = clamp(AQ_STATE.insight + 0.22, 0, 1);
     AQ_STATE.stability = clamp(AQ_STATE.stability - 0.05, 0, 1);
     addCreature('shark', aqCanvas.width, aqCanvas.height);
-    AQ_STATE.whisper = 'The Great Old Ones accept the offering and reveal nightmare-tier paths.';
+    AQ_STATE.whisper = 'The signal drops to silence, then returns — stranger, deeper, tuned to frequencies you cannot name.';
   } else {
     AQ_STATE.cleanse = 420;
     AQ_STATE.cracks = 1;
     AQ_STATE.toxicity = clamp(AQ_STATE.toxicity * 0.42, 0, 1);
     AQ_STATE.stability = clamp(AQ_STATE.stability + 0.08, 0, 1);
     AQ_STATE.frenzy = Math.max(AQ_STATE.frenzy, 180);
-    AQ_STATE.whisper = 'Whimsy returns with a violent shudder. The beasts rake their claws against the glass.';
+    AQ_STATE.whisper = 'Feedback explodes through the tank. The old ones thrash against the glass as the signal clears.';
   }
   updateAquariumStatus();
 }
@@ -4074,7 +4196,7 @@ function triggerGraveyard() {
   AQ_STATE.graveyardUntil = Date.now() + 2 * 60 * 60 * 1000;
   AQ_STATE.decay = 1;
   AQ_STATE.toxicity = 0.12;
-  AQ_STATE.whisper = 'The Flow pushed too hard. The reef falls silent into a graveyard of giants.';
+  AQ_STATE.whisper = 'Overdrive pushed too hard. The frequency collapses into a graveyard of giants — let the amp cool.';
   updateAquariumStatus();
 }
 
@@ -4083,12 +4205,19 @@ function initAqWorld(W, H) {
   AQ_RUINS = [];
   AQ_GLITTER = [];
   AQ_MOTES = [];
+  AQ_EAT_EVENTS = [];
+  AQ_CORPSES = [];
 
   for (let i = 0; i < 11; i++) {
+    const fullH = H * (0.14 + Math.random() * 0.22);
+    const fullW = 26 + Math.random() * 42;
     AQ_REEFS.push({
       x: (i + 0.2 + Math.random() * 0.6) / 11 * W,
-      h: H * (0.14 + Math.random() * 0.22),
-      w: 26 + Math.random() * 42,
+      h: fullH * 0.35,
+      w: fullW * 0.35,
+      maxH: fullH * 1.5,
+      maxW: fullW * 1.5,
+      growRate: 0.025 + Math.random() * 0.02,
       hue: [118, 170, 286][i % 3] + (Math.random() - 0.5) * 18,
       pulse: Math.random() * Math.PI * 2,
       kind: ['fungal', 'anemone', 'spines'][i % 3]
@@ -4150,7 +4279,8 @@ function addCreature(species, W, H) {
     age: 0,
     wobble: Math.random() * Math.PI * 2,
     depth: 0.45 + Math.random() * 0.55,
-    id: Math.random()
+    id: Math.random(),
+    born: aqFrame
   });
 }
 
@@ -4177,27 +4307,6 @@ function drawAqBackdrop(W, H) {
     }
     aqCtx.restore();
 
-    aqCtx.save();
-    aqCtx.globalCompositeOperation = 'lighten';
-    if (AQ_REF1 && AQ_REF1.complete && AQ_REF1.naturalWidth) {
-      aqCtx.globalAlpha = 0.28;
-      aqCtx.drawImage(
-        AQ_REF1,
-        AQ_REF1.naturalWidth * 0.18, AQ_REF1.naturalHeight * 0.02,
-        AQ_REF1.naturalWidth * 0.64, AQ_REF1.naturalHeight * 0.68,
-        W * 0.04, H * 0.03, W * 0.52, H * 0.62
-      );
-    }
-    if (AQ_REF2 && AQ_REF2.complete && AQ_REF2.naturalWidth) {
-      aqCtx.globalAlpha = 0.22;
-      aqCtx.drawImage(
-        AQ_REF2,
-        AQ_REF2.naturalWidth * 0.02, AQ_REF2.naturalHeight * 0.52,
-        AQ_REF2.naturalWidth * 0.96, AQ_REF2.naturalHeight * 0.42,
-        0, H * 0.58, W, H * 0.36
-      );
-    }
-    aqCtx.restore();
   }
 
   aqCtx.save();
@@ -4355,18 +4464,32 @@ function drawCreature(cr) {
   const pulse = 0.75 + 0.25 * Math.sin(aqFrame * 0.04 + cr.wobble);
   const facing = Math.cos(cr.angle) >= 0 ? 1 : -1;
   const graveyard = inGraveyard();
+  const hue  = (sp.hue + aqFrame * 0.6 + cr.id * 137.5) % 360;
+  const hue2 = (hue + 120) % 360;
+  const hue3 = (hue + 240) % 360;
+
+  const SPAWN_DUR = 240;
+  const spawnAge = aqFrame - (cr.born !== undefined ? cr.born : aqFrame);
+  const spawnT = Math.min(1, spawnAge / SPAWN_DUR);
+  const spawnScale = spawnT < 1 ? (1 - Math.pow(1 - spawnT, 3)) : 1;
 
   aqCtx.save();
   aqCtx.translate(cr.x, cr.y + bob);
-  aqCtx.scale(facing * cr.depth, cr.depth);
+  aqCtx.scale(facing * cr.depth * 3 * spawnScale, cr.depth * 3 * spawnScale);
 
   aqCtx.save();
   aqCtx.globalCompositeOperation = 'screen';
   aqCtx.beginPath();
-  aqCtx.arc(0, 0, sp.r * (2.2 + pulse * 0.5), 0, Math.PI * 2);
+  aqCtx.arc(0, 0, sp.r * (3.8 + pulse * 1.0), 0, Math.PI * 2);
+  aqCtx.fillStyle = graveyard
+    ? `rgba(220,220,220,${sp.tier === 0 ? 0.04 : 0.02})`
+    : `hsla(${hue},100%,52%,0.09)`;
+  aqCtx.fill();
+  aqCtx.beginPath();
+  aqCtx.arc(0, 0, sp.r * (1.9 + pulse * 0.4), 0, Math.PI * 2);
   aqCtx.fillStyle = graveyard
     ? `rgba(220,220,220,${sp.tier === 0 ? 0.06 : 0.035})`
-    : `hsla(${sp.hue},80%,45%,${cr.species === 'plankton' ? 0.18 : 0.08})`;
+    : `hsla(${hue2},100%,68%,${cr.species === 'plankton' ? 0.32 : 0.16})`;
   aqCtx.fill();
   aqCtx.restore();
 
@@ -4388,154 +4511,313 @@ function drawCreature(cr) {
   }
 
   if (cr.species === 'plankton') {
+    // Nucleus
+    const pGrad = aqCtx.createRadialGradient(0, 0, 0, 0, 0, 3.5);
+    pGrad.addColorStop(0, `hsla(${hue},100%,98%,1.0)`);
+    pGrad.addColorStop(1, `hsla(${hue2},100%,70%,0.5)`);
     aqCtx.beginPath();
-    aqCtx.arc(0, 0, 2.6, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsla(${sp.hue},100%,72%,0.9)`;
+    aqCtx.arc(0, 0, 3.5, 0, Math.PI * 2);
+    aqCtx.fillStyle = pGrad;
     aqCtx.fill();
-    aqCtx.beginPath();
-    aqCtx.moveTo(-3, 0);
-    aqCtx.lineTo(-10, -3);
-    aqCtx.lineTo(-8, 4);
-    aqCtx.closePath();
-    aqCtx.fillStyle = 'rgba(230,255,140,0.28)';
-    aqCtx.fill();
+    // Rotating rainbow spines
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * Math.PI * 2 + aqFrame * 0.02;
+      const len = 5.5 + Math.sin(aqFrame * 0.09 + i * 0.8) * 2;
+      aqCtx.beginPath();
+      aqCtx.moveTo(Math.cos(a) * 2.5, Math.sin(a) * 2.5);
+      aqCtx.lineTo(Math.cos(a) * (2.5 + len), Math.sin(a) * (2.5 + len));
+      aqCtx.strokeStyle = `hsla(${(hue + i * 36) % 360},100%,85%,0.9)`;
+      aqCtx.lineWidth = 0.9;
+      aqCtx.stroke();
+      aqCtx.beginPath();
+      aqCtx.arc(Math.cos(a) * (2.5 + len), Math.sin(a) * (2.5 + len), 0.8, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${(hue + i * 36 + 40) % 360},100%,92%,0.85)`;
+      aqCtx.fill();
+    }
   } else if (cr.species === 'sardine') {
+    // Iridescent body
     aqCtx.beginPath();
     aqCtx.moveTo(15, 0);
     aqCtx.lineTo(-2, -7);
     aqCtx.lineTo(-14, 0);
     aqCtx.lineTo(-2, 7);
     aqCtx.closePath();
-    aqCtx.fillStyle = 'rgba(215, 219, 230, 0.9)';
+    aqCtx.fillStyle = `hsla(${hue},88%,70%,0.92)`;
     aqCtx.fill();
-    aqCtx.strokeStyle = 'rgba(255, 220, 140, 0.45)';
+    aqCtx.strokeStyle = `hsla(${hue2},100%,88%,0.75)`;
     aqCtx.lineWidth = 1;
     aqCtx.stroke();
+    // Rainbow scale arcs
+    for (let i = 0; i < 5; i++) {
+      aqCtx.beginPath();
+      aqCtx.arc(-9 + i * 5, 0, 4.5, -Math.PI * 0.65, Math.PI * 0.65);
+      aqCtx.strokeStyle = `hsla(${(hue + i * 42) % 360},100%,82%,0.55)`;
+      aqCtx.lineWidth = 0.8;
+      aqCtx.stroke();
+    }
+    // Iridescent eye
     aqCtx.beginPath();
-    aqCtx.arc(9, -1.5, 1.8, 0, Math.PI * 2);
-    aqCtx.fillStyle = 'rgba(30,20,10,0.9)';
+    aqCtx.arc(9, -1.5, 2.2, 0, Math.PI * 2);
+    aqCtx.fillStyle = `hsla(${hue3},100%,82%,0.95)`;
+    aqCtx.fill();
+    aqCtx.beginPath();
+    aqCtx.arc(9.5, -1.5, 0.9, 0, Math.PI * 2);
+    aqCtx.fillStyle = 'rgba(4,2,10,0.95)';
     aqCtx.fill();
   } else if (cr.species === 'clownfish') {
+    // Body with horizontal gradient
+    const cfGrad = aqCtx.createLinearGradient(-16, 0, 16, 0);
+    cfGrad.addColorStop(0,   `hsla(${hue},90%,38%,0.9)`);
+    cfGrad.addColorStop(0.5, `hsla(${hue2},90%,62%,0.95)`);
+    cfGrad.addColorStop(1,   `hsla(${hue3},90%,42%,0.9)`);
     aqCtx.beginPath();
     aqCtx.ellipse(0, 0, 16, 11, 0, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsla(${sp.hue},62%,34%,0.92)`;
+    aqCtx.fillStyle = cfGrad;
     aqCtx.fill();
-    aqCtx.strokeStyle = `hsla(${sp.hue + 18},92%,72%,0.65)`;
-    aqCtx.lineWidth = 1.2;
-    aqCtx.stroke();
-    for (let i = 0; i < 6; i++) {
+    // Concentric iridescent rings
+    for (let r = 0; r < 3; r++) {
       aqCtx.beginPath();
-      aqCtx.moveTo(-8 + i * 3.2, 8);
-      aqCtx.quadraticCurveTo(-6 + i * 3.2, 18 + Math.sin(aqFrame * 0.06 + i) * 3, -4 + i * 3.2, 22);
-      aqCtx.strokeStyle = `hsla(${sp.hue},90%,76%,0.45)`;
+      aqCtx.ellipse(0, 0, 16 + r * 4, 11 + r * 3, 0, 0, Math.PI * 2);
+      aqCtx.strokeStyle = `hsla(${(hue + r * 50) % 360},100%,82%,${0.5 - r * 0.13})`;
+      aqCtx.lineWidth = 0.8;
+      aqCtx.stroke();
+    }
+    // Rainbow flowing tentacles
+    for (let i = 0; i < 8; i++) {
+      aqCtx.beginPath();
+      aqCtx.moveTo(-11 + i * 3.2, 9);
+      aqCtx.bezierCurveTo(
+        -13 + i * 3.2, 17 + Math.sin(aqFrame * 0.06 + i) * 5,
+        -9 + i * 3.2,  24 + Math.cos(aqFrame * 0.05 + i) * 4,
+        -7 + i * 3.2,  31
+      );
+      aqCtx.strokeStyle = `hsla(${(hue + i * 32) % 360},100%,80%,0.68)`;
       aqCtx.lineWidth = 1;
       aqCtx.stroke();
     }
-    aqCtx.beginPath();
-    aqCtx.moveTo(7, -1);
-    aqCtx.quadraticCurveTo(0, 6, -9, 2);
-    aqCtx.quadraticCurveTo(-1, 8, 8, 2);
-    aqCtx.strokeStyle = 'rgba(245,255,220,0.8)';
-    aqCtx.lineWidth = 1.3;
-    aqCtx.stroke();
-    for (let i = 0; i < 5; i++) {
+    // Spiral eye
+    for (let r = 0; r < 3; r++) {
       aqCtx.beginPath();
-      aqCtx.moveTo(6 - i * 3, 0.5);
-      aqCtx.lineTo(4.7 - i * 3, 3.5 + (i % 2) * 1.4);
+      aqCtx.arc(8, -3, r * 1.2 + 0.8, 0, Math.PI * 2);
+      aqCtx.strokeStyle = `hsla(${(hue + r * 70) % 360},100%,88%,${0.9 - r * 0.22})`;
+      aqCtx.lineWidth = 0.7;
       aqCtx.stroke();
     }
     aqCtx.beginPath();
-    aqCtx.arc(8, -4, 2.2, 0, Math.PI * 2);
-    aqCtx.fillStyle = 'rgba(250,255,245,0.9)';
-    aqCtx.fill();
-    aqCtx.beginPath();
-    aqCtx.arc(8.6, -4, 0.9, 0, Math.PI * 2);
-    aqCtx.fillStyle = '#091014';
+    aqCtx.arc(8, -3, 0.9, 0, Math.PI * 2);
+    aqCtx.fillStyle = '#040810';
     aqCtx.fill();
   } else if (cr.species === 'tuna') {
-    aqCtx.beginPath();
-    aqCtx.moveTo(18, 0);
-    aqCtx.quadraticCurveTo(6, -14, -12, -10);
-    aqCtx.quadraticCurveTo(-22, 0, -12, 10);
-    aqCtx.quadraticCurveTo(6, 14, 18, 0);
-    aqCtx.fillStyle = 'rgba(120, 150, 190, 0.2)';
-    aqCtx.fill();
-    aqCtx.strokeStyle = 'rgba(190, 210, 255, 0.42)';
-    aqCtx.lineWidth = 1.4;
-    aqCtx.stroke();
-    for (let i = 0; i < 4; i++) {
+    // Three translucent overlapping body layers
+    for (let layer = 0; layer < 3; layer++) {
       aqCtx.beginPath();
-      aqCtx.ellipse(-8 + i * 6, 0, 4, 8, 0, 0, Math.PI * 2);
+      aqCtx.moveTo(18 - layer * 0.5, 0);
+      aqCtx.quadraticCurveTo(6, -14 - layer * 2, -12 - layer, -10 - layer);
+      aqCtx.quadraticCurveTo(-22 - layer, 0, -12 - layer, 10 + layer);
+      aqCtx.quadraticCurveTo(6, 14 + layer * 2, 18 - layer * 0.5, 0);
+      aqCtx.fillStyle = `hsla(${(hue + layer * 45) % 360},80%,52%,${0.38 - layer * 0.09})`;
+      aqCtx.fill();
+      aqCtx.strokeStyle = `hsla(${(hue + layer * 65) % 360},100%,82%,0.5)`;
+      aqCtx.lineWidth = 0.9;
       aqCtx.stroke();
     }
-    for (let i = 0; i < 3; i++) {
+    // Mandala eye — concentric rings
+    for (let r = 0; r < 5; r++) {
       aqCtx.beginPath();
-      aqCtx.arc(7 - i * 6, -3 + (i % 2) * 6, 2, 0, Math.PI * 2);
-      aqCtx.fillStyle = `hsla(${sp.hue + 20 * i},85%,78%,0.8)`;
-      aqCtx.fill();
+      aqCtx.arc(8, 0, r * 1.8 + 0.8, 0, Math.PI * 2);
+      aqCtx.strokeStyle = `hsla(${(hue + r * 55) % 360},100%,84%,${0.85 - r * 0.14})`;
+      aqCtx.lineWidth = 0.6;
+      aqCtx.stroke();
+    }
+    aqCtx.beginPath();
+    aqCtx.arc(8, 0, 1, 0, Math.PI * 2);
+    aqCtx.fillStyle = '#050812';
+    aqCtx.fill();
+    // Rainbow internal segments
+    for (let i = 0; i < 5; i++) {
+      aqCtx.beginPath();
+      aqCtx.ellipse(-8 + i * 5, 0, 3, 7, 0, 0, Math.PI * 2);
+      aqCtx.strokeStyle = `hsla(${(hue + i * 38) % 360},100%,78%,0.42)`;
+      aqCtx.lineWidth = 0.7;
+      aqCtx.stroke();
     }
   } else if (cr.species === 'shark') {
+    // Dark deep body
     aqCtx.beginPath();
     aqCtx.moveTo(30, 0);
     aqCtx.bezierCurveTo(18, -12, -8, -15, -30, -4);
     aqCtx.bezierCurveTo(-38, 0, -30, 4, -18, 8);
     aqCtx.bezierCurveTo(-4, 15, 16, 12, 30, 0);
-    aqCtx.fillStyle = 'rgba(90, 110, 124, 0.95)';
+    aqCtx.fillStyle = `hsla(${hue},30%,16%,0.97)`;
     aqCtx.fill();
-    aqCtx.strokeStyle = 'rgba(160, 220, 220, 0.22)';
-    aqCtx.lineWidth = 1.4;
+    // Iridescent double edge
+    aqCtx.strokeStyle = `hsla(${hue},100%,72%,0.6)`;
+    aqCtx.lineWidth = 1.6;
     aqCtx.stroke();
-    for (let i = 0; i < 5; i++) {
-      aqCtx.beginPath();
-      aqCtx.arc(12 - i * 8, -3 + Math.sin(aqFrame * 0.04 + i) * 2, 2.2, 0, Math.PI * 2);
-      aqCtx.fillStyle = 'rgba(220,255,245,0.75)';
-      aqCtx.fill();
-      aqCtx.beginPath();
-      aqCtx.arc(12.5 - i * 8, -3 + Math.sin(aqFrame * 0.04 + i) * 2, 0.9, 0, Math.PI * 2);
-      aqCtx.fillStyle = '#071014';
-      aqCtx.fill();
-    }
-    for (let i = 0; i < 8; i++) {
-      aqCtx.beginPath();
-      aqCtx.moveTo(-6 - i * 2, 6);
-      aqCtx.quadraticCurveTo(-14 - i * 5, 16 + Math.sin(aqFrame * 0.05 + i) * 8, -18 - i * 7, 24 + Math.sin(aqFrame * 0.05 + i) * 8);
-      aqCtx.strokeStyle = `hsla(${sp.hue + i * 8},85%,68%,0.36)`;
-      aqCtx.lineWidth = 1.1;
-      aqCtx.stroke();
-    }
-  } else if (cr.species === 'jellyfish') {
-    aqCtx.beginPath();
-    aqCtx.ellipse(0, -2, 11, 13, 0, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsla(${sp.hue},75%,42%,0.88)`;
-    aqCtx.fill();
+    aqCtx.strokeStyle = `hsla(${hue2},100%,88%,0.22)`;
+    aqCtx.lineWidth = 3.5;
+    aqCtx.stroke();
+    // Bioluminescent spiral dots on flank
     for (let i = 0; i < 12; i++) {
-      const x = (i - 5.5) * 1.8;
+      const a = (i / 12) * Math.PI * 1.6 - 0.3;
+      const r = 9 + i * 1.4;
+      const sx = Math.cos(a) * r * 0.55 - 2;
+      const sy = Math.sin(a) * r * 0.28;
+      const glowPulse = 0.5 + 0.5 * Math.sin(aqFrame * 0.07 + i * 0.9);
       aqCtx.beginPath();
-      aqCtx.moveTo(x, 7);
-      aqCtx.bezierCurveTo(x + Math.sin(aqFrame * 0.04 + i) * 4, 15, x - Math.sin(aqFrame * 0.03 + i) * 5, 22, x + Math.sin(aqFrame * 0.04 + i) * 6, 28);
-      aqCtx.strokeStyle = `hsla(${sp.hue + 12},90%,70%,0.55)`;
+      aqCtx.arc(sx, sy, 1.4, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${(hue + i * 22) % 360},100%,82%,${0.5 + 0.5 * glowPulse})`;
+      aqCtx.fill();
+    }
+    // Long rainbow trailing barbels
+    for (let i = 0; i < 10; i++) {
+      aqCtx.beginPath();
+      aqCtx.moveTo(-2 - i * 2.4, 8);
+      aqCtx.quadraticCurveTo(
+        -10 - i * 4, 20 + Math.sin(aqFrame * 0.04 + i) * 10,
+        -14 - i * 6, 32 + Math.sin(aqFrame * 0.04 + i) * 10
+      );
+      aqCtx.strokeStyle = `hsla(${(hue + i * 24) % 360},100%,72%,0.58)`;
       aqCtx.lineWidth = 1;
       aqCtx.stroke();
     }
-  } else if (cr.species === 'octopus') {
-    aqCtx.beginPath();
-    aqCtx.ellipse(0, -4, 15, 11, 0, 0, Math.PI * 2);
-    aqCtx.fillStyle = `hsla(${sp.hue},42%,28%,0.94)`;
-    aqCtx.fill();
-    aqCtx.strokeStyle = `hsla(${sp.hue + 22},70%,68%,0.35)`;
-    aqCtx.lineWidth = 1.2;
-    aqCtx.stroke();
-    for (let i = 0; i < 7; i++) {
+    // Multi-hued eyes
+    for (let i = 0; i < 5; i++) {
       aqCtx.beginPath();
-      aqCtx.moveTo(-10 + i * 3, 2);
-      aqCtx.bezierCurveTo(-14 + i * 3, 12, -18 + i * 5 + Math.sin(aqFrame * 0.05 + i) * 8, 18, -14 + i * 4 + Math.sin(aqFrame * 0.05 + i) * 10, 28);
-      aqCtx.strokeStyle = `hsla(${sp.hue - 18},84%,64%,0.42)`;
+      aqCtx.arc(14 - i * 9, -2 + Math.sin(aqFrame * 0.04 + i) * 2, 2.6, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${(hue + i * 35) % 360},100%,80%,0.88)`;
+      aqCtx.fill();
+      aqCtx.beginPath();
+      aqCtx.arc(14 - i * 9, -2 + Math.sin(aqFrame * 0.04 + i) * 2, 1, 0, Math.PI * 2);
+      aqCtx.fillStyle = '#040810';
+      aqCtx.fill();
+    }
+  } else if (cr.species === 'jellyfish') {
+    // Iridescent bell with radial gradient
+    const jGrad = aqCtx.createRadialGradient(0, -8, 0, 0, -2, 14);
+    jGrad.addColorStop(0,   `hsla(${hue},100%,90%,0.98)`);
+    jGrad.addColorStop(0.5, `hsla(${hue2},90%,62%,0.85)`);
+    jGrad.addColorStop(1,   `hsla(${hue3},80%,40%,0.65)`);
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, -2, 11, 13, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = jGrad;
+    aqCtx.fill();
+    // Inner mandala rings
+    for (let r = 1; r < 5; r++) {
+      aqCtx.beginPath();
+      aqCtx.ellipse(0, -2, r * 2.6, r * 3, 0, 0, Math.PI * 2);
+      aqCtx.strokeStyle = `hsla(${(hue + r * 55) % 360},100%,92%,${0.5 - r * 0.08})`;
+      aqCtx.lineWidth = 0.6;
+      aqCtx.stroke();
+    }
+    // Long sinuous rainbow tentacles
+    for (let i = 0; i < 14; i++) {
+      const x = (i - 6.5) * 1.5;
+      aqCtx.beginPath();
+      aqCtx.moveTo(x, 8);
+      aqCtx.bezierCurveTo(
+        x + Math.sin(aqFrame * 0.04 + i * 0.7) * 7, 18,
+        x - Math.sin(aqFrame * 0.035 + i * 0.5) * 8, 28,
+        x + Math.sin(aqFrame * 0.04 + i * 0.9) * 9, 40
+      );
+      aqCtx.strokeStyle = `hsla(${(hue + i * 22) % 360},100%,80%,0.78)`;
       aqCtx.lineWidth = 1.1;
       aqCtx.stroke();
+    }
+  } else if (cr.species === 'octopus') {
+    // Body with radial gradient
+    const oGrad = aqCtx.createRadialGradient(0, -4, 0, 0, -4, 17);
+    oGrad.addColorStop(0, `hsla(${hue},92%,68%,0.97)`);
+    oGrad.addColorStop(1, `hsla(${hue2},70%,32%,0.9)`);
+    aqCtx.beginPath();
+    aqCtx.ellipse(0, -4, 15, 11, 0, 0, Math.PI * 2);
+    aqCtx.fillStyle = oGrad;
+    aqCtx.fill();
+    // Crown spines
+    for (let i = 0; i < 7; i++) {
+      const a = -Math.PI * 0.85 + (i / 6) * Math.PI * 1.7;
+      const len = 5.5 + Math.sin(aqFrame * 0.06 + i) * 2.5;
+      aqCtx.beginPath();
+      aqCtx.moveTo(Math.cos(a) * 10, -4 + Math.sin(a) * 7);
+      aqCtx.lineTo(Math.cos(a) * (10 + len), -4 + Math.sin(a) * (7 + len));
+      aqCtx.strokeStyle = `hsla(${(hue + i * 38) % 360},100%,85%,0.82)`;
+      aqCtx.lineWidth = 1.2;
+      aqCtx.stroke();
+    }
+    // 8 rainbow arms with sucker dots
+    for (let i = 0; i < 8; i++) {
+      const ox = -13 + i * 3.7;
+      const armHue = (hue + i * 45) % 360;
+      aqCtx.beginPath();
+      aqCtx.moveTo(ox, 2);
+      aqCtx.bezierCurveTo(
+        ox - 3 + i * 0.4, 13,
+        ox - 5 + i * 0.6 + Math.sin(aqFrame * 0.05 + i) * 9, 22,
+        ox - 3 + i * 0.4 + Math.sin(aqFrame * 0.05 + i) * 11, 34
+      );
+      aqCtx.strokeStyle = `hsla(${armHue},100%,70%,0.68)`;
+      aqCtx.lineWidth = 1.5;
+      aqCtx.stroke();
+      for (let s = 0; s < 4; s++) {
+        const t = (s + 1) / 5;
+        const ssx = ox + Math.sin(aqFrame * 0.05 + i) * 6 * t;
+        const ssy = 2 + t * 32;
+        aqCtx.beginPath();
+        aqCtx.arc(ssx, ssy, 1.3, 0, Math.PI * 2);
+        aqCtx.fillStyle = `hsla(${(armHue + 60) % 360},100%,90%,0.72)`;
+        aqCtx.fill();
+      }
     }
   }
 
   aqCtx.restore();
+
+  if (spawnT < 1) {
+    const cx = cr.x, cy = cr.y + bob;
+    aqCtx.save();
+    aqCtx.globalCompositeOperation = 'screen';
+
+    // flash bloom at birth
+    if (spawnT < 0.18) {
+      const flashA = (1 - spawnT / 0.18) * 0.55;
+      const flashGrad = aqCtx.createRadialGradient(cx, cy, 0, cx, cy, sp.r * 3 * 5);
+      flashGrad.addColorStop(0, `hsla(${sp.hue},100%,98%,${flashA})`);
+      flashGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      aqCtx.fillStyle = flashGrad;
+      aqCtx.beginPath();
+      aqCtx.arc(cx, cy, sp.r * 3 * 5, 0, Math.PI * 2);
+      aqCtx.fill();
+    }
+
+    // expanding rings
+    for (let i = 0; i < 3; i++) {
+      const rT = Math.max(0, spawnT - i * 0.2);
+      const rRadius = rT * sp.r * 3 * 10;
+      const rAlpha = (1 - rT) * 0.7;
+      aqCtx.beginPath();
+      aqCtx.arc(cx, cy, rRadius, 0, Math.PI * 2);
+      aqCtx.strokeStyle = `hsla(${sp.hue + i * 22},90%,72%,${rAlpha})`;
+      aqCtx.lineWidth = 3 * (1 - rT) + 0.5;
+      aqCtx.stroke();
+    }
+
+    // orbiting sparkles
+    const numS = 14;
+    for (let i = 0; i < numS; i++) {
+      const a = (i / numS) * Math.PI * 2 + spawnT * 2.2;
+      const dist = spawnT * sp.r * 3 * 8;
+      const sx = cx + Math.cos(a) * dist;
+      const sy = cy + Math.sin(a) * dist;
+      const sAlpha = (1 - spawnT) * 0.95;
+      const sR = (1 - spawnT) * 4.5 + 0.5;
+      aqCtx.beginPath();
+      aqCtx.arc(sx, sy, sR, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${sp.hue + i * 20},100%,85%,${sAlpha})`;
+      aqCtx.fill();
+    }
+
+    aqCtx.restore();
+  }
 }
 
 function updateCreature(cr, W, H, dt) {
@@ -4574,6 +4856,14 @@ function updateCreature(cr, W, H, dt) {
     if (targetDist < sp.r * 1.5 + SPECIES[target.species].r) {
       cr.hunger = Math.max(0, cr.hunger - 0.55);
       cr.energy = Math.min(1, cr.energy + 0.25);
+      const tsp = SPECIES[target.species];
+      AQ_EAT_EVENTS.push({
+        x: target.x, y: target.y,
+        preyHue:  (tsp.hue  + aqFrame * 0.6 + target.id * 137.5) % 360,
+        predHue:  (sp.hue   + aqFrame * 0.6 + cr.id    * 137.5) % 360,
+        r: tsp.r,
+        born: aqFrame
+      });
       const idx = AQ_CREATURES.indexOf(target);
       if (idx !== -1) AQ_CREATURES.splice(idx, 1);
     }
@@ -4604,6 +4894,140 @@ function updateCreature(cr, W, H, dt) {
   cr.y = Math.max(ceilY, Math.min(floorY, cr.y));
 }
 
+function drawCorpse(c) {
+  const sp = SPECIES[c.species];
+  aqCtx.save();
+  aqCtx.globalAlpha = c.alpha * 0.78;
+  aqCtx.translate(c.x, c.y);
+  aqCtx.rotate(c.tilt);
+  aqCtx.scale(c.depth * 3, c.depth * 3);
+
+  aqCtx.save();
+  aqCtx.globalCompositeOperation = 'screen';
+  aqCtx.beginPath();
+  aqCtx.arc(0, 0, sp.r * 2.2, 0, Math.PI * 2);
+  aqCtx.fillStyle = `hsla(${c.hue},20%,30%,0.12)`;
+  aqCtx.fill();
+  aqCtx.restore();
+
+  aqCtx.beginPath();
+  if (c.species === 'shark') {
+    aqCtx.ellipse(0, 0, sp.r * 1.8, sp.r * 0.52, 0, 0, Math.PI * 2);
+  } else if (c.species === 'jellyfish' || c.species === 'octopus') {
+    aqCtx.ellipse(0, 0, sp.r * 1.2, sp.r * 0.95, 0, 0, Math.PI * 2);
+  } else {
+    aqCtx.ellipse(0, 0, sp.r * 1.5, sp.r * 0.62, 0, 0, Math.PI * 2);
+  }
+  aqCtx.fillStyle = `hsla(${c.hue},22%,40%,0.82)`;
+  aqCtx.fill();
+  aqCtx.strokeStyle = `hsla(${c.hue},16%,58%,0.32)`;
+  aqCtx.lineWidth = 0.8;
+  aqCtx.stroke();
+
+  if (sp.r >= 6) {
+    const ex = sp.r * 0.55;
+    aqCtx.strokeStyle = `hsla(${c.hue},12%,68%,0.48)`;
+    aqCtx.lineWidth = 0.7;
+    aqCtx.beginPath();
+    aqCtx.moveTo(ex - 1.4, -1.4); aqCtx.lineTo(ex + 1.4, 1.4);
+    aqCtx.moveTo(ex + 1.4, -1.4); aqCtx.lineTo(ex - 1.4, 1.4);
+    aqCtx.stroke();
+  }
+  aqCtx.restore();
+}
+
+function updateAndDrawCorpses(H) {
+  const floorY = H - 84;
+  for (let i = AQ_CORPSES.length - 1; i >= 0; i--) {
+    const c = AQ_CORPSES[i];
+    if (c.phase === 'falling') {
+      c.vy = Math.min(c.vy + 0.22 * AQ_STATE.flow, 4);
+      c.y  = Math.min(c.y + c.vy, floorY);
+      c.tilt += (0 - c.tilt) * 0.06;
+      if (c.y >= floorY) { c.y = floorY; c.vy = 0; c.tilt = 0; c.phase = 'resting'; }
+    } else if (c.phase === 'resting') {
+      c.restFrames -= AQ_STATE.flow;
+      if (c.restFrames <= 0) c.phase = 'fading';
+    } else {
+      c.fadeFrames -= AQ_STATE.flow;
+      c.alpha = Math.max(0, c.fadeFrames / 90);
+      if (c.fadeFrames <= 0) { AQ_CORPSES.splice(i, 1); continue; }
+    }
+    drawCorpse(c);
+  }
+}
+
+function drawEatEvents() {
+  const EAT_DUR = 80;
+  aqCtx.save();
+  aqCtx.globalCompositeOperation = 'screen';
+  for (let i = AQ_EAT_EVENTS.length - 1; i >= 0; i--) {
+    const ev = AQ_EAT_EVENTS[i];
+    const age = aqFrame - ev.born;
+    if (age > EAT_DUR) { AQ_EAT_EVENTS.splice(i, 1); continue; }
+    const t = age / EAT_DUR;
+    const eased = 1 - Math.pow(1 - t, 2);
+    const scale = ev.r * 3;
+
+    // Initial flash bloom
+    if (t < 0.28) {
+      const fa = (1 - t / 0.28) * 0.72;
+      const fg = aqCtx.createRadialGradient(ev.x, ev.y, 0, ev.x, ev.y, scale * 7);
+      fg.addColorStop(0, `hsla(${ev.preyHue},100%,98%,${fa})`);
+      fg.addColorStop(0.4, `hsla(${ev.predHue},100%,80%,${fa * 0.5})`);
+      fg.addColorStop(1, 'rgba(0,0,0,0)');
+      aqCtx.fillStyle = fg;
+      aqCtx.beginPath();
+      aqCtx.arc(ev.x, ev.y, scale * 7, 0, Math.PI * 2);
+      aqCtx.fill();
+    }
+
+    // Three expanding rings, staggered
+    for (let r = 0; r < 3; r++) {
+      const rt = Math.max(0, t - r * 0.14);
+      if (rt <= 0) continue;
+      const rRadius = rt * scale * 14;
+      const rAlpha  = (1 - rt) * 0.75;
+      aqCtx.beginPath();
+      aqCtx.arc(ev.x, ev.y, rRadius, 0, Math.PI * 2);
+      aqCtx.strokeStyle = `hsla(${(ev.preyHue + r * 40) % 360},100%,80%,${rAlpha})`;
+      aqCtx.lineWidth = (1 - rt) * 3 + 0.5;
+      aqCtx.stroke();
+    }
+
+    // Spiral fragments flying outward
+    const N = 12;
+    for (let j = 0; j < N; j++) {
+      const angle = (j / N) * Math.PI * 2 + t * 1.8;
+      const dist  = eased * scale * 11;
+      const fx = ev.x + Math.cos(angle) * dist;
+      const fy = ev.y + Math.sin(angle) * dist;
+      const fa = (1 - t) * 0.95;
+      const fr = (1 - t) * scale * 0.9 + 0.4;
+      aqCtx.beginPath();
+      aqCtx.arc(fx, fy, fr, 0, Math.PI * 2);
+      aqCtx.fillStyle = `hsla(${(ev.preyHue + j * 26) % 360},100%,85%,${fa})`;
+      aqCtx.fill();
+    }
+
+    // Vortex swirl lines curling inward toward predator direction
+    for (let j = 0; j < 6; j++) {
+      const angle = (j / 6) * Math.PI * 2 + t * 3;
+      const r0 = eased * scale * 9 * (1 - t * 0.6);
+      aqCtx.beginPath();
+      aqCtx.moveTo(ev.x + Math.cos(angle) * r0, ev.y + Math.sin(angle) * r0);
+      aqCtx.quadraticCurveTo(
+        ev.x + Math.cos(angle + 0.6) * r0 * 0.5, ev.y + Math.sin(angle + 0.6) * r0 * 0.5,
+        ev.x, ev.y
+      );
+      aqCtx.strokeStyle = `hsla(${(ev.predHue + j * 50) % 360},100%,72%,${(1 - t) * 0.4})`;
+      aqCtx.lineWidth = 0.8;
+      aqCtx.stroke();
+    }
+  }
+  aqCtx.restore();
+}
+
 function drawAquarium() {
   if (!aqRunning) return;
   aqFrame += AQ_STATE.flow;
@@ -4630,14 +5054,36 @@ function drawAquarium() {
   drawGlitterDust(W, H);
 
   for (const ruin of AQ_RUINS) drawTeaRuin(ruin, H);
-  for (const reef of AQ_REEFS) drawReef(reef, H);
+  for (const reef of AQ_REEFS) {
+    const growBonus = 0.6 + AQ_STATE.biomass * 0.4;
+    reef.h = Math.min(reef.maxH, reef.h + reef.growRate * growBonus);
+    reef.w = Math.min(reef.maxW, reef.w + reef.growRate * growBonus * 18);
+    drawReef(reef, H);
+  }
 
   for (let i = AQ_CREATURES.length - 1; i >= 0; i--) {
     const cr = AQ_CREATURES[i];
     updateCreature(cr, W, H, AQ_STATE.flow);
-    if (cr.energy <= 0 || cr.age > 9000) { AQ_CREATURES.splice(i, 1); continue; }
+    if (cr.energy <= 0 || cr.age > 9000) {
+      AQ_CORPSES.push({
+        species: cr.species,
+        x: cr.x, y: cr.y, vy: 0,
+        tilt: cr.angle,
+        depth: cr.depth,
+        id: cr.id,
+        hue: (SPECIES[cr.species].hue + aqFrame * 0.6 + cr.id * 137.5) % 360,
+        phase: 'falling',
+        restFrames: 180 + Math.random() * 120,
+        fadeFrames: 90,
+        alpha: 1
+      });
+      AQ_CREATURES.splice(i, 1); continue;
+    }
     drawCreature(cr);
   }
+
+  updateAndDrawCorpses(H);
+  drawEatEvents();
 
   const counts = {};
   AQ_CREATURES.forEach(c => counts[c.species] = (counts[c.species] || 0) + 1);
@@ -4705,6 +5151,12 @@ function openAquarium() {
     updateAquariumStatus();
     aqRunning = true;
     drawAquarium();
+    const intro = document.getElementById('aquarium-intro');
+    intro.classList.remove('hidden');
+    intro.addEventListener('click', () => {
+      intro.classList.add('hidden');
+      setTimeout(() => { intro.style.display = 'none'; }, 520);
+    }, { once: true });
   }
 }
 
@@ -4715,6 +5167,146 @@ function closeAquarium() {
 document.getElementById('aquarium-back').addEventListener('click', closeAquarium);
 aqOverlay.addEventListener('click', e => { if (e.target === aqOverlay) closeAquarium(); });
 
+let iconT = 0;
+const Y_OFFSET = { plankton:0, sardine:0, clownfish:-10, tuna:0, shark:-10, jellyfish:-14, octopus:-10 };
+
+function renderSpeciesIcon(ctx, species, t) {
+  const sp = SPECIES[species];
+  const size = ctx.canvas.width;
+  const hue  = (sp.hue + t * 0.6) % 360;
+  const hue2 = (hue + 120) % 360;
+  const hue3 = (hue + 240) % 360;
+  const pulse = 0.75 + 0.25 * Math.sin(t * 0.04);
+  const bob   = Math.sin(t * 0.03) * 2;
+  const sc    = (size * 0.36) / (sp.r * 3);
+
+  ctx.clearRect(0, 0, size, size);
+  ctx.save();
+  ctx.translate(size / 2, size / 2 + bob * sc);
+  ctx.scale(sc, sc);
+  ctx.translate(0, Y_OFFSET[species] || 0);
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  ctx.beginPath(); ctx.arc(0, 0, sp.r * 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = `hsla(${hue2},100%,65%,0.22)`; ctx.fill();
+  ctx.restore();
+
+  if (species === 'plankton') {
+    const g = ctx.createRadialGradient(0,0,0,0,0,3.5);
+    g.addColorStop(0,`hsla(${hue},100%,98%,1)`); g.addColorStop(1,`hsla(${hue2},100%,70%,0.5)`);
+    ctx.beginPath(); ctx.arc(0,0,3.5,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    for (let i=0;i<10;i++) {
+      const a=(i/10)*Math.PI*2+t*0.02, len=5.5+Math.sin(t*0.09+i*0.8)*2;
+      ctx.beginPath(); ctx.moveTo(Math.cos(a)*2.5,Math.sin(a)*2.5);
+      ctx.lineTo(Math.cos(a)*(2.5+len),Math.sin(a)*(2.5+len));
+      ctx.strokeStyle=`hsla(${(hue+i*36)%360},100%,85%,0.9)`; ctx.lineWidth=0.9; ctx.stroke();
+      ctx.beginPath(); ctx.arc(Math.cos(a)*(2.5+len),Math.sin(a)*(2.5+len),0.8,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${(hue+i*36+40)%360},100%,92%,0.85)`; ctx.fill();
+    }
+  } else if (species === 'sardine') {
+    ctx.beginPath(); ctx.moveTo(15,0); ctx.lineTo(-2,-7); ctx.lineTo(-14,0); ctx.lineTo(-2,7); ctx.closePath();
+    ctx.fillStyle=`hsla(${hue},88%,70%,0.92)`; ctx.fill();
+    ctx.strokeStyle=`hsla(${hue2},100%,88%,0.75)`; ctx.lineWidth=1; ctx.stroke();
+    for (let i=0;i<5;i++) {
+      ctx.beginPath(); ctx.arc(-9+i*5,0,4.5,-Math.PI*0.65,Math.PI*0.65);
+      ctx.strokeStyle=`hsla(${(hue+i*42)%360},100%,82%,0.5)`; ctx.lineWidth=0.8; ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(9,-1.5,2.2,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${hue3},100%,82%,0.95)`; ctx.fill();
+    ctx.beginPath(); ctx.arc(9.5,-1.5,0.9,0,Math.PI*2); ctx.fillStyle='rgba(4,2,10,0.95)'; ctx.fill();
+  } else if (species === 'clownfish') {
+    const g=ctx.createLinearGradient(-16,0,16,0);
+    g.addColorStop(0,`hsla(${hue},90%,38%,0.9)`); g.addColorStop(0.5,`hsla(${hue2},90%,62%,0.95)`); g.addColorStop(1,`hsla(${hue3},90%,42%,0.9)`);
+    ctx.beginPath(); ctx.ellipse(0,0,16,11,0,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    for (let r=0;r<3;r++) {
+      ctx.beginPath(); ctx.ellipse(0,0,16+r*4,11+r*3,0,0,Math.PI*2);
+      ctx.strokeStyle=`hsla(${(hue+r*50)%360},100%,82%,${0.5-r*0.13})`; ctx.lineWidth=0.8; ctx.stroke();
+    }
+    for (let i=0;i<8;i++) {
+      ctx.beginPath(); ctx.moveTo(-11+i*3.2,9);
+      ctx.bezierCurveTo(-13+i*3.2,17+Math.sin(t*0.06+i)*5,-9+i*3.2,24+Math.cos(t*0.05+i)*4,-7+i*3.2,31);
+      ctx.strokeStyle=`hsla(${(hue+i*32)%360},100%,80%,0.68)`; ctx.lineWidth=1; ctx.stroke();
+    }
+    for (let r=0;r<3;r++) {
+      ctx.beginPath(); ctx.arc(8,-3,r*1.2+0.8,0,Math.PI*2);
+      ctx.strokeStyle=`hsla(${(hue+r*70)%360},100%,88%,${0.9-r*0.22})`; ctx.lineWidth=0.7; ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(8,-3,0.9,0,Math.PI*2); ctx.fillStyle='#040810'; ctx.fill();
+  } else if (species === 'tuna') {
+    for (let l=0;l<3;l++) {
+      ctx.beginPath(); ctx.moveTo(18-l*0.5,0);
+      ctx.quadraticCurveTo(6,-14-l*2,-12-l,-10-l); ctx.quadraticCurveTo(-22-l,0,-12-l,10+l); ctx.quadraticCurveTo(6,14+l*2,18-l*0.5,0);
+      ctx.fillStyle=`hsla(${(hue+l*45)%360},80%,52%,${0.38-l*0.09})`; ctx.fill();
+      ctx.strokeStyle=`hsla(${(hue+l*65)%360},100%,82%,0.5)`; ctx.lineWidth=0.9; ctx.stroke();
+    }
+    for (let r=0;r<5;r++) {
+      ctx.beginPath(); ctx.arc(8,0,r*1.8+0.8,0,Math.PI*2);
+      ctx.strokeStyle=`hsla(${(hue+r*55)%360},100%,84%,${0.85-r*0.14})`; ctx.lineWidth=0.6; ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(8,0,1,0,Math.PI*2); ctx.fillStyle='#050812'; ctx.fill();
+  } else if (species === 'shark') {
+    ctx.beginPath(); ctx.moveTo(30,0); ctx.bezierCurveTo(18,-12,-8,-15,-30,-4);
+    ctx.bezierCurveTo(-38,0,-30,4,-18,8); ctx.bezierCurveTo(-4,15,16,12,30,0);
+    ctx.fillStyle=`hsla(${hue},30%,16%,0.97)`; ctx.fill();
+    ctx.strokeStyle=`hsla(${hue},100%,72%,0.6)`; ctx.lineWidth=1.6; ctx.stroke();
+    for (let i=0;i<12;i++) {
+      const a=(i/12)*Math.PI*1.6-0.3, r=9+i*1.4;
+      ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.55-2,Math.sin(a)*r*0.28,1.4,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${(hue+i*22)%360},100%,82%,${0.5+0.5*Math.sin(t*0.07+i*0.9)})`; ctx.fill();
+    }
+    for (let i=0;i<10;i++) {
+      ctx.beginPath(); ctx.moveTo(-2-i*2.4,8);
+      ctx.quadraticCurveTo(-10-i*4,20+Math.sin(t*0.04+i)*10,-14-i*6,32+Math.sin(t*0.04+i)*10);
+      ctx.strokeStyle=`hsla(${(hue+i*24)%360},100%,72%,0.58)`; ctx.lineWidth=1; ctx.stroke();
+    }
+  } else if (species === 'jellyfish') {
+    const g=ctx.createRadialGradient(0,-8,0,0,-2,14);
+    g.addColorStop(0,`hsla(${hue},100%,90%,0.98)`); g.addColorStop(0.5,`hsla(${hue2},90%,62%,0.85)`); g.addColorStop(1,`hsla(${hue3},80%,40%,0.65)`);
+    ctx.beginPath(); ctx.ellipse(0,-2,11,13,0,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    for (let r=1;r<5;r++) {
+      ctx.beginPath(); ctx.ellipse(0,-2,r*2.6,r*3,0,0,Math.PI*2);
+      ctx.strokeStyle=`hsla(${(hue+r*55)%360},100%,92%,${0.5-r*0.08})`; ctx.lineWidth=0.6; ctx.stroke();
+    }
+    for (let i=0;i<14;i++) {
+      const x=(i-6.5)*1.5;
+      ctx.beginPath(); ctx.moveTo(x,8);
+      ctx.bezierCurveTo(x+Math.sin(t*0.04+i*0.7)*7,18,x-Math.sin(t*0.035+i*0.5)*8,28,x+Math.sin(t*0.04+i*0.9)*9,40);
+      ctx.strokeStyle=`hsla(${(hue+i*22)%360},100%,80%,0.78)`; ctx.lineWidth=1.1; ctx.stroke();
+    }
+  } else if (species === 'octopus') {
+    const g=ctx.createRadialGradient(0,-4,0,0,-4,17);
+    g.addColorStop(0,`hsla(${hue},92%,68%,0.97)`); g.addColorStop(1,`hsla(${hue2},70%,32%,0.9)`);
+    ctx.beginPath(); ctx.ellipse(0,-4,15,11,0,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+    for (let i=0;i<7;i++) {
+      const a=-Math.PI*0.85+(i/6)*Math.PI*1.7, len=5.5+Math.sin(t*0.06+i)*2.5;
+      ctx.beginPath(); ctx.moveTo(Math.cos(a)*10,-4+Math.sin(a)*7); ctx.lineTo(Math.cos(a)*(10+len),-4+Math.sin(a)*(7+len));
+      ctx.strokeStyle=`hsla(${(hue+i*38)%360},100%,85%,0.82)`; ctx.lineWidth=1.2; ctx.stroke();
+    }
+    for (let i=0;i<8;i++) {
+      const ox=-13+i*3.7, ah=(hue+i*45)%360;
+      ctx.beginPath(); ctx.moveTo(ox,2);
+      ctx.bezierCurveTo(ox-3+i*0.4,13,ox-5+i*0.6+Math.sin(t*0.05+i)*9,22,ox-3+i*0.4+Math.sin(t*0.05+i)*11,34);
+      ctx.strokeStyle=`hsla(${ah},100%,70%,0.68)`; ctx.lineWidth=1.5; ctx.stroke();
+      for (let s=0;s<4;s++) {
+        const tf=(s+1)/5;
+        ctx.beginPath(); ctx.arc(ox+Math.sin(t*0.05+i)*6*tf,2+tf*32,1.3,0,Math.PI*2);
+        ctx.fillStyle=`hsla(${(ah+60)%360},100%,90%,0.72)`; ctx.fill();
+      }
+    }
+  }
+  ctx.restore();
+}
+
+function animateSpeciesIcons() {
+  iconT++;
+  document.querySelectorAll('.aq-species-icon').forEach((canvas, idx) => {
+    renderSpeciesIcon(canvas.getContext('2d'), canvas.dataset.species, iconT + idx * 47);
+  });
+  requestAnimationFrame(animateSpeciesIcons);
+}
+animateSpeciesIcons();
+
 document.querySelectorAll('.aq-add-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     favorSpecies(btn.dataset.species);
@@ -4723,8 +5315,8 @@ document.querySelectorAll('.aq-add-btn').forEach(btn => {
 aqFlow.addEventListener('input', () => {
   AQ_STATE.flow = parseFloat(aqFlow.value);
   AQ_STATE.whisper = AQ_STATE.flow > 3.4
-    ? 'The Flow strains the flesh of the reef. Push harder and the giants will rot in place.'
-    : 'Chronos bends. Evolution quickens, but the reef still remembers your touch.';
+    ? 'The tempo is redlining. Push further and the giants will blow their circuits.'
+    : 'Time bends like a whammy bar. The ecosystem quickens, but it remembers every note.';
   updateAquariumStatus();
 });
 document.getElementById('aq-pour-tea').addEventListener('click', () => resolveTeaParty('pour'));
@@ -5126,6 +5718,11 @@ navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
   }
   drawFrame();
 })();
+</script>
+<script>
+  /* Bridge dream player from outer shell */
+  if (window.parent !== window && window.parent.dreamPlayer)
+    window.dreamPlayer = window.parent.dreamPlayer;
 </script>
 <script src="../miniplayer.js"></script>
 </body>
