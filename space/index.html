@@ -814,8 +814,88 @@
     /* ── Animation buttons ── */
     #anim-controls {
       position: fixed; bottom: 3vh; right: 20px; z-index: 25;
-      display: flex; flex-direction: column; gap: 8px;
-      align-items: flex-end;
+      display: none;
+      width: min(280px, calc(100vw - 32px));
+      max-height: 40vh;
+      overflow-y: auto;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at top, rgba(0,190,255,0.12), transparent 34%),
+        rgba(4, 8, 20, 0.88);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 46px rgba(0,0,0,0.38);
+    }
+    #anim-controls.fx-visible {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+    }
+    #anim-toggle {
+      display: none;
+      position: fixed; bottom: 3vh; right: 20px; z-index: 26;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      background: rgba(4, 8, 20, 0.72);
+      color: rgba(230,245,255,0.88);
+      font-family: 'Georgia', serif;
+      font-size: clamp(10px, 1vw, 13px);
+      letter-spacing: 0.28em; text-transform: uppercase;
+      padding: 0.8em 1.2em;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: color 0.35s, border-color 0.35s, box-shadow 0.35s, background 0.35s;
+    }
+    #anim-toggle:hover,
+    #anim-toggle.active {
+      color: #00eeff;
+      border-color: rgba(0,220,255,0.7);
+      background: rgba(0,60,80,0.35);
+      box-shadow: 0 0 18px rgba(0,200,255,0.3), inset 0 0 10px rgba(0,180,255,0.08);
+    }
+    .anim-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .anim-panel-title {
+      font-family: 'Georgia', serif;
+      font-size: clamp(12px, 1.15vw, 16px);
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(235, 247, 255, 0.92);
+    }
+    #anim-reset {
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: rgba(235,247,255,0.84);
+      padding: 0.45em 0.8em;
+      font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      cursor: pointer;
+    }
+    .anim-button-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+    .anim-effect-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.02);
+      padding: 8px;
+      border-radius: 8px;
+    }
+    .anim-effect-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .anim-btn {
       background: none;
@@ -829,6 +909,7 @@
       cursor: pointer;
       transition: color 0.35s, border-color 0.35s, box-shadow 0.35s, background 0.35s;
       user-select: none;
+      text-align: left;
     }
     .anim-btn:hover {
       color: rgba(255,255,255,0.75);
@@ -842,6 +923,147 @@
       animation: stormPulse 1.8s ease-in-out infinite;
     }
     @keyframes stormPulse { 0%,100%{box-shadow:0 0 18px rgba(0,200,255,0.35)} 50%{box-shadow:0 0 32px rgba(0,220,255,0.6)} }
+    .anim-edit-btn {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: rgba(235,247,255,0.78);
+      font-family: 'Georgia', serif;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.55em 0.8em;
+      cursor: pointer;
+    }
+    .anim-edit-btn:hover {
+      color: #fff;
+      border-color: rgba(0,220,255,0.45);
+    }
+    .anim-slider-group {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 10px;
+    }
+    .anim-slider-group:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+    .anim-slider-group-title {
+      margin: 0 0 8px;
+      font-family: 'Georgia', serif;
+      font-size: 11px;
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: rgba(150, 224, 255, 0.9);
+    }
+    .anim-slider-row {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .anim-slider-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 4px;
+      color: rgba(220, 235, 255, 0.86);
+      font-size: 11px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .anim-slider-meta span:last-child {
+      color: rgba(255,255,255,0.62);
+    }
+    .anim-slider-row input[type="range"] {
+      width: 100%;
+      accent-color: #5fe1ff;
+    }
+    #anim-sliders {
+      display: none;
+    }
+    #anim-fx-popup {
+      position: fixed;
+      top: 50%;
+      right: calc(min(280px, calc(100vw - 32px)) + 36px);
+      transform: translateY(-50%);
+      z-index: 120;
+      display: none;
+      align-items: flex-start;
+      justify-content: flex-end;
+      background: transparent;
+      padding: 0;
+      pointer-events: none;
+    }
+    #anim-fx-popup.visible {
+      display: flex;
+    }
+    .anim-fx-popup-panel {
+      width: min(300px, calc(100vw - 40px));
+      max-height: min(72vh, 560px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      pointer-events: auto;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      padding: 16px;
+      background:
+        radial-gradient(circle at top, rgba(0,190,255,0.10), transparent 34%),
+        rgba(4, 8, 20, 0.94);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    .anim-fx-popup-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.09);
+    }
+    .anim-fx-popup-title {
+      font-family: 'Georgia', serif;
+      font-size: clamp(11px, 1.1vw, 14px);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(0,220,255,0.85);
+    }
+    .anim-fx-popup-close {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.7);
+      padding: 0.45em 0.75em;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .anim-fx-popup-close:hover {
+      color: #fff;
+      border-color: rgba(0,220,255,0.5);
+    }
+    .anim-fx-popup-reset-row {
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: center;
+    }
+    .anim-fx-popup-reset-btn {
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.4);
+      padding: 0.45em 1em;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: 'Georgia', serif;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .anim-fx-popup-reset-btn:hover {
+      color: rgba(255,100,100,0.85);
+      border-color: rgba(255,80,80,0.4);
+    }
     .truth-note-particle {
       position: fixed; pointer-events: none; z-index: 70;
       font-size: clamp(11px,1.4vw,17px);
@@ -896,10 +1118,11 @@
     }
 
     /* ── Rituelles idle UI hide ── */
-    #back, #anim-controls, #tip, #panel-dots, .nav-arrow, #modal.audio-mode {
+    #back, #anim-toggle, #anim-controls, #tip, #panel-dots, .nav-arrow, #modal.audio-mode {
       transition: opacity 0.55s ease, visibility 0.55s ease;
     }
     body.rituelles-ui-hidden #back,
+    body.rituelles-ui-hidden #anim-toggle,
     body.rituelles-ui-hidden #anim-controls,
     body.rituelles-ui-hidden #tip,
     body.rituelles-ui-hidden #panel-dots,
@@ -912,6 +1135,7 @@
       opacity: 0 !important;
     }
     body.rituelles-ui-hidden.reveal-back #back,
+    body.rituelles-ui-hidden.reveal-anim #anim-toggle,
     body.rituelles-ui-hidden.reveal-anim #anim-controls,
     body.rituelles-ui-hidden.reveal-dots #panel-dots,
     body.rituelles-ui-hidden.reveal-nav-prev #nav-prev,
@@ -933,6 +1157,7 @@
 <div id="love-caret-mirror"></div>
 <div id="tip"><span id="tip-name"></span><span id="tip-desc"></span></div>
 <div id="back">&#8592; Return</div>
+<button id="anim-toggle" type="button">Visual FX</button>
 <div id="panel-dots">
   <div class="panel-dot active" data-panel="0"></div>
   <div class="panel-dot" data-panel="1"></div>
@@ -954,13 +1179,34 @@
 </div>
 
 <div id="anim-controls">
-  <button class="anim-btn" data-anim="storm">Cosmic Storm</button>
-  <button class="anim-btn" data-anim="fluid">Liquid Space</button>
-  <button class="anim-btn" data-anim="neon">Neon Pulse</button>
-  <button class="anim-btn" data-anim="frantic">Frantic</button>
-  <button class="anim-btn active" data-anim="fractal">Fractal Dream</button>
-  <button class="anim-btn" data-anim="echo">Ghost Echo</button>
-  <button class="anim-btn" data-anim="chroma">Chroma Shift</button>
+  <div class="anim-panel-head">
+    <div class="anim-panel-title">Visual FX</div>
+    <button id="anim-reset" type="button">Reset</button>
+  </div>
+  <div class="anim-button-grid">
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="storm">Cosmic Storm</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="storm">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="fluid">Liquid Space</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="fluid">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="neon">Neon Pulse</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="neon">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="frantic">Frantic</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="frantic">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="fractal">Fractal Dream</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="fractal">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="echo">Ghost Echo</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="echo">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="chroma">Chroma Shift</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="chroma">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="plasma">Plasma Field</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="plasma">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="prism">Prism Drift</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="prism">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="vortex">Dark Vortex</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="vortex">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="aurora">Aurora Wave</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="aurora">Edit</button></div></div>
+    <div class="anim-effect-card"><button class="anim-btn" data-anim="acid">Acid Wash</button><div class="anim-effect-actions"><button class="anim-edit-btn" data-edit-anim="acid">Edit</button></div></div>
+  </div>
+  <div id="anim-sliders"></div>
+</div>
+<div id="anim-fx-popup">
+  <div class="anim-fx-popup-panel">
+    <div class="anim-fx-popup-head">
+      <div class="anim-fx-popup-title">Effect Settings</div>
+      <button id="anim-fx-popup-close" class="anim-fx-popup-close" type="button">Close</button>
+    </div>
+    <div id="anim-fx-popup-body"></div>
+  </div>
 </div>
 
 <!-- Navigation arrows -->
@@ -1118,7 +1364,13 @@ const tip      = document.getElementById('tip');
 const tipName  = document.getElementById('tip-name');
 const tipDesc  = document.getElementById('tip-desc');
 const back     = document.getElementById('back');
+const animToggle = document.getElementById('anim-toggle');
 const animControls = document.getElementById('anim-controls');
+const animReset = document.getElementById('anim-reset');
+const animSliders = document.getElementById('anim-sliders');
+const animFxPopup = document.getElementById('anim-fx-popup');
+const animFxPopupBody = document.getElementById('anim-fx-popup-body');
+const animFxPopupClose = document.getElementById('anim-fx-popup-close');
 const panelDotsWrap = document.getElementById('panel-dots');
 const modal    = document.getElementById('modal');
 const mFrame   = document.getElementById('modal-frame');
@@ -1344,7 +1596,7 @@ const ZONES = [
 
   { nx:0.1322, ny:0.5400, nrx:0.04, nry:0.05,
     name:'SpaceRave Planet', hoverText:'spaced out beats with a psychedelic touch',
-    baseH:200, label:'#ffffff', type:'placeholder', msg:'SpaceRave Planet\n— spaced out beats with a psychedelic touch —' },
+    baseH:200, label:'#ffffff', type:'placeholder', msg:'SpaceRave Planet\n— Coming Soon —' },
 ];
 
 /* ═══ ZOOM STATE ═══ */
@@ -1356,11 +1608,15 @@ let zoomCurrent = {tx:0, ty:0, scale:1};
 let t = 0;
 
 /* ═══ ANIMATIONS ═══ */
-let activeAnim = 'fractal';
 let animLevel = 0.0;
-let animManual = false;
 let prevDarknessActive = false;
 let prevDesertDreamActive = false;
+let prevLoveHover = false;
+let loveSatLevel = 0;
+let spaceRaveHoverAcid = 0;
+let spaceRavePhase = 0;
+let spaceRaveAcidActive = false;
+let spaceRaveExitFrames = 0;
 let rituellesPlaying = false;
 let fractalRampStart = null;
 let fractalViewMix = 0;
@@ -1373,11 +1629,195 @@ const FRACTAL_BASE_ROT_SPEED = 0.0023;
 const FRACTAL_TARGET_SCALE = 1.3;
 const FRACTAL_DEEP_PHASE_END = 0.36;
 const DESERT_NEON_LEVEL = 0.72;
+const FX_NAMES = ['storm','fluid','neon','frantic','fractal','echo','chroma','plasma','prism','vortex','aurora','acid'];
+const FX_LABELS = {
+  storm: 'Cosmic Storm',
+  fluid: 'Liquid Space',
+  neon: 'Neon Pulse',
+  frantic: 'Frantic',
+  fractal: 'Fractal Dream',
+  echo: 'Ghost Echo',
+  chroma: 'Chroma Shift',
+  plasma: 'Plasma Field',
+  prism: 'Prism Drift',
+  vortex: 'Dark Vortex',
+  aurora: 'Aurora Wave',
+  acid: 'Acid Wash'
+};
+const VISUAL_FX_STORAGE_KEY = 'space-visual-fx-settings';
+const VISUAL_FX_ACTIVE_KEY = 'space-visual-fx-active';
+const FX_CONTROL_SPECS = [
+  ['mix', 'Mix', 100],
+  ['speed', 'Speed', 50],
+  ['scale', 'Scale', 50],
+  ['warp', 'Warp', 50],
+  ['drift', 'Drift', 50],
+  ['hue', 'Hue', 50],
+  ['saturation', 'Saturation', 50],
+  ['brightness', 'Brightness', 50],
+  ['contrast', 'Contrast', 50],
+  ['echo', 'Echo', 50]
+];
+// Per-effect parameter specs with meaningful labels.
+// Each entry: [internalKey, displayLabel]
+// internalKey maps to the fxRange() calls in the draw loop.
+const FX_EDITOR_SPECS = {
+  storm:   [['mix','Intensity'],['warp','Warp'],['scale','Gravity'],['speed','Speed'],['drift','Drift'],['echo','Ripple'],['saturation','Desaturate'],['brightness','Darken'],['contrast','Contrast']],
+  fluid:   [['mix','Intensity'],['scale','Wave Height'],['speed','Speed'],['warp','Shimmer'],['drift','Flow'],['echo','Echo'],['hue','Hue Shift'],['saturation','Saturation'],['brightness','Brightness'],['contrast','Contrast']],
+  neon:    [['mix','Intensity'],['brightness','Brightness'],['contrast','Contrast'],['hue','Hue Speed'],['saturation','Saturation'],['warp','Distortion'],['speed','Speed'],['scale','Scanlines'],['echo','Invert']],
+  frantic: [['mix','Intensity'],['brightness','Brightness'],['contrast','Contrast'],['hue','Hue Speed'],['saturation','Saturation'],['warp','Distortion'],['speed','Speed'],['scale','Scanlines'],['echo','Invert']],
+  fractal: [['mix','Intensity'],['scale','Bloom'],['echo','Passes'],['brightness','Fade'],['speed','Speed'],['warp','Reveal Radius'],['hue','Hue Drift'],['saturation','Saturation'],['contrast','Contrast'],['drift','Rotation']],
+  echo:    [['mix','Opacity'],['echo','Copies'],['drift','Spread'],['scale','Scale'],['warp','Rotation'],['speed','Speed'],['hue','Hue'],['saturation','Saturation'],['brightness','Brightness'],['contrast','Contrast']],
+  chroma:  [['mix','Opacity'],['scale','Wobble'],['warp','Rotation'],['hue','Hue'],['saturation','Saturation'],['speed','Speed']],
+  plasma:  [['mix','Opacity'],['scale','Resolution'],['speed','Speed']],
+  prism:   [['mix','Opacity'],['echo','Copies'],['drift','Spread'],['hue','Hue Offset'],['saturation','Saturation'],['brightness','Brightness'],['speed','Speed']],
+  vortex:  [['mix','Intensity'],['echo','Layers'],['speed','Speed'],['scale','Scale'],['brightness','Glow'],['hue','Hue'],['saturation','Saturation'],['warp','Strip Warp'],['drift','Drift']],
+  aurora:  [['mix','Intensity'],['echo','Bands'],['warp','Wave'],['brightness','Glow'],['hue','Hue Shift'],['saturation','Saturation'],['scale','Band Height']],
+  acid:    [['mix','Color Wash'],['echo','Rings'],['hue','Hue Speed'],['scale','Ring Size'],['warp','Ring Spread'],['drift','Drift'],['brightness','Brightness'],['saturation','Saturation'],['speed','Speed'],['contrast','Contrast']],
+};
+const VISUAL_FX_DEFAULTS = Object.fromEntries(
+  FX_NAMES.flatMap(name => FX_CONTROL_SPECS.map(([param, , value]) => [`${name}_${param}`, value]))
+);
+let visualFx = loadVisualFxSettings();
+let manualFxActive = loadManualFxActive();
+let openFxEditor = null;
 
-function getEffectiveAnim() {
-  if (prevDarknessActive) return 'storm';
-  if (prevDesertDreamActive) return 'neon';
-  return activeAnim;
+function loadManualFxActive() {
+  try {
+    return new Set(JSON.parse(sessionStorage.getItem(VISUAL_FX_ACTIVE_KEY) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function loadVisualFxSettings() {
+  try {
+    const defaults = { ...VISUAL_FX_DEFAULTS };
+    // Custom default values for specific effects
+    defaults.fractal_brightness = 75;
+    defaults.fractal_saturation = 0;
+    defaults.echo_brightness = 5;
+    defaults.echo_saturation = 75;
+    defaults.vortex_speed = 2;
+    defaults.vortex_warp = 9;
+    defaults.vortex_hue = 100;
+    defaults.vortex_echo = 25;
+    defaults.acid_mix = 50;
+    defaults.acid_speed = 1;
+    defaults.neon_mix = 23;
+    defaults.neon_speed = 1;
+    return { ...defaults, ...(JSON.parse(sessionStorage.getItem(VISUAL_FX_STORAGE_KEY) || '{}')) };
+  } catch {
+    const defaults = { ...VISUAL_FX_DEFAULTS };
+    // Custom default values for specific effects
+    defaults.fractal_brightness = 75;
+    defaults.fractal_saturation = 0;
+    defaults.echo_brightness = 5;
+    defaults.echo_saturation = 75;
+    defaults.vortex_speed = 2;
+    defaults.vortex_warp = 9;
+    defaults.vortex_hue = 100;
+    defaults.vortex_echo = 25;
+    defaults.acid_mix = 50;
+    defaults.acid_speed = 1;
+    defaults.neon_mix = 23;
+    defaults.neon_speed = 1;
+    return defaults;
+  }
+}
+
+function saveVisualFxSettings() {
+  sessionStorage.setItem(VISUAL_FX_STORAGE_KEY, JSON.stringify(visualFx));
+}
+
+function saveManualFxActive() {
+  sessionStorage.setItem(VISUAL_FX_ACTIVE_KEY, JSON.stringify([...manualFxActive]));
+}
+
+function fxSlider(key) {
+  return visualFx[key] ?? VISUAL_FX_DEFAULTS[key] ?? 50;
+}
+
+function fxParam(effect, param) {
+  return fxSlider(`${effect}_${param}`);
+}
+
+function fxMix(effect) {
+  return fxParam(effect, 'mix') / 100;
+}
+
+function fxLevel(effect, base = animLevel) {
+  return base * fxMix(effect);
+}
+
+function fxRange(keyOrEffect, maybeParam, maybeMin, maybeMax) {
+  if (typeof maybeMax === 'number') {
+    const key = `${keyOrEffect}_${maybeParam}`;
+    return maybeMin + (maybeMax - maybeMin) * (fxSlider(key) / 100);
+  }
+  return maybeParam + (maybeMin - maybeParam) * (fxSlider(keyOrEffect) / 100);
+}
+
+function fxInt(key, min, max) {
+  return Math.round(fxRange(key, min, max));
+}
+
+function fxEffectInt(effect, param, min, max) {
+  return Math.round(fxRange(effect, param, min, max));
+}
+
+function isManualFxActive(name) {
+  return manualFxActive.has(name);
+}
+
+function getActiveEffects() {
+  const active = new Set(manualFxActive);
+  if (prevDarknessActive) active.add('storm');
+  if (prevDesertDreamActive) active.add('neon');
+  if (rituellesPlaying) active.add('fractal');
+  if (spaceRaveAcidActive) active.add('acid');
+  return active;
+}
+
+function renderFxEditor(effect) {
+  animFxPopupBody.innerHTML = '';
+  if (!effect) return;
+
+  // Use per-effect specs when available, fall back to generic specs
+  const specs = FX_EDITOR_SPECS[effect] || FX_CONTROL_SPECS.map(([p, l]) => [p, l]);
+
+  for (const [param, label] of specs) {
+    const key = `${effect}_${param}`;
+    const val = fxSlider(key);
+    const row = document.createElement('label');
+    row.className = 'anim-slider-row';
+    row.innerHTML =
+      `<div class="anim-slider-meta">` +
+        `<span>${label}</span>` +
+        `<span class="anim-slider-val" data-fx-value="${key}">${val}</span>` +
+      `</div>` +
+      `<input type="range" min="0" max="100" step="1" value="${val}" data-fx-key="${key}">`;
+    animFxPopupBody.appendChild(row);
+  }
+
+  // Reset this effect button
+  const resetRow = document.createElement('div');
+  resetRow.className = 'anim-fx-popup-reset-row';
+  resetRow.innerHTML = `<button class="anim-fx-popup-reset-btn" data-reset-effect="${effect}">Reset ${FX_LABELS[effect]}</button>`;
+  animFxPopupBody.appendChild(resetRow);
+}
+
+function openFxEditorPopup(effect) {
+  openFxEditor = effect;
+  const titleEl = animFxPopup.querySelector('.anim-fx-popup-title');
+  if (titleEl) titleEl.textContent = FX_LABELS[effect] || effect;
+  renderFxEditor(effect);
+  animFxPopup.classList.add('visible');
+}
+
+function closeFxEditorPopup() {
+  animFxPopup.classList.remove('visible');
+  openFxEditor = null;
 }
 
 function easeInOutCubic(v) {
@@ -1398,32 +1838,77 @@ function catmullRom(p0, p1, p2, p3, u) {
 }
 
 function updateAnimButtonState() {
-  const isActive = rituellesPlaying || animManual || prevDarknessActive || prevDesertDreamActive;
-  const currentAnim = getEffectiveAnim();
+  const activeEffects = getActiveEffects();
   document.querySelectorAll('.anim-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.anim === currentAnim && isActive);
+    b.classList.toggle('active', activeEffects.has(b.dataset.anim));
   });
 }
 
 
 document.querySelectorAll('.anim-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    if (activeAnim === btn.dataset.anim) {
-      animManual = !animManual;
+    if (manualFxActive.has(btn.dataset.anim)) {
+      manualFxActive.delete(btn.dataset.anim);
     } else {
-      activeAnim = btn.dataset.anim;
-      animManual = true; 
+      manualFxActive.add(btn.dataset.anim);
     }
+    saveManualFxActive();
     updateAnimButtonState();
   });
 });
 
+animToggle.addEventListener('click', () => {
+  animControls.classList.toggle('fx-visible');
+});
+
+animReset.addEventListener('click', () => {
+  visualFx = { ...VISUAL_FX_DEFAULTS };
+  manualFxActive = new Set();
+  saveVisualFxSettings();
+  saveManualFxActive();
+  if (openFxEditor) renderFxEditor(openFxEditor);
+  updateAnimButtonState();
+});
+
+document.querySelectorAll('.anim-edit-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    openFxEditorPopup(btn.dataset.editAnim);
+  });
+});
+
+animFxPopupClose.addEventListener('click', closeFxEditorPopup);
+animFxPopup.addEventListener('click', (event) => {
+  if (event.target === animFxPopup) closeFxEditorPopup();
+});
+
+animFxPopupBody.addEventListener('input', (event) => {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement) || input.type !== 'range') return;
+  visualFx[input.dataset.fxKey] = Number(input.value);
+  const valueNode = animFxPopupBody.querySelector(`[data-fx-value="${input.dataset.fxKey}"]`);
+  if (valueNode) valueNode.textContent = input.value;
+  saveVisualFxSettings();
+});
+
+animFxPopupBody.addEventListener('click', (event) => {
+  const btn = event.target.closest('[data-reset-effect]');
+  if (!btn) return;
+  const effect = btn.dataset.resetEffect;
+  const specs = FX_EDITOR_SPECS[effect] || FX_CONTROL_SPECS.map(([p]) => [p]);
+  specs.forEach(([param]) => {
+    const key = `${effect}_${param}`;
+    visualFx[key] = VISUAL_FX_DEFAULTS[key] ?? 50;
+  });
+  saveVisualFxSettings();
+  if (openFxEditor === effect) renderFxEditor(effect);
+});
+
+updateAnimButtonState();
+
 mAudio.addEventListener('play', () => {
   if (mAudio.src && mAudio.src.includes('Rituelles')) {
     rituellesPlaying = true;
-    activeAnim = 'fractal';
-    animManual = false;
-    
+
     // Reset video trigger state when song starts
     rituellesVideoTriggered = false;
   }
@@ -1433,12 +1918,13 @@ mAudio.addEventListener('play', () => {
 
 // Add timeupdate event listener to check for 1:15 mark
 mAudio.addEventListener('timeupdate', () => {
-  if (mAudio.src && mAudio.src.includes('Rituelles') && rituellesPlaying && !rituellesVideoTriggered) {
-    // Check if current time has reached or passed 1:15 (75 seconds)
-    if (mAudio.currentTime >= 75) {
-      startRituellesVideo();
-    }
-  }
+  // DISABLED: Video popup trigger - commented out to prevent video from appearing
+  // if (mAudio.src && mAudio.src.includes('Rituelles') && rituellesPlaying && !rituellesVideoTriggered) {
+  //   // Check if current time has reached or passed 1:15 (75 seconds)
+  //   if (mAudio.currentTime >= 75) {
+  //     startRituellesVideo();
+  //   }
+  // }
 });
 mAudio.addEventListener('pause', () => {
   rituellesPlaying = false;
@@ -1462,6 +1948,35 @@ function updateDesertDreamNeon(desertDreamActive) {
   if (desertDreamActive === prevDesertDreamActive) return;
   prevDesertDreamActive = desertDreamActive;
   updateAnimButtonState();
+}
+
+function updateLoveHover(loveActive) {
+  prevLoveHover = loveActive;
+}
+
+let stormColorLevel = 0; // 0 = full color, 1 = fully desaturated
+let stormColorLastT = performance.now();
+function updateStormColorFade() {
+  const now = performance.now();
+  const dt = Math.min(0.1, (now - stormColorLastT) / 1000);
+  stormColorLastT = now;
+  const target = (prevDarknessActive || manualFxActive.has('storm')) ? Math.max(0.18, fxMix('storm')) : 0;
+  const durationScale = fxRange('storm', 'speed', 0.18, 1.7);
+  const duration = (prevDarknessActive ? 5 : 2) * durationScale;
+  const step = dt / duration;
+  if (stormColorLevel < target) stormColorLevel = Math.min(target, stormColorLevel + step);
+  else if (stormColorLevel > target) stormColorLevel = Math.max(target, stormColorLevel - step);
+}
+let _lastCanvasFilter = '';
+function applyCanvasFilter() {
+  const parts = [];
+  if (stormColorLevel > 0.001) parts.push(`saturate(${(1 - stormColorLevel).toFixed(2)})`);
+  if (prevLoveHover) parts.push('saturate(1.6)');
+  const next = parts.join(' ');
+  if (next !== _lastCanvasFilter) {
+    canvas.style.filter = next;
+    _lastCanvasFilter = next;
+  }
 }
 
 /* ---- Rituelles Video Functions ---- */
@@ -1637,7 +2152,7 @@ function updateRituellesHoverReveal(inRituellesUniverse) {
   }
   const now = performance.now();
   if (pointInEl(mx, my, back)) rituellesRevealUntil.back = now + RITUELLES_REVEAL_MS;
-  if (pointInEl(mx, my, animControls)) rituellesRevealUntil.anim = now + RITUELLES_REVEAL_MS;
+  if (pointInEl(mx, my, animControls) || pointInEl(mx, my, animToggle)) rituellesRevealUntil.anim = now + RITUELLES_REVEAL_MS;
   if (pointInEl(mx, my, panelDotsWrap)) rituellesRevealUntil.dots = now + RITUELLES_REVEAL_MS;
   if (pointInEl(mx, my, navPrev)) rituellesRevealUntil.navPrev = now + RITUELLES_REVEAL_MS;
   if (pointInEl(mx, my, navNext)) rituellesRevealUntil.navNext = now + RITUELLES_REVEAL_MS;
@@ -1678,6 +2193,7 @@ canvas.addEventListener('click', e => {
 back.addEventListener('click', () => {
   if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) { closeModal(); return; }
   if (modal.classList.contains('visible')) closeModal();
+  if (spaceRaveAcidActive) { spaceRaveAcidActive = false; updateAnimButtonState(); }
   if (zoomed) { zoomOut(); return; }
   window.parent?.dreamPlayer?.tryUnlock?.();
   window.location.href = '../landing.html';
@@ -1693,7 +2209,20 @@ document.querySelector('.gods-close').addEventListener('click', (e) => {
   popup.style.display = 'none';
 });
 document.addEventListener('keydown', e => {
+  if (e.metaKey && e.key.toLowerCase() === 'f') {
+    e.preventDefault();
+    animControls.classList.toggle('fx-visible');
+    return;
+  }
   if (e.key === 'Escape') {
+    if (animFxPopup.classList.contains('visible')) {
+      closeFxEditorPopup();
+      return;
+    }
+    if (animControls.classList.contains('fx-visible')) {
+      animControls.classList.remove('fx-visible');
+      return;
+    }
     if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) { closeModal(); return; }
     if (modal.classList.contains('visible')) closeModal();
     if (document.getElementById('gods-popup').classList.contains('visible')) {
@@ -1705,6 +2234,7 @@ document.addEventListener('keydown', e => {
     if (document.getElementById('truth-overlay').classList.contains('visible')) { closeTruthOverlay(); return; }
     if (document.getElementById('love-overlay').classList.contains('visible')) { closeLoveOverlay(); return; }
     if (document.getElementById('aquarium-overlay').classList.contains('visible')) { closeAquarium(); return; }
+    if (spaceRaveAcidActive) { spaceRaveAcidActive = false; updateAnimButtonState(); }
     if (zoomed) zoomOut(); else { window.parent?.dreamPlayer?.tryUnlock?.(); window.location.href='../landing.html'; }
   }
 });
@@ -1723,11 +2253,40 @@ function imgLayout() {
 /* ═══ MAIN DRAW ═══ */
 function draw() {
   t++;
-  const effectiveAnim = getEffectiveAnim();
-  const animNow = rituellesPlaying || animManual || prevDarknessActive || prevDesertDreamActive;
-  animLevel += (animNow ? 1.0 : 0.0 - animLevel) * (animNow ? 0.035 : 0.022);
-  const neonEffectLevel = (effectiveAnim === 'neon' && prevDesertDreamActive) ? DESERT_NEON_LEVEL : animLevel;
-  const fractalActive = animNow && effectiveAnim === 'fractal';
+  const activeEffects = getActiveEffects();
+  const hasStorm = activeEffects.has('storm');
+  const hasFluid = activeEffects.has('fluid');
+  const hasNeon = activeEffects.has('neon');
+  const hasFrantic = activeEffects.has('frantic');
+  const hasFractal = activeEffects.has('fractal');
+  const hasEcho = activeEffects.has('echo');
+  const hasChroma = activeEffects.has('chroma');
+  const hasPlasma = activeEffects.has('plasma');
+  const hasPrism = activeEffects.has('prism');
+  const hasVortex = activeEffects.has('vortex');
+  const hasAurora = activeEffects.has('aurora');
+  const hasAcid = activeEffects.has('acid');
+  const stormLevel = hasStorm ? fxLevel('storm') : 0;
+  const fluidLevel = hasFluid ? fxLevel('fluid') : 0;
+  const neonLevel = hasNeon ? fxLevel('neon') : 0;
+  const franticLevel = hasFrantic ? fxLevel('frantic') : 0;
+  const fractalLevel = hasFractal ? fxLevel('fractal') : 0;
+  const echoLevel = hasEcho ? fxLevel('echo') : 0;
+  const chromaLevel = hasChroma ? fxLevel('chroma') : 0;
+  const plasmaLevel = hasPlasma ? fxLevel('plasma') : 0;
+  const prismLevel = hasPrism ? fxLevel('prism') : 0;
+  const vortexLevel = hasVortex ? fxLevel('vortex') : 0;
+  const auroraLevel = hasAurora ? fxLevel('aurora') : 0;
+  const acidLevel = hasAcid ? fxLevel('acid') : 0;
+  const globalIntensity = Math.max(0.15, [...activeEffects].reduce((sum, name) => sum + fxMix(name), 0) / Math.max(1, activeEffects.size));
+  const animNow = activeEffects.size > 0;
+  const animTarget = animNow ? Math.min(1.25, globalIntensity) : 0.0;
+  animLevel += (animTarget - animLevel) * (animNow ? 0.035 : 0.022);
+  const neonEffectLevel = hasNeon
+    ? Math.max(prevDesertDreamActive ? DESERT_NEON_LEVEL : 0, neonLevel)
+    : 0;
+  const franticEffectLevel = franticLevel;
+  const fractalActive = fractalLevel > 0.01;
   if (fractalActive) {
     if (fractalRampStart === null) {
       fractalRampStart = performance.now();
@@ -1894,14 +2453,29 @@ function draw() {
   }
 
   // Add neon vibration/distortion effect
-  if ((effectiveAnim === 'neon' || effectiveAnim === 'frantic') && neonEffectLevel > 0.1) {
-    const isFrantic = effectiveAnim === 'frantic';
-    const vibrationIntensity = neonEffectLevel * (isFrantic ? 1.9 : 0.22);
-    const vibX = Math.sin(t * (isFrantic ? 0.08 : 0.045)) * vibrationIntensity
-      + Math.sin(t * (isFrantic ? 0.13 : 0.045) + 1.2) * vibrationIntensity * (isFrantic ? 0.6 : 0.05);
-    const vibY = Math.cos(t * (isFrantic ? 0.11 : 0.058)) * vibrationIntensity
-      + Math.cos(t * (isFrantic ? 0.09 : 0.042) + 0.8) * vibrationIntensity * (isFrantic ? 0.6 : 0.05);
-    const vibSkew = Math.sin(t * (isFrantic ? 0.06 : 0.024)) * neonEffectLevel * (isFrantic ? 0.05 : 0.0045);
+  if ((hasNeon || hasFrantic) && neonEffectLevel > 0.1) {
+    const isFrantic = hasFrantic;
+    const desertDreamLook = !isFrantic && prevDesertDreamActive;
+    let vibX, vibY, vibSkew;
+    if (desertDreamLook) {
+      // Desert Dream auto-trigger keeps the original fixed-formula neon look, independent of the Visual FX sliders.
+      const vi = neonEffectLevel * 0.22;
+      vibX = Math.sin(t * 0.045) * vi + Math.sin(t * 0.045 + 1.2) * vi * 0.05;
+      vibY = Math.cos(t * 0.058) * vi + Math.cos(t * 0.042 + 0.8) * vi * 0.05;
+      vibSkew = Math.sin(t * 0.024) * neonEffectLevel * 0.0045;
+    } else {
+      const effect = isFrantic ? 'frantic' : 'neon';
+      const effectLevel = isFrantic ? franticEffectLevel : neonEffectLevel;
+      const vibSpeed = fxRange(effect, 'speed', 0.4, 2.8);
+      const vibWarp = fxRange(effect, 'warp', 0.05, isFrantic ? 3.5 : 1.4);
+      const vibDrift = fxRange(effect, 'drift', 0.05, isFrantic ? 2.6 : 0.8);
+      const vibrationIntensity = effectLevel * vibWarp * (isFrantic ? 2.4 : 0.8);
+      vibX = Math.sin(t * (isFrantic ? 0.08 : 0.045) * vibSpeed) * vibrationIntensity
+        + Math.sin(t * (isFrantic ? 0.13 : 0.045) * vibSpeed + 1.2) * vibrationIntensity * vibDrift;
+      vibY = Math.cos(t * (isFrantic ? 0.11 : 0.058) * vibSpeed) * vibrationIntensity
+        + Math.cos(t * (isFrantic ? 0.09 : 0.042) * vibSpeed + 0.8) * vibrationIntensity * vibDrift;
+      vibSkew = Math.sin(t * (isFrantic ? 0.06 : 0.024) * vibSpeed) * effectLevel * fxRange(effect, 'scale', 0.001, isFrantic ? 0.12 : 0.03);
+    }
     ctx.translate(vibX, vibY);
     ctx.transform(1, vibSkew, vibSkew * 0.5, 1, 0, 0);
   }
@@ -1922,12 +2496,24 @@ function draw() {
     !!(hoveredZone && hoveredZone.dark) ||
     !!(zoomed && zoomTarget && zoomTarget.dark)
   );
+  updateStormColorFade();
 
   // Auto-trigger neon pulse when in Desert Dream zone (hover or navigated to)
   updateDesertDreamNeon(
     !!(hoveredZone && hoveredZone.name === 'Desert Dream') ||
     !!(zoomed && zoomTarget && zoomTarget.name === 'Desert Dream')
   );
+
+  // Saturate all colors when hovering Love zone (smooth JS lerp)
+  const isLoveZone = !!(hoveredZone && hoveredZone.type === 'love');
+  loveSatLevel += ((isLoveZone ? 1 : 0) - loveSatLevel) * (isLoveZone ? 0.06 : 0.05);
+  updateLoveHover(isLoveZone);
+
+  // SpaceRave hover acid — smooth sine breathing, continuous
+  const isOnSpaceRave = !!(hoveredZone && hoveredZone.name === 'SpaceRave Planet');
+  const isSpaceRaveHovered = isOnSpaceRave && !hasAcid;
+  if (isSpaceRaveHovered) spaceRavePhase += 0.018;
+  spaceRaveHoverAcid += ((isSpaceRaveHovered ? 1 : 0) - spaceRaveHoverAcid) * (isSpaceRaveHovered ? 0.08 : 0.07);
 
   // Hearts when zoomed into Love universe
   if (zoomed && zoomTarget && zoomTarget.type === 'love' && t % 18 === 0) {
@@ -1951,67 +2537,159 @@ function draw() {
 
   /* ── Draw artwork: orb-gravity deformation makes lines warp and breathe ── */
   ctx.save();
-  ctx.filter = ((effectiveAnim === 'neon' || effectiveAnim === 'frantic') && neonEffectLevel > 0.01)
-    ? (effectiveAnim === 'frantic'
-      ? `contrast(22) brightness(1.95) hue-rotate(${t * 4.6 * neonEffectLevel}deg) saturate(${1 + 5.2 * neonEffectLevel}) invert(${0.05 * neonEffectLevel})`
-      : `contrast(13.2) brightness(1.18) hue-rotate(${t * 1.15 * neonEffectLevel}deg) saturate(${1 + 0.95 * neonEffectLevel}) invert(${0.008 * neonEffectLevel})`)
-    : 'contrast(12) brightness(1.4)';
+  {
+    const filterParts = [`contrast(${(10 + globalIntensity * 4).toFixed(2)})`, `brightness(${(1.08 + globalIntensity * 0.28).toFixed(2)})`];
+    if ((hasNeon || hasFrantic) && neonEffectLevel > 0.01) {
+      const isFrantic = hasFrantic;
+      if (!isFrantic && prevDesertDreamActive) {
+        // Desert Dream auto-trigger keeps the original fixed-formula neon look, independent of the Visual FX sliders.
+        filterParts[0] = `contrast(13.2)`;
+        filterParts[1] = `brightness(1.18)`;
+        filterParts.push(`hue-rotate(${(t * 1.15 * neonEffectLevel).toFixed(2)}deg)`);
+        filterParts.push(`saturate(${(1 + 0.95 * neonEffectLevel).toFixed(3)})`);
+        filterParts.push(`invert(${(0.008 * neonEffectLevel).toFixed(3)})`);
+      } else {
+        const effect = isFrantic ? 'frantic' : 'neon';
+        const effectLevel = isFrantic ? franticEffectLevel : neonEffectLevel;
+        filterParts[0] = `contrast(${fxRange(effect, 'contrast', isFrantic ? 10 : 7, isFrantic ? 40 : 24).toFixed(2)})`;
+        filterParts[1] = `brightness(${fxRange(effect, 'brightness', 0.75, isFrantic ? 3.1 : 1.9).toFixed(2)})`;
+        filterParts.push(`hue-rotate(${(t * fxRange(effect, 'hue', 0.3, isFrantic ? 10 : 4.5) * effectLevel).toFixed(2)}deg)`);
+        filterParts.push(`saturate(${fxRange(effect, 'saturation', 0.7, isFrantic ? 12 : 6).toFixed(2)})`);
+        filterParts.push(`invert(${fxRange(effect, 'echo', 0, isFrantic ? 0.22 : 0.09).toFixed(3)})`);
+      }
+    }
+    if (hasFluid) {
+      filterParts.push(`hue-rotate(${(t * fxRange('fluid', 'hue', 0, 2.2) * fluidLevel).toFixed(2)}deg)`);
+      filterParts.push(`saturate(${fxRange('fluid', 'saturation', 0.6, 4.5).toFixed(2)})`);
+      filterParts.push(`contrast(${fxRange('fluid', 'contrast', 0.8, 2.8).toFixed(2)})`);
+      filterParts.push(`brightness(${fxRange('fluid', 'brightness', 0.7, 1.8).toFixed(2)})`);
+    }
+    if (hasAcid && animLevel > 0.01) {
+      filterParts.push(`hue-rotate(${(t * fxRange('acid', 'hue', 0.6, 10) * acidLevel).toFixed(2)}deg)`);
+      filterParts.push(`saturate(${fxRange('acid', 'saturation', 0.8, 10).toFixed(2)})`);
+      filterParts.push(`contrast(${fxRange('acid', 'contrast', 0.9, 4.2).toFixed(2)})`);
+      filterParts.push(`brightness(${fxRange('acid', 'brightness', 0.9, 1.9).toFixed(2)})`);
+    }
+    ctx.filter = filterParts.join(' ');
+  }
   const NS = 60;
 
   function stripDisplace(si) {
     const syC = (si + 0.5) / NS;
-    const isStorm = effectiveAnim === 'storm';
-    const isFluid = effectiveAnim === 'fluid';
-    const isNeon = effectiveAnim === 'neon';
-    const isFrantic = effectiveAnim === 'frantic';
-    const sf = 0.14 + (isStorm ? animLevel * 0.86 : 0);
+    const isFluid = hasFluid;
+    const isNeon = hasNeon;
+    const isFrantic = hasFrantic;
+    const isAcid = hasAcid;
+    const isVortex = hasVortex;
+    const stormWarp = fxRange('storm', 'warp', 0, 3.6);
+    const stormScale = fxRange('storm', 'scale', 0.5, 2.5);
+    const stormDrift = fxRange('storm', 'drift', 0, 2.5);
+    const stormSpeed = fxRange('storm', 'speed', 0.4, 3.2);
+    const stormContrast = fxRange('storm', 'contrast', 0.6, 2.8);
+    const stormEcho = fxRange('storm', 'echo', 0, 2.2);
+    const sf = 0.08 + stormColorLevel * 1.35 * stormWarp;
 
     // Base organic wave (horizontal shimmer)
     let wx = (Math.sin(t * 0.006 + si * 0.21) * 2.2
-            + Math.sin(t * 0.010 + si * 0.13 + 1.4) * 1.1) * (isFluid ? 0.14 + animLevel * 1.5 : sf);
+            + Math.sin(t * 0.010 + si * 0.13 + 1.4) * 1.1) * (isFluid ? 0.14 + fluidLevel * 2.3 : sf);
     // Width scale for depth illusion
-    let wMod = 1.0 + Math.sin(t * 0.005 + si * 0.31) * 0.016 * (isFluid ? 0.14 + animLevel * 0.8 : sf);
+    let wMod = 1.0 + Math.sin(t * 0.005 + si * 0.31) * 0.016 * (isFluid ? 0.14 + fluidLevel * 1.6 : sf);
 
-    if (animLevel < 0.02) return { wx, wMod };
+    if (animLevel < 0.02 && stormColorLevel < 0.01) return { wx, wMod };
 
-    if (isStorm) {
-      // Storm: orb gravity pulls strips toward each orb's gravitational field
+    if (stormColorLevel > 0.01) {
+      // Storm: orb gravity pulls strips toward each orb's gravitational field.
+      // Intensity tied to stormColorLevel so warping fades in/out with the storm envelope.
+      const k = stormColorLevel * stormWarp * Math.max(0.12, stormLevel);
       for (let i = 0; i < ZONES.length; i++) {
         const z = ZONES[i];
-        const dp = t * 0.007 + i * 1.3;
-        const orbY = z.ny + Math.cos(dp * 0.73) * 0.004;
-        const orbX = z.nx + Math.sin(dp) * 0.005;
+        const dp = t * 0.007 * stormSpeed + i * 1.3;
+        const orbY = z.ny + Math.cos(dp * 0.73) * 0.004 * stormDrift;
+        const orbX = z.nx + Math.sin(dp) * 0.005 * stormDrift;
         const dy = syC - orbY;
-        const str = z.dark ? 0.024 : 0.011;
+        const str = (z.dark ? 0.024 : 0.011) * stormScale;
         const hoverBoost = (hoveredZone === z) ? 2.2 : 1.0;
         const falloff = (str * hoverBoost) / (1.0 + 25 * dy * dy);
-        const ph = t * 0.009 + i * 2.1;
-        wx += (orbX - 0.5) * drawW * falloff * Math.sin(ph + si * 0.14);
-        wMod += falloff * 0.5 * Math.abs(Math.sin(ph * 0.8 + si * 0.22));
+        const ph = t * 0.009 * stormSpeed + i * 2.1;
+        wx += (orbX - 0.5) * drawW * falloff * Math.sin(ph + si * 0.14) * k * stormContrast;
+        wx += Math.sin(ph * 1.7 + si * 0.36) * drawW * falloff * 0.08 * stormEcho * k;
+        wMod += falloff * 0.5 * Math.abs(Math.sin(ph * 0.8 + si * 0.22)) * k * stormContrast;
         if (z.dark) {
-          wx += Math.sin(t * 0.041 + si * 7.1 + i * 3.3) * drawW * falloff * 0.45;
-          wx += Math.cos(t * 0.029 + si * 4.4 + i * 1.9) * drawW * falloff * 0.25;
+          wx += Math.sin(t * 0.041 * stormSpeed + si * 7.1 + i * 3.3) * drawW * falloff * 0.45 * k * stormContrast;
+          wx += Math.cos(t * 0.029 * stormSpeed + si * 4.4 + i * 1.9) * drawW * falloff * 0.25 * k * stormContrast;
         }
       }
-    } else if (isFluid) {
-      wx += Math.sin(t * 0.03 + si * 0.4) * 45 * animLevel;
-      wMod += Math.sin(t * 0.04 + si * 0.5) * 0.12 * animLevel;
+    }
+    if (isFluid) {
+      const fluidSpeed = fxRange('fluid', 'speed', 0.25, 3.8);
+      const fluidScale = fxRange('fluid', 'scale', 0, 120);
+      const fluidWarp = fxRange('fluid', 'warp', 0, 0.42);
+      const fluidDrift = fxRange('fluid', 'drift', 0, 4.2);
+      const fluidEcho = fxRange('fluid', 'echo', 0, 1.8);
+      const fluidContrast = fxRange('fluid', 'contrast', 0.2, 2.4);
+      wx += Math.sin(t * 0.03 * fluidSpeed + si * 0.4) * fluidScale * fluidLevel * fluidDrift;
+      wx += Math.cos(t * 0.022 * fluidSpeed + si * 0.72) * fluidScale * 0.45 * fluidLevel * fluidWarp;
+      wx += Math.sin(t * 0.061 * fluidSpeed + si * 1.3) * fluidScale * 0.22 * fluidLevel * fluidEcho;
+      wMod += Math.sin(t * 0.04 * fluidSpeed + si * 0.5) * fluidWarp * fluidLevel * 1.25 * fluidContrast;
     }
 
     // Neon pulse: extreme distortion and flicker
     if ((isNeon || isFrantic) && neonEffectLevel > 0.05) {
-      const neonIntensity = neonEffectLevel * (isFrantic ? 0.95 : 0.14);
-      wx += Math.sin(t * (isFrantic ? 0.19 : 0.055) + si * (isFrantic ? 2.1 : 0.75)) * drawW * neonIntensity * (isFrantic ? 0.3 : 0.02);
-      wx += Math.cos(t * (isFrantic ? 0.14 : 0.042) + si * (isFrantic ? 1.2 : 0.45)) * drawW * neonIntensity * (isFrantic ? 0.18 : 0.012);
-      wMod += Math.sin(t * (isFrantic ? 0.17 : 0.048) + si * (isFrantic ? 1.0 : 0.34)) * neonIntensity * (isFrantic ? 0.12 : 0.01);
+      if (!isFrantic && prevDesertDreamActive) {
+        // Desert Dream auto-trigger keeps the original fixed-formula neon look, independent of the Visual FX sliders.
+        const neonIntensity = neonEffectLevel * 0.14;
+        wx += Math.sin(t * 0.055 + si * 0.75) * drawW * neonIntensity * 0.02;
+        wx += Math.cos(t * 0.042 + si * 0.45) * drawW * neonIntensity * 0.012;
+        wMod += Math.sin(t * 0.048 + si * 0.34) * neonIntensity * 0.01;
+      } else {
+        const effect = isFrantic ? 'frantic' : 'neon';
+        const level = isFrantic ? franticEffectLevel : neonEffectLevel;
+        const warpBoost = fxRange(effect, 'warp', 0, isFrantic ? 3.8 : 2.8);
+        const speedBoost = fxRange(effect, 'speed', 0.25, isFrantic ? 4.5 : 3);
+        const driftBoost = fxRange(effect, 'drift', 0, isFrantic ? 2.8 : 1.9);
+        const scaleBoost = fxRange(effect, 'scale', 0, isFrantic ? 0.7 : 0.16);
+        const neonIntensity = level * warpBoost;
+        wx += Math.sin(t * (isFrantic ? 0.19 : 0.055) * speedBoost + si * (isFrantic ? 2.1 : 0.75)) * drawW * neonIntensity * scaleBoost;
+        wx += Math.cos(t * (isFrantic ? 0.14 : 0.042) * speedBoost + si * (isFrantic ? 1.2 : 0.45)) * drawW * neonIntensity * scaleBoost * driftBoost * 0.75;
+        wMod += Math.sin(t * (isFrantic ? 0.17 : 0.048) * speedBoost + si * (isFrantic ? 1.0 : 0.34)) * neonIntensity * (isFrantic ? 0.2 : 0.05) * driftBoost;
+      }
+    }
+
+    // Acid wash: rhythmic zigzag ripple
+    if (isAcid && animLevel > 0.05) {
+      const acidSpeed = fxRange('acid', 'speed', 0.35, 4.2);
+      const acidDrift = fxRange('acid', 'drift', 0, 4.4);
+      const acidHue = fxRange('acid', 'hue', 0.3, 4.5);
+      const acidWarp = fxRange('acid', 'warp', 0, 0.28);
+      const acidScale = fxRange('acid', 'scale', 0, 0.14);
+      wx += Math.sin(t * 0.09 * acidHue * acidSpeed + si * 0.85) * drawW * acidLevel * acidScale * acidDrift;
+      wx += Math.cos(si * (Math.PI * 2 / (NS * 0.5)) + t * 0.06 * acidHue * acidSpeed) * drawW * acidLevel * acidScale * 0.75 * acidDrift;
+      wMod += Math.sin(t * 0.11 * acidHue * acidSpeed + si * 0.9) * acidLevel * acidWarp * acidDrift;
+    }
+
+    // Dark vortex: spiral outward displacement
+    if (isVortex && animLevel > 0.05) {
+      const vortexSpeed = fxRange('vortex', 'speed', 0.25, 4.2);
+      const vortexWarp = fxRange('vortex', 'warp', 0, 0.18);
+      const vortexDrift = fxRange('vortex', 'drift', 0, 2.6);
+      const angle = t * 0.015 * vortexSpeed + Math.abs(syC - 0.5) * Math.PI * (2 + vortexDrift * 2.5);
+      wx += Math.sin(angle + si * 0.1) * drawW * vortexLevel * vortexWarp;
+      wMod += Math.cos(angle * 0.7 + si * 0.15) * vortexLevel * vortexWarp * 1.4;
     }
 
     return { wx, wMod };
   }
 
-  // Clip to image bounds so horizontal shimmer doesn't bleed outside
+  // Clip to image bounds so horizontal shimmer doesn't bleed outside.
+  // During storm, drop the horizontal clip so the warped strips can continue sideways past the frame.
   ctx.save();
-  ctx.beginPath(); ctx.rect(ox - 2, oy - 2, drawW + 4, drawH + 4); ctx.clip();
+  ctx.beginPath();
+  if (animLevel > 0.001 || stormColorLevel > 0.001) {
+    ctx.rect(-W, oy - 2, W * 3, drawH + 4);
+  } else {
+    ctx.rect(ox - 2, oy - 2, drawW + 4, drawH + 4);
+  }
+  ctx.clip();
 
   if (needsRot) {
     ctx.translate(ox + drawW/2, oy + drawH/2);
@@ -2040,10 +2718,12 @@ function draw() {
   ctx.fillRect(ox, oy, drawW, drawH);
   ctx.globalCompositeOperation = 'source-over';
 
-  /* ── Cover JPEG edge artifacts with a thin black border ── */
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(ox, oy, drawW, drawH);
+  /* ── Cover JPEG edge artifacts with a thin black border (fades away during storm) ── */
+  if (stormColorLevel < 0.999) {
+    ctx.strokeStyle = `rgba(0,0,0,${1 - stormColorLevel})`;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(ox, oy, drawW, drawH);
+  }
 
   /* ── Nebula overlays: slow, smooth, psychedelic (original two-layer approach) ── */
   ctx.globalCompositeOperation = 'screen';
@@ -2064,12 +2744,14 @@ function draw() {
 
     if (z.dark) {
       // Darkness orb: soft dark-blue/purple shroud (no void core, no tendrils)
-      const evilHue = 235 + 20 * Math.sin(t * 0.009 + i);
+      const evilHue = 235 + fxRange('storm', 'hue', -120, 120) + 20 * Math.sin(t * 0.009 * fxRange('storm', 'speed', 0.4, 3.2) + i);
+      const stormSat = fxRange('storm', 'saturation', 0.4, 1.8);
+      const stormBright = fxRange('storm', 'brightness', 0.25, 1.5);
       ctx.save();
       ctx.translate(zx, zy); ctx.scale(1, zry / zrx);
       const gd = ctx.createRadialGradient(0, 0, 0, 0, 0, zrx);
-      gd.addColorStop(0,   `hsla(${evilHue},75%,35%,${alpha1 * 0.8 * boost})`);
-      gd.addColorStop(0.5, `hsla(${evilHue},85%,45%,${alpha2 * 0.7 * boost})`);
+      gd.addColorStop(0,   `hsla(${evilHue},${(75 * stormSat).toFixed(1)}%,${(35 * stormBright).toFixed(1)}%,${alpha1 * 0.8 * boost})`);
+      gd.addColorStop(0.5, `hsla(${evilHue},${(85 * stormSat).toFixed(1)}%,${(45 * stormBright).toFixed(1)}%,${alpha2 * 0.7 * boost})`);
       gd.addColorStop(1,   'transparent');
       ctx.beginPath(); ctx.arc(0, 0, zrx, 0, Math.PI * 2);
       ctx.fillStyle = gd; ctx.fill();
@@ -2141,10 +2823,19 @@ function draw() {
 
   // Apply post-processing effects
   if (animLevel > 0.01) {
-    if (effectiveAnim === 'fractal') {
+    if (hasFractal) {
+      const fractalBloomBoost = fxRange('fractal', 'scale', 0.08, 3.6);
+      const fractalFeedback = fxRange('fractal', 'echo', 0.15, 3.2);
+      const fractalFade = fxRange('fractal', 'brightness', 0.12, 2.4);
+      const fractalSpeed = fxRange('fractal', 'speed', 0.2, 3.2);
+      const fractalWarp = fxRange('fractal', 'warp', 0.2, 2.6);
+      const fractalHue = fxRange('fractal', 'hue', 0, 20);
+      const fractalSat = fxRange('fractal', 'saturation', 0.6, 2.4);
+      const fractalContrast = fxRange('fractal', 'contrast', 0.4, 2.8);
+      const fractalDrift = fxRange('fractal', 'drift', 0.4, 2.8);
       const lineRevealRaw = Math.max(0, Math.min((fractalIntroProgress - 0.42) / 0.5, 1));
       const lineReveal = easeInOutCubic(lineRevealRaw);
-      const revealRadius = (0.06 + lineReveal * 1.25) * Math.max(W, H);
+      const revealRadius = (0.04 + lineReveal * 1.45 * fractalWarp) * Math.max(W, H);
       const glowIn = easeInOutCubic(Math.min(fractalIntroProgress / FRACTAL_DEEP_PHASE_END, 1));
       const glowOut = fractalIntroProgress <= FRACTAL_DEEP_PHASE_END
         ? 1
@@ -2173,45 +2864,45 @@ function draw() {
 
       // Fade out the thick original map so the delicate filters can take over the whole screen
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = `rgba(0, 0, 0, ${fractalBloom * 0.88})`;
+      ctx.fillStyle = `rgba(0, 0, 0, ${Math.min(1, fractalBloom * 0.88 * fractalFade)})`;
       ctx.fillRect(0, 0, W, H);
 
-      const rotationPasses = fractalBloom < 0.45 ? 2 : 3;
+      const rotationPasses = Math.max(1, Math.round(fxRange('fractal', 'echo', 1, 6)));
       ctx.save();
       ctx.translate(W/2, H/2);
-      ctx.scale(1.24 + fractalBloom * 0.18, 1.24 + fractalBloom * 0.18);
+      ctx.scale(1.24 + fractalBloom * 0.18 * fractalBloomBoost, 1.24 + fractalBloom * 0.18 * fractalBloomBoost);
       ctx.globalCompositeOperation = 'lighten';
       ctx.beginPath();
       ctx.arc(0, 0, revealRadius, 0, Math.PI * 2);
       ctx.clip();
       // Soft haze pass: gives line edges a slight evaporating aura.
-      ctx.filter = `blur(${0.9 + fractalBloom * 1.6}px)`;
+      ctx.filter = `blur(${0.9 + fractalBloom * 1.6 * fractalBloomBoost}px)`;
       // Keep the fractal airy by limiting simultaneous rotations even at full bloom.
       for(let i=0; i<rotationPasses; i++) {
         ctx.globalAlpha = (0.045 + fractalBloom * 0.08) * lineReveal;
         ctx.drawImage(window.tmpCanvas, -W/2, -H/2);
-        ctx.rotate((Math.PI * 2) / rotationPasses);
+        ctx.rotate(((Math.PI * 2) / rotationPasses) * fractalDrift);
       }
       ctx.filter = 'none';
       for(let i=0; i<rotationPasses; i++) {
         ctx.globalAlpha = (0.08 + fractalBloom * 0.12) * lineReveal;
         ctx.drawImage(window.tmpCanvas, -W/2, -H/2);
-        ctx.rotate((Math.PI * 2) / rotationPasses);
+        ctx.rotate(((Math.PI * 2) / rotationPasses) * fractalDrift);
       }
       ctx.restore();
 
       ctx.save();
       ctx.globalCompositeOperation = 'lighten';
-      ctx.globalAlpha = fractalBloom * 0.78 * lineReveal;
+      ctx.globalAlpha = Math.min(1, fractalBloom * 0.78 * lineReveal * fractalBloomBoost);
       
       // Expand from the center
       ctx.translate(W/2, H/2);
       ctx.beginPath();
       ctx.arc(0, 0, revealRadius, 0, Math.PI * 2);
       ctx.clip();
-      const feedbackScale = 1.006 + fractalBloom * 0.022;
+      const feedbackScale = 1.006 + fractalBloom * 0.022 * fractalFeedback;
       ctx.scale(feedbackScale, feedbackScale);
-      ctx.rotate(0.0007 + fractalBloom * 0.0023);
+      ctx.rotate((0.0007 + fractalBloom * 0.0023 * fractalFeedback) * fractalSpeed);
       ctx.translate(-W/2, -H/2);
       
       ctx.drawImage(window.fbCanvas, 0, 0);
@@ -2230,36 +2921,234 @@ function draw() {
       }
 
       window.fbCtx.globalCompositeOperation = 'copy';
-      window.fbCtx.filter = 'hue-rotate(4deg) saturate(1.03)';
+      window.fbCtx.filter = `hue-rotate(${fractalHue.toFixed(1)}deg) saturate(${fractalSat.toFixed(2)}) contrast(${fractalContrast.toFixed(2)})`;
       window.fbCtx.drawImage(canvas, 0, 0);
       window.fbCtx.filter = 'none';
 
       // Darken the feedback heavily to let trails fade
       window.fbCtx.globalCompositeOperation = 'source-over';
-      window.fbCtx.fillStyle = `rgba(0, 0, 0, ${0.2 + (1 - fractalBloom) * 0.14})`;
+      window.fbCtx.fillStyle = `rgba(0, 0, 0, ${0.2 + (1 - fractalBloom) * 0.14 * fractalFade})`;
       window.fbCtx.fillRect(0, 0, W, H);
-    } else if (effectiveAnim === 'echo') {
+    }
+    if (hasEcho) {
+      const echoCopies = fxEffectInt('echo', 'echo', 1, 16);
+      const echoSpread = fxRange('echo', 'drift', 0, 0.16);
+      const echoAlpha = fxRange('echo', 'mix', 0, 0.85);
+      const echoScale = fxRange('echo', 'scale', 0.004, 0.08);
+      const echoWarp = fxRange('echo', 'warp', 0, 0.08);
+      const echoSpeed = fxRange('echo', 'speed', 0.2, 4);
+      const echoHue = fxRange('echo', 'hue', 0, 220);
+      const echoSat = fxRange('echo', 'saturation', 0.4, 4.5);
+      const echoBright = fxRange('echo', 'brightness', 0.5, 1.8);
+      const echoContrast = fxRange('echo', 'contrast', 0.7, 2.8);
       ctx.save();
-      ctx.globalAlpha = animLevel * 0.15;
+      ctx.globalAlpha = animLevel * echoAlpha;
       ctx.globalCompositeOperation = 'screen';
-      for(let i=1; i<=4; i++) {
+      for(let i=1; i<=echoCopies; i++) {
         ctx.save();
         ctx.translate(W/2, H/2);
-        ctx.scale(1.0 + i*0.02, 1.0 + i*0.02);
+        ctx.scale(1.0 + i * (echoSpread + echoScale), 1.0 + i * (echoSpread + echoScale));
+        ctx.rotate(i * echoWarp * echoSpeed);
+        ctx.filter = `hue-rotate(${(echoHue + i * 8).toFixed(1)}deg) saturate(${echoSat.toFixed(2)}) brightness(${echoBright.toFixed(2)}) contrast(${echoContrast.toFixed(2)})`;
         ctx.drawImage(canvas, -W/2, -H/2);
         ctx.restore();
       }
       ctx.restore();
-    } else if (effectiveAnim === 'chroma') {
+    }
+    if (hasChroma) {
+      const chromaAlpha = fxRange('chroma', 'mix', 0, 1);
+      const chromaScale = fxRange('chroma', 'scale', 0, 0.22);
+      const chromaRotate = fxRange('chroma', 'warp', 0, 0.16);
+      const chromaHue = fxRange('chroma', 'hue', 0, 180);
+      const chromaSat = fxRange('chroma', 'saturation', 0.4, 4);
+      const chromaSpeed = fxRange('chroma', 'speed', 0.25, 3.8);
       ctx.save();
       ctx.globalCompositeOperation = 'exclusion';
-      ctx.globalAlpha = animLevel * 0.5;
+      ctx.globalAlpha = animLevel * chromaAlpha;
       ctx.translate(W/2, H/2);
-      ctx.scale(1.0 + Math.sin(t*0.02)*0.03*animLevel, 1.0 + Math.cos(t*0.02)*0.03*animLevel);
-      ctx.rotate(Math.sin(t*0.01)*0.01*animLevel);
+      ctx.scale(1.0 + Math.sin(t*0.02*chromaSpeed)*chromaScale*chromaLevel, 1.0 + Math.cos(t*0.02*chromaSpeed)*chromaScale*chromaLevel);
+      ctx.rotate(Math.sin(t*0.01*chromaSpeed)*chromaRotate*chromaLevel);
+      ctx.filter = `hue-rotate(${chromaHue.toFixed(1)}deg) saturate(${chromaSat.toFixed(2)})`;
       ctx.drawImage(canvas, -W/2, -H/2);
       ctx.restore();
+
     }
+    if (hasPlasma) {
+      const plasmaScale = fxRange('plasma', 'scale', 0.18, 3.4);
+      const plasmaSpeed = fxRange('plasma', 'speed', 0.12, 4.8);
+      const plasmaOpacity = fxRange('plasma', 'mix', 0, 255);
+      const PW = Math.max(48, Math.round(96 / plasmaScale));
+      const PH = Math.max(27, Math.round(54 / plasmaScale));
+      if (!window._pC) { window._pC = document.createElement('canvas'); window._pX = window._pC.getContext('2d'); }
+      if (window._pC.width !== PW || window._pC.height !== PH) { window._pC.width = PW; window._pC.height = PH; window._pX = window._pC.getContext('2d'); }
+      const id = window._pX.createImageData(PW, PH);
+      const d = id.data, tt = t * 0.025 * plasmaSpeed;
+      for (let py = 0; py < PH; py++) {
+        for (let px = 0; px < PW; px++) {
+          const v = Math.sin(px*0.22+tt) + Math.sin(py*0.18+tt*1.3)
+                  + Math.sin((px+py)*0.14+tt*0.8) + Math.sin(Math.hypot(px-PW/2, py-PH/2)*0.18+tt*0.6);
+          const i = (py*PW+px)*4;
+          d[i]   = 128 + 127 * Math.sin(v * Math.PI);
+          d[i+1] = 128 + 127 * Math.sin(v * Math.PI + 2.094);
+          d[i+2] = 128 + 127 * Math.sin(v * Math.PI + 4.189);
+          d[i+3] = Math.round(animLevel * plasmaOpacity);
+        }
+      }
+      window._pX.putImageData(id, 0, 0);
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(window._pC, 0, 0, W, H);
+      ctx.restore();
+
+    }
+    if (hasPrism) {
+      const prismCopies = fxEffectInt('prism', 'echo', 1, 18);
+      const prismSpread = fxRange('prism', 'drift', 0, 80);
+      const prismAlpha = fxRange('prism', 'mix', 0, 0.8);
+      const prismHue = fxRange('prism', 'hue', 0, 360);
+      const prismSat = fxRange('prism', 'saturation', 0.8, 8);
+      const prismBright = fxRange('prism', 'brightness', 0.4, 1.6);
+      const prismSpeed = fxRange('prism', 'speed', 0.25, 4);
+      if (!window._prC) { window._prC = document.createElement('canvas'); }
+      if (window._prC.width !== W || window._prC.height !== H) { window._prC.width = W; window._prC.height = H; }
+      window._prC.getContext('2d').drawImage(canvas, 0, 0);
+      const dist = (prismSpread + Math.sin(t * 0.018 * prismSpeed) * prismSpread * 0.66) * prismLevel;
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      for (let i = 0; i < prismCopies; i++) {
+        const ang = (i / prismCopies) * Math.PI * 2 + t * 0.006 * prismSpeed;
+        ctx.save();
+        ctx.globalAlpha = prismLevel * prismAlpha;
+        ctx.filter = `hue-rotate(${((i / prismCopies) * 360 + prismHue).toFixed(1)}deg) saturate(${prismSat.toFixed(2)}) brightness(${prismBright.toFixed(2)})`;
+        ctx.drawImage(window._prC, Math.cos(ang) * dist, Math.sin(ang) * dist);
+        ctx.restore();
+      }
+      ctx.restore();
+
+    }
+    if (hasVortex) {
+      const vortexLayers = fxEffectInt('vortex', 'echo', 2, 20);
+      const vortexSpin = fxRange('vortex', 'speed', 0.1, 5.5);
+      const vortexVignette = fxRange('vortex', 'brightness', 0, 2.2);
+      const vortexScale = fxRange('vortex', 'scale', 0.006, 0.07);
+      const vortexHue = fxRange('vortex', 'hue', 0, 180);
+      const vortexSat = fxRange('vortex', 'saturation', 0.8, 5);
+      if (!window._vtC) { window._vtC = document.createElement('canvas'); }
+      if (window._vtC.width !== W || window._vtC.height !== H) { window._vtC.width = W; window._vtC.height = H; }
+      window._vtC.getContext('2d').drawImage(canvas, 0, 0);
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      ctx.translate(W/2, H/2);
+      for (let i = 1; i <= vortexLayers; i++) {
+        ctx.save();
+        ctx.rotate(i * 0.05 * animLevel * vortexSpin + t * 0.004 * vortexSpin);
+        ctx.scale(1 + i * vortexScale * vortexLevel, 1 + i * vortexScale * vortexLevel);
+        ctx.globalAlpha = vortexLevel * Math.max(0.03, 0.16 - i * (0.12 / Math.max(2, vortexLayers)));
+        ctx.filter = `hue-rotate(${(i * 18 + vortexHue).toFixed(1)}deg) saturate(${vortexSat.toFixed(2)})`;
+        ctx.drawImage(window._vtC, -W/2, -H/2);
+        ctx.restore();
+      }
+      ctx.restore();
+      const vg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.min(W,H) * 0.3 * animLevel * Math.max(0.3, vortexVignette));
+      vg.addColorStop(0, `rgba(50,0,70,${animLevel * 0.55 * vortexVignette})`);
+      vg.addColorStop(0.5, `rgba(100,0,180,${animLevel * 0.18 * vortexVignette})`);
+      vg.addColorStop(1, 'transparent');
+      ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+
+    }
+    if (hasAurora) {
+      const auroraBands = fxEffectInt('aurora', 'echo', 1, 16);
+      const auroraWave = fxRange('aurora', 'warp', 0.08, 4.2);
+      const auroraGlow = fxRange('aurora', 'brightness', 0, 3.1);
+      const auroraHue = fxRange('aurora', 'hue', 0, 220);
+      const auroraSat = fxRange('aurora', 'saturation', 0.5, 3.2);
+      const auroraScale = fxRange('aurora', 'scale', 0.35, 2.6);
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      for (let b = 0; b < auroraBands; b++) {
+        const hue = (150 + auroraHue + b * 35 + t * 0.5) % 360;
+        const al = (0.28 + 0.16 * Math.sin(t * 0.009 * auroraWave + b * 1.7)) * auroraLevel * auroraGlow;
+        const yMid = H * (0.08 + b * (0.78 / Math.max(1, auroraBands)));
+        const bH = (55 + 35 * Math.sin(t * 0.007 * auroraWave + b * 2.1)) * auroraLevel * auroraWave * auroraScale;
+        ctx.save();
+        ctx.beginPath();
+        for (let x = 0; x <= W; x += 8) {
+          const y = yMid + Math.sin(x * 0.013 + t * 0.016 * auroraWave + b) * 22 * auroraLevel * auroraWave * auroraScale
+                         + Math.sin(x * 0.007 + t * 0.009 * auroraWave + b * 1.8) * 13 * auroraLevel * auroraWave * auroraScale;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.lineTo(W, yMid + bH * 2); ctx.lineTo(0, yMid + bH * 2); ctx.closePath();
+        const g = ctx.createLinearGradient(0, yMid - bH, 0, yMid + bH * 2);
+        g.addColorStop(0,    `hsla(${hue},${(auroraSat * 40).toFixed(1)}%,70%,0)`);
+        g.addColorStop(0.25, `hsla(${hue},${(auroraSat * 40).toFixed(1)}%,70%,${al})`);
+        g.addColorStop(0.7,  `hsla(${(hue+40)%360},${(auroraSat * 34).toFixed(1)}%,60%,${al*0.4})`);
+        g.addColorStop(1,    `hsla(${(hue+80)%360},${(auroraSat * 34).toFixed(1)}%,55%,0)`);
+        ctx.fillStyle = g; ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+
+    }
+    if (hasAcid) {
+      const acidRings = fxEffectInt('acid', 'echo', 1, 24);
+      const acidHue = fxRange('acid', 'hue', 0.1, 5.5);
+      const acidWash = fxRange('acid', 'mix', 0, 0.9);
+      const acidDrift = fxRange('acid', 'drift', 0, 3.4);
+      const acidScale = fxRange('acid', 'scale', 0.25, 2.4);
+      const acidWarp = fxRange('acid', 'warp', 0.4, 3.2);
+      const acidBright = fxRange('acid', 'brightness', 0.5, 1.9);
+      const acidSat = fxRange('acid', 'saturation', 0.8, 3.5);
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+      for (let r = 0; r < acidRings; r++) {
+        const rad = (0.05 + r * 0.065 * acidScale) * Math.min(W,H) * acidLevel * acidWarp * (1 + 0.18 * Math.sin(t * 0.022 * acidHue + r * 0.9));
+        const hue = (t * 3 * acidHue + r * 40) % 360;
+        const al = (0.14 + 0.08 * Math.sin(t * 0.015 * acidHue + r * 1.1)) * acidLevel * acidBright;
+        ctx.save();
+        ctx.strokeStyle = `hsla(${hue},100%,70%,${al})`;
+        ctx.lineWidth = 0.8 + acidLevel * 8 * acidScale;
+        ctx.beginPath();
+        ctx.arc(
+          W/2 + Math.sin(t * 0.011 * acidHue + r) * 28 * acidLevel * acidDrift,
+          H/2 + Math.cos(t * 0.009 * acidHue + r) * 18 * acidLevel * acidDrift,
+          rad, 0, Math.PI * 2
+        );
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.globalAlpha = acidLevel * acidWash;
+      ctx.fillStyle = `hsl(${(t * 4 * acidHue) % 360},${(acidSat * 28).toFixed(1)}%,60%)`;
+      ctx.fillRect(0, 0, W, H);
+      ctx.restore();
+    }
+  }
+
+  // SpaceRave hover acid preview overlay (independent of main anim system)
+  if (spaceRaveHoverAcid > 0.01) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    for (let r = 0; r < 9; r++) {
+      const breathe = 0.5 + 0.5 * Math.sin(spaceRavePhase + r * 0.5);
+      const rad = (0.07 + r * 0.085) * Math.min(W,H) * spaceRaveHoverAcid * (1 + 0.18 * breathe);
+      const hue = (t * 3 + r * 40) % 360;
+      const al = (0.18 + 0.14 * breathe) * spaceRaveHoverAcid;
+      ctx.save();
+      ctx.strokeStyle = `hsla(${hue},100%,72%,${al})`;
+      ctx.lineWidth = (1.5 + breathe * 2.5) * spaceRaveHoverAcid;
+      ctx.beginPath();
+      ctx.arc(
+        W/2 + Math.sin(t * 0.011 + r) * 32 * spaceRaveHoverAcid,
+        H/2 + Math.cos(t * 0.009 + r) * 22 * spaceRaveHoverAcid,
+        rad, 0, Math.PI * 2
+      );
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.globalAlpha = spaceRaveHoverAcid * (0.04 + 0.04 * (0.5 + 0.5 * Math.sin(spaceRavePhase)));
+    ctx.fillStyle = `hsl(${(t * 4) % 360},100%,60%)`;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
   }
 
   /* ── Tooltip ── */
@@ -2282,18 +3171,45 @@ function draw() {
   updateRituellesHoverReveal(inRituellesUniverse);
 
   // Neon scanline overlay and final flicker
-  if ((effectiveAnim === 'neon' || effectiveAnim === 'frantic') && neonEffectLevel > 0.15) {
-    ctx.globalAlpha = neonEffectLevel * (effectiveAnim === 'frantic' ? 0.14 : 0.035);
+  if ((hasNeon || hasFrantic) && neonEffectLevel > 0.15) {
+    const isFrantic = hasFrantic;
+    const desertDreamLook = !isFrantic && prevDesertDreamActive;
+    // Desert Dream auto-trigger keeps the original fixed-formula neon look, independent of the Visual FX sliders.
+    const scanBoost = desertDreamLook ? 1 : fxRange(isFrantic ? 'frantic' : 'neon', 'echo', 0, 4.2);
+    ctx.globalAlpha = neonEffectLevel * (isFrantic ? 0.14 : 0.035) * scanBoost;
     ctx.fillStyle = '#ffffff';
     ctx.globalCompositeOperation = 'screen';
-    const lineStep = effectiveAnim === 'frantic' ? 4 : 7;
+    const lineStep = desertDreamLook ? 7 : Math.max(1, Math.round(fxRange(isFrantic ? 'frantic' : 'neon', 'warp', isFrantic ? 1 : 2, isFrantic ? 10 : 16)));
     for (let y = 0; y < H; y += lineStep) {
-      if ((Math.floor(y / lineStep) + Math.floor(t / (effectiveAnim === 'frantic' ? 3 : 6))) % 2 === 0) {
-        ctx.fillRect(0, y, W, effectiveAnim === 'frantic' ? 1.2 : 0.9);
+      if ((Math.floor(y / lineStep) + Math.floor(t / (isFrantic ? 3 : 6))) % 2 === 0) {
+        ctx.fillRect(0, y, W, desertDreamLook ? 0.9 : fxRange(isFrantic ? 'frantic' : 'neon', 'scale', isFrantic ? 0.8 : 0.5, isFrantic ? 3 : 2));
       }
     }
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 1;
+  }
+
+  // Unified CSS filter: storm desaturation + love saturation + acid hue-rotate
+  {
+    const parts = [];
+    const activeBrightness = [...activeEffects].length
+      ? [...activeEffects].reduce((sum, name) => sum + fxRange(name, 'brightness', 0.55, 1.9), 0) / activeEffects.size
+      : 1;
+    if (stormColorLevel > 0.001) {
+      parts.push(`saturate(${Math.max(0, 1 - stormColorLevel * fxRange('storm', 'saturation', 0, 1.7)).toFixed(3)})`);
+      parts.push(`brightness(${Math.max(0.08, 1 - stormColorLevel * fxRange('storm', 'brightness', 0, 0.9)).toFixed(3)})`);
+      parts.push(`contrast(${fxRange('storm', 'contrast', 0.8, 2.1).toFixed(3)})`);
+    }
+    if (loveSatLevel > 0.001) parts.push(`saturate(${(1 + 0.6 * loveSatLevel).toFixed(3)})`);
+    if (hasAcid && animLevel > 0.01) {
+      parts.push(`hue-rotate(${(t * 2.5 * animLevel * fxRange('acid', 'hue', 0.3, 2.4)).toFixed(1)}deg)`);
+      parts.push(`saturate(${fxRange('acid', 'saturation', 1, 7).toFixed(2)})`);
+      parts.push(`brightness(${(activeBrightness + fxRange('acid', 'mix', 0, 0.9) * 0.55).toFixed(3)})`);
+      parts.push(`contrast(${fxRange('acid', 'contrast', 0.9, 3.5).toFixed(3)})`);
+    } else {
+      parts.push(`brightness(${activeBrightness.toFixed(3)})`);
+    }
+    canvas.style.filter = parts.join(' ');
   }
 
   requestAnimationFrame(draw);
@@ -2417,6 +3333,13 @@ function openZoneContent(zone) {
     return;
   }
   if (zone.type === 'placeholder') {
+    if (zone.name === 'SpaceRave Planet') {
+      manualFxActive.add('acid');
+      saveManualFxActive();
+      spaceRaveAcidActive = true;
+      updateAnimButtonState();
+      return;
+    }
     showPlaceholder(zone.msg, zone.label);
     return;
   }
@@ -2503,7 +3426,6 @@ function closeModal() {
     endRituellesVideo();
     // Return to regular Rituelles universe view after closing playback.
     rituellesPlaying = false;
-    animManual = false;
     updateAnimButtonState();
     updateNavLockState();
     setRituellesUiHidden(false);
