@@ -1028,6 +1028,7 @@ document.addEventListener('keydown', e => {
 // Touch
 document.addEventListener('touchstart', e => {
   if (e.target.closest('.nav-zone')) return;
+  if (e.target.closest('.top-nav-item') || e.target.closest('.popup-overlay')) return;
   e.preventDefault();
   const t = e.touches[0];
   padStart(t.clientX / W, t.clientY / H);
