@@ -149,8 +149,9 @@
 
     /* ═══ MOBILE ═══ */
     @media (max-width: 768px) {
-      /* Restore cursor on touch devices */
+      /* Restore cursor on touch devices; keep pointer on tappable elements */
       * { cursor: auto !important; }
+      a, button, [data-popup], [data-close], .music-release-header, .popup-backdrop { cursor: pointer !important; }
 
       /* Logo — larger, sits in upper half */
       #logo-wrap {
@@ -1158,6 +1159,7 @@ document.addEventListener('touchend', e => {
 <script>
 /* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
 (function() {
+  if ('ontouchstart' in window) return; // no cursor on touch devices
   const cc_canvas = document.createElement('canvas');
   cc_canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;pointer-events:none;';
   document.body.appendChild(cc_canvas);
