@@ -34,7 +34,8 @@
     }
 
     #logo-wrap img {
-      width: clamp(160px, 22vw, 340px);
+      display: block;
+      width: clamp(220px, 32vw, 480px);
       filter: invert(1) contrast(6) brightness(2);
       mix-blend-mode: screen;
       opacity: 0;
@@ -145,6 +146,276 @@
       opacity: 0;
       transition: opacity 0.5s ease;
     }
+
+    /* ─── TOP NAV ─── */
+    #top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 30;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(24px, 5vw, 72px);
+      padding: clamp(14px, 2.5vh, 28px) 0;
+      pointer-events: auto;
+    }
+
+    .top-nav-item {
+      color: rgba(255,255,255,0.65);
+      font-family: 'Georgia', serif;
+      font-size: clamp(16px, 2vw, 26px);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      user-select: none;
+    }
+
+    .top-nav-item:hover {
+      color: rgba(255,255,255,1);
+      text-shadow: 0 0 18px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.2);
+    }
+
+    /* ─── POPUPS ─── */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .popup-overlay.open {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .popup-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+    }
+
+    .popup-panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(8,10,18,0.96);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-radius: 2px;
+      padding: clamp(32px, 5vw, 64px) clamp(28px, 5vw, 72px);
+      width: min(520px, 90vw);
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: translateY(18px);
+      transition: transform 0.4s ease;
+    }
+
+    .popup-overlay.open .popup-panel {
+      transform: translateY(0);
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 18px; right: 22px;
+      color: rgba(255,255,255,0.35);
+      font-size: 20px;
+      cursor: none;
+      transition: color 0.2s ease;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .popup-close:hover { color: rgba(255,255,255,0.85); }
+
+    .popup-title {
+      font-family: 'Georgia', serif;
+      font-size: clamp(13px, 1.3vw, 17px);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: clamp(22px, 3vh, 38px);
+    }
+
+    .popup-body {
+      font-family: 'Georgia', serif;
+      font-size: clamp(14px, 1.4vw, 17px);
+      line-height: 1.85;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .popup-body p { margin-bottom: 1.2em; }
+    .popup-body p:last-child { margin-bottom: 0; }
+
+    .popup-body a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .popup-body a:hover {
+      color: rgba(255,255,255,1);
+      border-color: rgba(255,255,255,0.6);
+    }
+
+    .live-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .live-list li {
+      display: flex;
+      gap: 20px;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: clamp(13px, 1.3vw, 16px);
+      color: rgba(255,255,255,0.68);
+    }
+
+    .live-list li:last-child { border-bottom: none; }
+
+    .live-date {
+      color: rgba(255,255,255,0.45);
+      font-size: 0.82em;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      min-width: 52px;
+    }
+
+    .music-item-title {
+      color: rgba(255,255,255,0.85);
+      font-size: clamp(13px, 1.3vw, 16px);
+      margin-bottom: 4px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .music-item-year {
+      font-size: 0.82em;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+      letter-spacing: 0.08em;
+    }
+
+    .music-release {
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 2px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.25s ease;
+    }
+
+    .music-release:last-child { margin-bottom: 0; }
+
+    .music-release:not(.music-release--soon):hover {
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .music-release-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      cursor: none;
+    }
+
+    .music-release:not(.music-release--soon) .music-release-header {
+      cursor: none;
+    }
+
+    .music-release--soon {
+      opacity: 0.45;
+    }
+
+    .music-release-arrow {
+      font-size: 20px;
+      color: rgba(255,255,255,0.35);
+      transition: transform 0.3s ease, color 0.2s ease;
+      line-height: 1;
+    }
+
+    .music-release.open .music-release-arrow {
+      transform: rotate(180deg);
+      color: rgba(255,255,255,0.8);
+    }
+
+    .music-release-soon-tag {
+      font-size: clamp(9px, 0.9vw, 11px);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .music-release-links {
+      display: none;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 16px;
+      padding: 0 20px 18px;
+    }
+
+    .music-release.open .music-release-links {
+      display: flex;
+    }
+
+    .music-stream-label {
+      font-size: clamp(10px, 1vw, 12px);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-right: 4px;
+      width: 100%;
+    }
+
+    .music-release-links a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: clamp(12px, 1.2vw, 14px);
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid rgba(255,255,255,0.18);
+      transition: color 0.2s ease, border-color 0.2s ease;
+      cursor: none;
+    }
+
+    .music-release-links a:hover {
+      color: rgba(255,255,255,1);
+      border-color: rgba(255,255,255,0.55);
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: rgba(255,255,255,0.68);
+      text-decoration: none;
+      font-size: clamp(13px, 1.3vw, 16px);
+      letter-spacing: 0.06em;
+      transition: color 0.2s ease;
+      cursor: none;
+    }
+
+    .contact-link:hover { color: rgba(255,255,255,0.95); }
+
+    .contact-label {
+      font-size: 0.78em;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      width: 64px;
+    }
   </style>
 </head>
 <body>
@@ -152,12 +423,112 @@
 <canvas id="canvas"></canvas>
 <canvas id="canvas-fg"></canvas>
 
+<!-- Top navigation -->
+<nav id="top-nav">
+  <span class="top-nav-item" data-popup="about">About</span>
+  <span class="top-nav-item" data-popup="live">Live</span>
+  <span class="top-nav-item" data-popup="music">Music</span>
+  <span class="top-nav-item" data-popup="contact">Contact</span>
+</nav>
+
+<!-- About popup -->
+<div class="popup-overlay" id="popup-about">
+  <div class="popup-backdrop"></div>
+  <div class="popup-panel">
+    <span class="popup-close" data-close="about">&#215;</span>
+    <div class="popup-title">About</div>
+    <div class="popup-body">
+      <p>Tristan Rio creates immersive psychedelic guitar journeys, inspired by a lifelong love of listening to music in bed and drifting toward sleep. Missing music that could truly carry him into dreamland he began crafting his own: rich psychedelic soundscapes grounded in strong melodies and raw, emotional guitar solos.</p>
+      <p>Recently this vision has led to a series of magical, immersive lying-down concerts where music and visuals invite the audience to fully surrender to the experience. Built entirely live, his performances unfold into hypnotic soundscapes that encourage audiences to dream and reconnect.</p>
+      <p>In between building dreamscapes Tristan has also played in numerous bands, the most recent one being the explosive and thought evoking folk/punk band Cirque Constance.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Live popup -->
+<div class="popup-overlay" id="popup-live">
+  <div class="popup-backdrop"></div>
+  <div class="popup-panel">
+    <span class="popup-close" data-close="live">&#215;</span>
+    <div class="popup-title">Live</div>
+    <div class="popup-body">
+      <ul class="live-list">
+        <li><span class="live-date">30 Aug</span><span>Diggie, Brakel/<em>Cirque Constance</em></span></li>
+        <li><span class="live-date">6 Sep</span><span>Lying Down Concert — Sint-Pietersabdij, Gent <em>(RIJP)</em></span></li>
+        <li><span class="live-date">19 Sep</span><span>20 jaar Laweit, Gent/<em>Cirque Constance</em></span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Music popup -->
+<div class="popup-overlay" id="popup-music">
+  <div class="popup-backdrop"></div>
+  <div class="popup-panel">
+    <span class="popup-close" data-close="music">&#215;</span>
+    <div class="popup-title">Music</div>
+    <div class="popup-body">
+      <div class="music-release" id="release-gods">
+        <div class="music-release-header" onclick="toggleRelease('gods')">
+          <div>
+            <div class="music-item-title">The Gods Told Me To Relax</div>
+            <div class="music-item-year">2024 — Album</div>
+          </div>
+          <span class="music-release-arrow">&#8964;</span>
+        </div>
+        <div class="music-release-links">
+          <span class="music-stream-label">Listen on</span>
+          <a href="https://tristanrio.bandcamp.com/album/the-gods-told-me-to-relax" target="_blank">Bandcamp</a>
+          <a href="https://open.spotify.com/album/0qPVZdF4LIxFSKXCxHKYep" target="_blank">Spotify</a>
+          <a href="https://geo.music.apple.com/us/album/_/1734421858?app=music&at=1000lHKX&ct=linktree_http&itscg=30200&itsct=lt_m&ls=1&mt=1" target="_blank">Apple Music</a>
+          <a href="https://listen.tidal.com/album/350002816" target="_blank">Tidal</a>
+          <a href="https://music.amazon.com/albums/B0CX56YNXJ" target="_blank">Amazon Music</a>
+        </div>
+      </div>
+      <div class="music-release music-release--soon">
+        <div class="music-release-header">
+          <div>
+            <div class="music-item-title">Rituelles</div>
+            <div class="music-item-year">Coming soon</div>
+          </div>
+          <span class="music-release-soon-tag">Soon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contact popup -->
+<div class="popup-overlay" id="popup-contact">
+  <div class="popup-backdrop"></div>
+  <div class="popup-panel">
+    <span class="popup-close" data-close="contact">&#215;</span>
+    <div class="popup-title">Contact</div>
+    <div class="popup-body">
+      <div class="contact-links">
+        <a class="contact-link" href="tel:+32487478473">
+          <span class="contact-label">Phone</span>
+          <span>+32 487 47 84 73</span>
+        </a>
+        <a class="contact-link" href="mailto:tristanriomusic@gmail.com">
+          <span class="contact-label">Email</span>
+          <span>tristanriomusic@gmail.com</span>
+        </a>
+        <a class="contact-link" href="https://instagram.com/tristanriomusic" target="_blank">
+          <span class="contact-label">Insta</span>
+          <span>@tristanriomusic</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="logo-wrap">
   <img src="logo.png.jpeg" alt="Tristan Rio" id="logo-img" />
 </div>
 
 <div class="nav-zone" id="zone-bottom" data-dest="space/index.html">
-  <span class="nav-label">Enter Space</span>
+  <span class="nav-label">Discover my universe</span>
   <span class="nav-arrow">&#8593;</span>
 </div>
 
@@ -600,7 +971,16 @@ function toggleSynth() {
 }
 
 /* ─── INPUT HANDLERS ─── */
+let logoParallaxActive = false;
 document.addEventListener('mousemove', e => {
+  // Don't apply parallax until mouse actually enters the window interior
+  if (!logoParallaxActive) {
+    if (e.clientX > 0 && e.clientY > 0 && e.clientX < W - 1 && e.clientY < H - 1) {
+      logoParallaxActive = true;
+    } else {
+      return;
+    }
+  }
   // Parallax logo
   const cx = (e.clientX / W - 0.5) * 12;
   const cy = (e.clientY / H - 0.5) * 8;
@@ -617,6 +997,33 @@ document.addEventListener('mousemove', e => {
 
 // Touch — synth disabled
 // document.addEventListener('touchstart', e => { ... });
+
+/* ─── POPUP LOGIC ─── */
+function toggleRelease(id) {
+  document.getElementById('release-' + id)?.classList.toggle('open');
+}
+
+function openPopup(name) {
+  document.getElementById('popup-' + name)?.classList.add('open');
+}
+function closePopup(name) {
+  document.getElementById('popup-' + name)?.classList.remove('open');
+}
+
+document.querySelectorAll('.top-nav-item[data-popup]').forEach(el => {
+  el.addEventListener('click', () => openPopup(el.dataset.popup));
+});
+document.querySelectorAll('.popup-close[data-close]').forEach(el => {
+  el.addEventListener('click', () => closePopup(el.dataset.close));
+});
+document.querySelectorAll('.popup-backdrop').forEach(el => {
+  el.addEventListener('click', () => {
+    el.closest('.popup-overlay')?.classList.remove('open');
+  });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.popup-overlay.open').forEach(p => p.classList.remove('open'));
+});
 
 // Touch
 document.addEventListener('touchstart', e => {
