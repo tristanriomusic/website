@@ -47,7 +47,7 @@
       position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
       z-index: 30; gap: 10px; align-items: center;
     }
-    @media (max-width: 768px) { #panel-dots { display: flex; } }
+    @media (max-width: 768px), (pointer: coarse) and (max-height: 520px) { #panel-dots { display: flex; } }
     .panel-dot {
       width: 8px; height: 8px; border-radius: 50%;
       background: rgba(255,255,255,0.3);
@@ -1145,6 +1145,231 @@
       visibility: visible !important;
       pointer-events: auto !important;
     }
+    /* ══════════════════════════════════════════════════════════════
+       MOBILE (≤768px) — everything below is phone-only.
+       Desktop keeps its hover-driven behaviour untouched.
+       ══════════════════════════════════════════════════════════════ */
+    #m-menu-btn, #m-sheet, #m-drawer, #m-hint { display: none; }
+
+    /* Kept in sync with MOBILE_MQ in the script below. */
+    @media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
+      /* Desktop chrome that can't work on touch, or is too dense for a phone */
+      #anim-toggle, #anim-controls, #anim-fx-popup { display: none !important; }
+      #tip { display: none !important; }          /* replaced by the info sheet */
+
+      /* No text selection / tap-highlight on the touch controls */
+      #m-menu-btn, #m-sheet, #m-drawer, #back, .panel-dot, .nav-arrow {
+        -webkit-user-select: none; user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* ── Universes button ── */
+      #m-menu-btn {
+        display: block;
+        position: fixed; top: calc(12px + env(safe-area-inset-top)); left: 12px; z-index: 40;
+        border: 1px solid rgba(0,220,255,0.4);
+        border-radius: 999px;
+        background: rgba(4,8,20,0.82);
+        backdrop-filter: blur(14px);
+        color: rgba(235,247,255,0.92);
+        font-family: 'Georgia', serif; font-size: 13px;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        padding: 11px 18px;
+        box-shadow: 0 0 22px rgba(0,180,255,0.22);
+      }
+
+      /* ── First-run hint ── */
+      #m-hint {
+        display: block;
+        position: fixed; top: calc(60px + env(safe-area-inset-top)); left: 50%;
+        transform: translateX(-50%);
+        z-index: 39; white-space: nowrap;
+        color: rgba(180,220,255,0.5);
+        font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+        transition: opacity 0.6s ease;
+        pointer-events: none;
+      }
+      #m-hint.gone { opacity: 0; }
+
+      /* ── Info sheet: name + description + explicit Enter ── */
+      #m-sheet {
+        display: block;
+        position: fixed; left: 10px; right: 10px;
+        bottom: calc(10px + env(safe-area-inset-bottom));
+        z-index: 45;
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 14px;
+        padding: 18px 18px 16px;
+        background:
+          radial-gradient(circle at top left, rgba(0,190,255,0.12), transparent 55%),
+          rgba(4,8,20,0.94);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 18px 50px rgba(0,0,0,0.6);
+        transform: translateY(140%);
+        opacity: 0;
+        transition: transform 0.34s cubic-bezier(.22,.9,.3,1), opacity 0.28s ease;
+        pointer-events: none;
+      }
+      #m-sheet.visible { transform: translateY(0); opacity: 1; pointer-events: auto; }
+      #m-sheet-name {
+        color: #fff; font-size: 17px; line-height: 1.25;
+        letter-spacing: 0.16em; text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      #m-sheet-desc {
+        color: rgba(255,255,255,0.62); font-size: 13px; line-height: 1.5;
+        font-style: italic; letter-spacing: 0.04em;
+        margin-bottom: 16px;
+      }
+      #m-sheet-actions { display: flex; gap: 10px; }
+      #m-sheet-enter, #m-sheet-close {
+        font-family: 'Georgia', serif; font-size: 13px;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        border-radius: 999px; padding: 13px 20px;
+        min-height: 46px;                          /* comfortable touch target */
+      }
+      #m-sheet-enter {
+        flex: 1;
+        border: 1px solid rgba(0,220,255,0.65);
+        background: rgba(0,60,80,0.5);
+        color: #7df3ff;
+        box-shadow: 0 0 20px rgba(0,200,255,0.28);
+      }
+      #m-sheet-close {
+        border: 1px solid rgba(255,255,255,0.16);
+        background: rgba(255,255,255,0.04);
+        color: rgba(255,255,255,0.55);
+      }
+
+      /* ── Universe index drawer ── */
+      #m-drawer {
+        display: block;
+        position: fixed; inset: 0; z-index: 90;
+        background: rgba(0,0,0,0.62);
+        backdrop-filter: blur(6px);
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      #m-drawer.visible { opacity: 1; pointer-events: auto; }
+      #m-drawer-panel {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column;
+        padding: calc(14px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+        background:
+          radial-gradient(circle at top, rgba(0,190,255,0.10), transparent 40%),
+          rgba(3,6,16,0.97);
+      }
+      #m-drawer-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 6px 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 8px;
+      }
+      #m-drawer-title {
+        color: rgba(0,220,255,0.9); font-size: 14px;
+        letter-spacing: 0.24em; text-transform: uppercase;
+      }
+      #m-drawer-close {
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 999px;
+        background: rgba(255,255,255,0.05);
+        color: rgba(255,255,255,0.72);
+        font-family: 'Georgia', serif; font-size: 11px;
+        letter-spacing: 0.18em; text-transform: uppercase;
+        padding: 10px 16px; min-height: 40px;
+      }
+      #m-drawer-list {
+        flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .m-item {
+        display: flex; align-items: center; gap: 14px;
+        width: 100%; text-align: left;
+        padding: 15px 10px;
+        background: none; border: none;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        min-height: 58px;
+      }
+      .m-item-dot {
+        width: 11px; height: 11px; border-radius: 50%;
+        flex-shrink: 0;
+        box-shadow: 0 0 12px currentColor;
+        background: currentColor;
+      }
+      .m-item-text { min-width: 0; }
+      .m-item-name {
+        display: block; color: rgba(255,255,255,0.94);
+        font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase;
+        margin-bottom: 3px;
+      }
+      .m-item-desc {
+        display: block; color: rgba(255,255,255,0.45);
+        font-size: 11.5px; font-style: italic; line-height: 1.4;
+      }
+
+      /* ── Return: real touch target, clear of the panel dots ── */
+      #back {
+        bottom: calc(34px + env(safe-area-inset-bottom));
+        font-size: 12px;
+        padding: 12px 22px;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 999px;
+        background: rgba(4,8,20,0.8);
+        backdrop-filter: blur(12px);
+        color: rgba(255,255,255,0.75);
+        max-width: 88vw;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      /* Sheet is up → move Return above it so they never overlap */
+      body.m-sheet-open #back { opacity: 0; pointer-events: none; }
+
+      #panel-dots { bottom: calc(12px + env(safe-area-inset-bottom)); }
+      .panel-dot { width: 9px; height: 9px; }
+      /* Dots track the map pan, which is meaningless while zoomed into a universe */
+      body.m-sheet-open #panel-dots,
+      body.m-zoomed #panel-dots { opacity: 0; }
+
+      /* Placeholder copy sits over brightly-lit zoomed artwork — give it a scrim */
+      body.m-zoomed #modal-placeholder {
+        background: rgba(2,5,14,0.82);
+        backdrop-filter: blur(8px);
+        border-radius: 14px;
+        padding: 22px 26px;
+        max-width: 88vw;
+      }
+
+      /* ── Nav arrows: tap instead of hover-countdown, and moved out of the middle
+         into a bottom row flanking Return, so they never sit over modal content ── */
+      .nav-arrow {
+        top: auto; transform: none;
+        bottom: calc(28px + env(safe-area-inset-bottom));
+        width: 52px; height: 52px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(4,8,20,0.8) !important;
+        backdrop-filter: blur(12px);
+      }
+      #nav-prev { left: 14px;  right: auto; }
+      #nav-next { right: 14px; left: auto; }
+      .nav-fill { display: none; }
+      .nav-label { color: rgba(255,255,255,0.8); gap: 0; }
+      .nav-symbol { font-size: 22px; }
+      .nav-text { display: none; }
+      /* Leave room for the arrows either side of the Return pill */
+      body.m-zoomed #back { max-width: calc(100vw - 160px); }
+
+      /* Close control is white-on-bright over zoomed artwork — make it a solid pill */
+      body.m-zoomed #modal-close {
+        background: rgba(4,8,20,0.86);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 999px;
+        padding: 12px 22px;
+        color: rgba(255,255,255,0.85);
+        min-height: 44px;
+      }
+    }
+
     .nav-arrow.disabled {
       opacity: 0.2;
       pointer-events: none;
@@ -1162,6 +1387,29 @@
   <div class="panel-dot active" data-panel="0"></div>
   <div class="panel-dot" data-panel="1"></div>
   <div class="panel-dot" data-panel="2"></div>
+</div>
+
+<!-- ── Mobile-only navigation (hidden above 768px) ── -->
+<button id="m-menu-btn" type="button">☰ Universes</button>
+<div id="m-hint">Swipe to explore · tap a glow</div>
+
+<div id="m-sheet" aria-hidden="true">
+  <div id="m-sheet-name"></div>
+  <div id="m-sheet-desc"></div>
+  <div id="m-sheet-actions">
+    <button id="m-sheet-enter" type="button">Enter</button>
+    <button id="m-sheet-close" type="button">Close</button>
+  </div>
+</div>
+
+<div id="m-drawer" aria-hidden="true">
+  <div id="m-drawer-panel">
+    <div id="m-drawer-head">
+      <span id="m-drawer-title">Universes</span>
+      <button id="m-drawer-close" type="button">Close</button>
+    </div>
+    <div id="m-drawer-list"></div>
+  </div>
 </div>
 <div id="handle-layer"></div>
 <div id="edit-bar">
@@ -1496,46 +1744,97 @@ function resize() { W = canvas.width = window.innerWidth; H = canvas.height = wi
 resize();
 window.addEventListener('resize', resize);
 
-/* ═══ MOBILE DETECT ═══ */
-const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+/* ═══ MOBILE DETECT ═══
+   Width alone misses a phone held in landscape (e.g. 812×375), which would then fall
+   back to the desktop hover model that touch can't drive. The second clause catches
+   those: `pointer: coarse` is touch-only, and the height cap keeps tablets and real
+   desktops out. Kept in sync with the matching CSS media query. */
+const MOBILE_MQ = '(max-width: 768px), (pointer: coarse) and (max-height: 520px)';
+const isMobile = () => window.matchMedia(MOBILE_MQ).matches;
 
-/* ═══ MOBILE PANEL SWIPE ═══ */
-let panelIndex = 0;
-let panelOffsetX = 0;
-let touchStartX = 0;
-let touchDeltaX = 0;
-let isSwiping = false;
+/* ═══ MOBILE PANEL PAN ═══
+   On phones the map is drawn taller than the viewport (see imgLayout), so the visible
+   window slides across MOBILE_PANELS screen-widths of artwork.
+   panelIndex = snapped target, panelPos = smoothed float the renderer actually reads. */
+const MOBILE_PANELS = 3;
+let panelIndex = 1;   // start centred — matches what desktop shows
+let panelPos = 1;
+let dragStartX = 0, dragStartY = 0, dragStartPanel = 1;
+let isSwiping = false, dragMoved = false;
+let lastPanOffsetX = 0;   // published by draw() so hit-testing matches what's on screen
 
 const panelDots = document.querySelectorAll('.panel-dot');
 
-function setPanel(idx) {
-  panelIndex = Math.max(0, Math.min(2, idx));
+function setPanel(idx, snap) {
+  panelIndex = Math.max(0, Math.min(MOBILE_PANELS - 1, idx));
+  if (snap) panelPos = panelIndex;
   panelDots.forEach((d, i) => d.classList.toggle('active', i === panelIndex));
+}
+setPanel(1, true);
+
+/* Pixels of artwork travelled per panel step. 0 when the map already fits (landscape). */
+function panelStridePx(drawW) {
+  return drawW > W ? (drawW - W) / (MOBILE_PANELS - 1) : 0;
+}
+
+/* Translate amount for the current pan position: panel 0 flushes the artwork's left
+   edge to the screen's left, the last panel flushes its right edge to the right. */
+function mobilePanOffset(drawW, ox) {
+  const stride = panelStridePx(drawW);
+  return stride === 0 ? 0 : ox + panelPos * stride;
 }
 
 panelDots.forEach(d => {
-  d.addEventListener('click', () => setPanel(parseInt(d.dataset.panel)));
+  d.addEventListener('click', () => setPanel(parseInt(d.dataset.panel), false));
 });
 
 canvas.addEventListener('touchstart', e => {
-  if (!isMobile()) return;
-  touchStartX = e.touches[0].clientX;
-  touchDeltaX = 0;
+  if (!isMobile() || zoomed) return;
+  dragStartX = e.touches[0].clientX;
+  dragStartY = e.touches[0].clientY;
+  dragStartPanel = panelPos;
+  dragMoved = false;
   isSwiping = true;
 }, { passive: true });
 
 canvas.addEventListener('touchmove', e => {
   if (!isMobile() || !isSwiping) return;
-  touchDeltaX = e.touches[0].clientX - touchStartX;
+  const dx = e.touches[0].clientX - dragStartX;
+  const dy = e.touches[0].clientY - dragStartY;
+  // Past this threshold it's a pan, not a tap — used to suppress the trailing click.
+  if (Math.abs(dx) > 10 || Math.abs(dy) > 10) dragMoved = true;
+  const stride = panelStridePx(imgLayout().drawW);
+  if (stride > 0) {
+    panelPos = Math.max(0, Math.min(MOBILE_PANELS - 1, dragStartPanel - dx / stride));
+  }
 }, { passive: true });
 
-canvas.addEventListener('touchend', e => {
+canvas.addEventListener('touchend', () => {
   if (!isMobile() || !isSwiping) return;
   isSwiping = false;
-  if (touchDeltaX < -50) setPanel(panelIndex + 1);
-  else if (touchDeltaX > 50) setPanel(panelIndex - 1);
-  touchDeltaX = 0;
+  setPanel(Math.round(panelPos), false);   // draw() eases panelPos into the snap
 });
+
+/* ═══ MOBILE ZONE SELECTION ═══
+   A tap selects an orb and opens its info sheet; entering takes a second, deliberate
+   tap on "Enter". Replaces the desktop hover-then-click model, which on touch meant
+   zooming into a universe before you could see what it was. */
+let mobileSelectedZone = null;
+
+/* Mirrors draw()'s hit test, but resolves overlapping orbs to the nearest centre
+   rather than the last one in ZONES order — fairer under a fingertip. */
+function zoneAtPoint(px, py) {
+  const { drawW, drawH, ox, oy } = imgLayout();
+  let best = null, bestD = Infinity;
+  for (const z of ZONES) {
+    const zx = ox + z.nx * drawW, zy = oy + z.ny * drawH;
+    const czrx = (z.cnrx !== undefined ? z.cnrx : z.nrx) * drawW * 1.5;
+    const czry = (z.cnry !== undefined ? z.cnry : z.nry) * drawH * 1.5;
+    const d = Math.pow((px + lastPanOffsetX - zx) / czrx, 2) + Math.pow((py - zy) / czry, 2);
+    if (d < 1 && d < bestD) { best = z; bestD = d; }
+  }
+  return best;
+}
 
 /* ═══ IMAGE ═══ */
 const img = new Image();
@@ -2186,11 +2485,27 @@ document.addEventListener('keydown', markUiActivity);
 canvas.addEventListener('click', e => {
   if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) return;
   if (document.getElementById('truth-overlay').classList.contains('visible')) return;
+  if (isMobile()) {
+    if (dragMoved) { dragMoved = false; return; }   // that was a pan, not a tap
+    if (zoomed) return;                             // leaving is the Return button's job
+    const z = zoneAtPoint(e.clientX, e.clientY);
+    if (z) selectMobileZone(z); else clearMobileSelection();
+    return;
+  }
   if (zoomed) { zoomOut(); return; }
   if (hoveredZone) zoomIn(hoveredZone);
 });
 
 back.addEventListener('click', () => {
+  if (isMobile()) {
+    // On touch this pill is the only way out (canvas taps select orbs instead of
+    // zooming out), so one tap exits fully — zoomOut() also closes modals/overlays.
+    if (spaceRaveAcidActive) { spaceRaveAcidActive = false; updateAnimButtonState(); }
+    if (zoomed) { zoomOut(); return; }
+    window.parent?.dreamPlayer?.tryUnlock?.();
+    window.location.href = '../landing.html';
+    return;
+  }
   if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) { closeModal(); return; }
   if (modal.classList.contains('visible')) closeModal();
   if (spaceRaveAcidActive) { spaceRaveAcidActive = false; updateAnimButtonState(); }
@@ -2244,7 +2559,10 @@ function imgLayout() {
   const needsRot = img.naturalWidth < img.naturalHeight;
   const imgLW = needsRot ? img.naturalHeight : img.naturalWidth;
   const imgLH = needsRot ? img.naturalWidth  : img.naturalHeight;
-  const scale = Math.min(W / imgLW, H / imgLH);
+  // Desktop fits the whole map on screen. On phones that leaves it a thin letterboxed
+  // strip with unreadable orbs, so fill the viewport height instead and let the user
+  // pan sideways across MOBILE_PANELS screen-widths (see mobilePanOffset).
+  const scale = isMobile() ? (H / imgLH) : Math.min(W / imgLW, H / imgLH);
   const drawW = imgLW * scale, drawH = imgLH * scale;
   const ox = (W - drawW) / 2, oy = (H - drawH) / 2;
   return { needsRot, drawW, drawH, ox, oy };
@@ -2287,6 +2605,19 @@ function draw() {
     : 0;
   const franticEffectLevel = franticLevel;
   const fractalActive = fractalLevel > 0.01;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+
+  if (!img.complete || !img.naturalWidth) { requestAnimationFrame(draw); return; }
+
+  const { needsRot, drawW, drawH, ox, oy } = imgLayout();
+
+  /* Mobile pan offset. Eased toward the snapped panel between drags. Computed here,
+     ahead of the fractal intro below, which reads it. */
+  if (isMobile() && !isSwiping) panelPos += (panelIndex - panelPos) * 0.18;
+  const mobileOffsetX = isMobile() ? mobilePanOffset(drawW, ox) : 0;
+  lastPanOffsetX = mobileOffsetX;
+
   if (fractalActive) {
     if (fractalRampStart === null) {
       fractalRampStart = performance.now();
@@ -2313,18 +2644,6 @@ function draw() {
   const fractalIntroProgress = fractalIntroStart === null
     ? 0
     : Math.min((performance.now() - fractalIntroStart) / FRACTAL_INTRO_MS, 1);
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, W, H);
-
-  if (!img.complete || !img.naturalWidth) { requestAnimationFrame(draw); return; }
-
-  const { needsRot, drawW, drawH, ox, oy } = imgLayout();
-
-  /* Mobile panel offset */
-  let mobileOffsetX = 0;
-  if (isMobile()) {
-    mobileOffsetX = panelIndex * (drawW / 3);
-  }
 
   /* ── Auto-tour for Fractal Dream ── */
   let fractalTouring = false;
@@ -2397,7 +2716,7 @@ function draw() {
     baseTx = zoomCurrent.tx;
     baseTy = zoomCurrent.ty;
     baseScale = zoomCurrent.scale;
-  } else if (isMobile() && mobileOffsetX !== 0) {
+  } else if (isMobile()) {
     baseTx = -mobileOffsetX;
   }
 
@@ -2448,7 +2767,7 @@ function draw() {
     ctx.translate(W/2, H/2);
     ctx.scale(z.scale, z.scale);
     ctx.translate(-W/2 + z.tx, -H/2 + z.ty);
-  } else if (isMobile() && mobileOffsetX !== 0) {
+  } else if (isMobile()) {
     ctx.translate(-mobileOffsetX, 0);
   }
 
@@ -2480,15 +2799,22 @@ function draw() {
     ctx.transform(1, vibSkew, vibSkew * 0.5, 1, 0, 0);
   }
 
-  /* ── Detect hovered zone (before draw so we can boost deformation) ── */
-  hoveredZone = null;
-  for (let i = 0; i < ZONES.length; i++) {
-    const z = ZONES[i];
-    const zx = ox + z.nx * drawW, zy = oy + z.ny * drawH;
-    const czrx = (z.cnrx !== undefined ? z.cnrx : z.nrx) * drawW * 1.5;
-    const czry = (z.cnry !== undefined ? z.cnry : z.nry) * drawH * 1.5;
-    if (!zoomed && Math.pow((mx + mobileOffsetX - zx) / czrx, 2) + Math.pow((my - zy) / czry, 2) < 1)
-      hoveredZone = z;
+  /* ── Detect hovered zone (before draw so we can boost deformation) ──
+     Touch has no hover, so on mobile the tapped selection stands in for it: the
+     chosen orb gets the same glow boost and per-zone effects as a desktop hover. */
+  if (isMobile()) {
+    hoveredZone = zoomed ? null : mobileSelectedZone;
+    document.body.classList.toggle('m-zoomed', zoomed);
+  } else {
+    hoveredZone = null;
+    for (let i = 0; i < ZONES.length; i++) {
+      const z = ZONES[i];
+      const zx = ox + z.nx * drawW, zy = oy + z.ny * drawH;
+      const czrx = (z.cnrx !== undefined ? z.cnrx : z.nrx) * drawW * 1.5;
+      const czry = (z.cnry !== undefined ? z.cnry : z.nry) * drawH * 1.5;
+      if (!zoomed && Math.pow((mx + mobileOffsetX - zx) / czrx, 2) + Math.pow((my - zy) / czry, 2) < 1)
+        hoveredZone = z;
+    }
   }
 
   // Auto-trigger storm when in Darkness zone (hover or navigated to)
@@ -3216,6 +3542,13 @@ function draw() {
 }
 draw();
 
+/* Phones have no ESC key and the canvas tap is reserved for selection, so the pill is
+   the only way back — label it plainly instead of the desktop's longer hint, which
+   also overflowed the pill on a narrow screen. */
+function setBackLabel(zone) {
+  back.textContent = isMobile() ? '← Return' : `↑ ${zone.name} — click or ESC to return`;
+}
+
 /* ═══ ZOOM IN/OUT ═══ */
 function zoomIn(zone) {
   zoomed = true;
@@ -3231,7 +3564,7 @@ function zoomIn(zone) {
     openZoneContent(zone);
     showNavArrows(true);
   });
-  back.textContent = `↑ ${zone.name} — click or ESC to return`;
+  setBackLabel(zone);
 }
 
 function zoomOut() {
@@ -3239,6 +3572,7 @@ function zoomOut() {
   closeTruthOverlay();
   closeLoveOverlay();
   closeAquarium();
+  if (isMobile()) clearMobileSelection();
   showNavArrows(false);
   animateZoom(zoomCurrent, { tx:0, ty:0, scale:1 }, 500, () => {
     zoomed = false;
@@ -3275,7 +3609,7 @@ function openZoneContent(zone) {
   if (zone.type === 'external') {
     window.open(zone.url, '_blank');
     // stay zoomed in — user exits manually
-    back.textContent = `^ ${zone.name} - click or ESC to return`;
+    setBackLabel(zone);
     return;
   }
   if (zone.type === 'popup-window') {
@@ -3286,7 +3620,7 @@ function openZoneContent(zone) {
     const top = (screen.height - height) / 2;
     window.open(zone.url, 'godsPopup', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
     // stay zoomed in - user exits manually
-    back.textContent = `^ ${zone.name} - click or ESC to return`;
+    setBackLabel(zone);
     return;
   }
   if (zone.type === 'popup') {
@@ -6279,7 +6613,7 @@ function navigateToZone(newZone) {
   closeLoveOverlay();
   closeAquarium();
   zoomTarget = newZone;
-  back.textContent = `↑ ${newZone.name} — click or ESC to return`;
+  setBackLabel(newZone);
   const { drawW, drawH, ox, oy } = imgLayout();
   const zx = ox + newZone.nx * drawW, zy = oy + newZone.ny * drawH;
   const tx = W/2 - zx, ty = H/2 - zy;
@@ -6316,6 +6650,127 @@ navPrev.addEventListener('mouseenter', () => startNavHover(navPrev, -1, 'prev'))
 navPrev.addEventListener('mouseleave', () => cancelNavHover(navPrev, 'prev'));
 navNext.addEventListener('mouseenter', () => startNavHover(navNext,  1, 'next'));
 navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
+
+// Touch has no hover, so the 2s hover-countdown above never fires: tap navigates directly.
+navPrev.addEventListener('click', () => { if (isMobile()) navigateSpatial(-1); });
+navNext.addEventListener('click', () => { if (isMobile()) navigateSpatial(1); });
+
+/* ═══ MOBILE NAVIGATION UI ═══ */
+const mMenuBtn    = document.getElementById('m-menu-btn');
+const mHint       = document.getElementById('m-hint');
+const mSheet      = document.getElementById('m-sheet');
+const mSheetName  = document.getElementById('m-sheet-name');
+const mSheetDesc  = document.getElementById('m-sheet-desc');
+const mSheetEnter = document.getElementById('m-sheet-enter');
+const mSheetClose = document.getElementById('m-sheet-close');
+const mDrawer     = document.getElementById('m-drawer');
+const mDrawerClose= document.getElementById('m-drawer-close');
+const mDrawerList = document.getElementById('m-drawer-list');
+
+function dismissMobileHint() {
+  if (mHint) mHint.classList.add('gone');
+}
+
+/* Zone label colours are tuned to glow as orbs over artwork; a few (Darkness #3322aa,
+   Peace #ff2d78) are too dark to read as text on the near-black panels. Keep the hue,
+   lift saturation/lightness to a legible floor. */
+function readableAccent(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  const r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  const l = (max + min) / 2;
+  let h = 0, s = 0;
+  if (d) {
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r)      h = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) h = (b - r) / d + 2;
+    else                h = (r - g) / d + 4;
+    h *= 60;
+  }
+  return `hsl(${Math.round(h)}, ${Math.round(Math.max(60, s * 100))}%, ${Math.round(Math.max(68, l * 100))}%)`;
+}
+
+function selectMobileZone(zone) {
+  mobileSelectedZone = zone;
+  dismissMobileHint();
+  mSheetName.textContent = zone.name;
+  mSheetName.style.color = readableAccent(zone.label);
+  mSheetName.style.textShadow = `0 0 16px ${zone.label}`;   // raw colour still drives the glow
+  mSheetDesc.textContent = zone.hoverText || '';
+  mSheet.classList.add('visible');
+  mSheet.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('m-sheet-open');
+}
+
+function clearMobileSelection() {
+  mobileSelectedZone = null;
+  mSheet.classList.remove('visible');
+  mSheet.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('m-sheet-open');
+}
+
+mSheetEnter.addEventListener('click', () => {
+  const zone = mobileSelectedZone;
+  if (!zone) return;
+  clearMobileSelection();
+  zoomIn(zone);
+});
+mSheetClose.addEventListener('click', clearMobileSelection);
+
+/* Which pan panel best centres a given zone. */
+function panelForZone(zone) {
+  const { drawW } = imgLayout();
+  const stride = panelStridePx(drawW);
+  if (stride === 0) return panelIndex;
+  return Math.max(0, Math.min(MOBILE_PANELS - 1,
+    Math.round((zone.nx * drawW - W / 2) / stride)));
+}
+
+function buildMobileDrawer() {
+  mDrawerList.innerHTML = '';
+  // Ordered left→right across the map so the list matches the swipe order.
+  [...ZONES].sort((a, b) => a.nx - b.nx).forEach(zone => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'm-item';
+    btn.innerHTML =
+      `<span class="m-item-dot"></span>` +
+      `<span class="m-item-text"><span class="m-item-name"></span>` +
+      `<span class="m-item-desc"></span></span>`;
+    btn.querySelector('.m-item-dot').style.color = readableAccent(zone.label);
+    btn.querySelector('.m-item-name').textContent = zone.name;
+    btn.querySelector('.m-item-desc').textContent = zone.hoverText || '';
+    btn.addEventListener('click', () => {
+      closeMobileDrawer();
+      if (zoomed) {
+        // Already inside a universe — fly straight there rather than dropping back out.
+        navigateToZone(zone);
+        return;
+      }
+      setPanel(panelForZone(zone), false);
+      selectMobileZone(zone);
+    });
+    mDrawerList.appendChild(btn);
+  });
+}
+
+function openMobileDrawer() {
+  buildMobileDrawer();
+  mDrawer.classList.add('visible');
+  mDrawer.setAttribute('aria-hidden', 'false');
+  dismissMobileHint();
+}
+
+function closeMobileDrawer() {
+  mDrawer.classList.remove('visible');
+  mDrawer.setAttribute('aria-hidden', 'true');
+}
+
+mMenuBtn.addEventListener('click', openMobileDrawer);
+mDrawerClose.addEventListener('click', closeMobileDrawer);
+mDrawer.addEventListener('click', e => { if (e.target === mDrawer) closeMobileDrawer(); });
 
 /* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
 (function() {
@@ -6585,8 +7040,11 @@ navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
 
   function drawFrame() {
     const inEditMode = document.body.classList.contains('edit-mode');
-    cc_canvas.style.display = inEditMode ? 'none' : 'block';
-    if (inEditMode) { requestAnimationFrame(drawFrame); return; }
+    // The cursor ship follows a mouse; on touch there is none, so it would sit
+    // frozen in the middle of the screen. Hide it on phones.
+    const hidden = inEditMode || isMobile();
+    cc_canvas.style.display = hidden ? 'none' : 'block';
+    if (hidden) { requestAnimationFrame(drawFrame); return; }
     cc.clearRect(0, 0, cc_canvas.width, cc_canvas.height);
     frame++;
 
