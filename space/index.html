@@ -3110,7 +3110,10 @@ function draw() {
   ctx.globalCompositeOperation = 'source-over';
 
   /* ── Warp starfield ── */
-  drawWarpStars();
+  // Skipped on phones: the artwork fills the whole viewport there, so these 500
+  // streaking trails land on top of the art rather than the empty space around it,
+  // which reads as constant flashing motion over the map.
+  if (!isMobile()) drawWarpStars();
 
   /* ── Twinkling stars — slow, varied palette ── */
   ctx.globalCompositeOperation = 'screen';
