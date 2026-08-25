@@ -7,6 +7,11 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
 
+    /* Vertical centre of the logo, which is also the starfield's vanishing point.
+       Declared once here so the CSS placement and the canvas warp origin (read from
+       this variable in resize()) can never drift apart. */
+    :root { --logo-center-y: 50%; }
+
     body {
       background: #000;
       overflow: hidden;
@@ -26,7 +31,7 @@
     /* Logo — sharp, hi-res, breathing animation */
     #logo-wrap {
       position: fixed;
-      top: 50%; left: 50%;
+      top: var(--logo-center-y); left: 50%;
       transform: translate(-50%, -50%);
       z-index: 10;
       pointer-events: none;
@@ -153,10 +158,9 @@
       * { cursor: auto !important; }
       a, button, [data-popup], [data-close], .music-release-header, .popup-backdrop { cursor: pointer !important; }
 
-      /* Logo — larger, sits in upper half */
-      #logo-wrap {
-        top: 42%;
-      }
+      /* Logo — larger, sits in the upper half to clear the bottom nav strip.
+         The starfield reads this too, so the warp still radiates from behind it. */
+      :root { --logo-center-y: 42%; }
       #logo-wrap img {
         width: clamp(220px, 72vw, 340px);
       }
@@ -654,11 +658,21 @@ const canvasFg = document.getElementById('canvas-fg');
 const ctxFg    = canvasFg.getContext('2d');
 let W, H, CX, CY;
 
+/* The starfield's vanishing point is meant to sit behind the logo. On mobile the logo
+   is raised to clear the bottom nav, so take its position from the same CSS variable
+   that places it rather than assuming the viewport centre. */
+function logoCenterFraction() {
+  const pct = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--logo-center-y')
+  );
+  return Number.isFinite(pct) ? pct / 100 : 0.5;
+}
+
 function resize() {
   W  = canvas.width  = canvasFg.width  = window.innerWidth;
   H  = canvas.height = canvasFg.height = window.innerHeight;
   CX = W / 2;
-  CY = H / 2;
+  CY = H * logoCenterFraction();
 }
 resize();
 window.addEventListener('resize', resize);
