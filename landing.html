@@ -494,19 +494,26 @@
       }
 
       /* Top nav moves to bottom strip, above Discover button */
+      /* Two rows of two — half the items per row, so each can be far
+         larger than it could be on a single cramped line. */
       #top-nav {
         top: unset !important;
-        bottom: 64px;
-        padding: 12px 10px;
-        gap: clamp(9px, 3.4vw, 22px);
-        background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+        bottom: 62px;
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        justify-content: center;
+        column-gap: clamp(20px, 7vw, 48px);
+        row-gap: 0;
+        padding: 14px 10px;
+        background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
       }
 
       .top-nav-item {
-        font-size: clamp(14px, 4.4vw, 21px);
+        font-size: clamp(20px, 7.6vw, 30px);
         letter-spacing: 0.1em;
-        padding: 9px 0;
-        color: rgba(255,255,255,0.82);
+        padding: 10px 0;
+        color: rgba(255,255,255,0.88);
+        text-align: center;
       }
 
       /* Discover my universe — smaller and tighter on mobile */
