@@ -516,6 +516,11 @@
         text-align: center;
       }
 
+      /* Bottom row reads Contact / Music on phones — balances the two
+         columns better than Music / Contact does. Visual order only. */
+      .top-nav-item[data-popup="contact"] { order: 3; }
+      .top-nav-item[data-popup="music"]   { order: 4; }
+
       /* Discover my universe — smaller and tighter on mobile */
       #zone-bottom {
         bottom: 14px;
