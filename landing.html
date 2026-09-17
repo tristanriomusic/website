@@ -497,15 +497,16 @@
       #top-nav {
         top: unset !important;
         bottom: 64px;
-        padding: 10px 12px;
-        gap: clamp(8px, 3.5vw, 20px);
-        background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 100%);
+        padding: 12px 10px;
+        gap: clamp(9px, 3.4vw, 22px);
+        background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
       }
 
       .top-nav-item {
-        font-size: clamp(11px, 3.2vw, 15px);
-        letter-spacing: 0.13em;
-        padding: 6px 0;
+        font-size: clamp(14px, 4.4vw, 21px);
+        letter-spacing: 0.1em;
+        padding: 9px 0;
+        color: rgba(255,255,255,0.82);
       }
 
       /* Discover my universe — smaller and tighter on mobile */
@@ -937,9 +938,15 @@ loop();
 const overlay = document.getElementById('zoom-overlay');
 const warpMsg = document.getElementById('warp-msg');
 
+// Each destination gets one or more lines, shown in turn during the warp.
 const WARP_MESSAGES = {
-  'space/index.html': 'We are here to discover —\nto boldly go where no one has gone before.',
-  'dreams/index.html': 'Who are you?\nWhere do we go?',
+  'space/index.html': [
+    'We are here to discover —\nto boldly go where no one has gone before.',
+    'This universe is still under construction —\nexpect a glitch or two along the way.',
+  ],
+  'dreams/index.html': [
+    'Who are you?\nWhere do we go?',
+  ],
 };
 
 function navigate(zone) {
@@ -951,14 +958,19 @@ function navigate(zone) {
   warpZoom  = 1;
   document.body.classList.add('transitioning');
 
-  // Show message if defined — Space gets longer to let the quote breathe
-  const msg = WARP_MESSAGES[dest];
-  const navDelay = dest.startsWith('space/') ? 5000 : 2400;
-  if (msg) {
-    warpMsg.textContent = msg;
+  // Show messages if defined — Space gets longer to let each line breathe
+  const msgs = WARP_MESSAGES[dest] || [];
+  const navDelay = dest.startsWith('space/') ? 400 + msgs.length * 3200 : 2400;
+  if (msgs.length) {
+    const FADE = 600;                       // matches the #warp-msg colour transition
+    const slot = (navDelay - 400) / msgs.length;
     warpMsg.style.whiteSpace = 'pre-line';
-    setTimeout(() => warpMsg.classList.add('visible'), 400);
-    setTimeout(() => warpMsg.classList.remove('visible'), navDelay - 600);
+    msgs.forEach((msg, i) => {
+      const start = 400 + i * slot;
+      // Swapped only once the previous line has finished fading out.
+      setTimeout(() => { warpMsg.textContent = msg; warpMsg.classList.add('visible'); }, start);
+      setTimeout(() => warpMsg.classList.remove('visible'), start + slot - FADE);
+    });
   }
 
   setTimeout(() => {
