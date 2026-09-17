@@ -295,10 +295,14 @@
       gap: 3px;
     }
 
-    .live-place {
+    .live-meta {
       font-size: 0.82em;
       color: rgba(255,255,255,0.38);
     }
+
+    /* The collaborating act — kept brighter than the location so a
+       shared bill reads as a credit, not part of the venue. */
+    .live-with { color: rgba(255,255,255,0.58); }
 
     .live-tab {
       cursor: pointer;
@@ -321,7 +325,8 @@
     }
 
     .live-list li.is-past { color: rgba(255,255,255,0.48); }
-    .live-list li.is-past .live-place { color: rgba(255,255,255,0.28); }
+    .live-list li.is-past .live-meta { color: rgba(255,255,255,0.28); }
+    .live-list li.is-past .live-with { color: rgba(255,255,255,0.42); }
 
     .live-list {
       list-style: none;
@@ -1186,9 +1191,10 @@ document.addEventListener('mousemove', e => {
    Upcoming to Past automatically once their date has passed.
    `note` is optional and renders in italics. */
 const SHOWS = [
-  { date: '2026-09-19', title: '20 jaar Laweit — Cirque Constance', note: 'Gent, België' },
+  { date: '2026-09-29', title: 'Tattoo Circus', with: 'Cirque Constance', note: 'Melle, België' },
+  { date: '2026-09-19', title: '20 jaar Laweit', with: 'Cirque Constance', note: 'Gent, België' },
   { date: '2026-09-06', title: 'Sint-Pietersabdij — RIJP (Lying Down)', note: 'Gent, België' },
-  { date: '2026-08-30', title: 'Diggie — Cirque Constance', note: 'Brakel, België' },
+  { date: '2026-08-30', title: 'Diggie', with: 'Cirque Constance', note: 'Brakel, België' },
   { date: '2026-03-28', title: 'Desert Dream — Bombay Beach Biennale', note: 'Bombay Beach, Californië, Verenigde Staten' },
   { date: '2026-03-03', title: 'Painted Canyon', note: 'Mecca, Californië, Verenigde Staten' },
   { date: '2026-02-27', title: 'Yurtsessies Terneuzen', note: 'Terneuzen, Nederland' },
@@ -1200,7 +1206,7 @@ const SHOWS = [
   { date: '2025-09-27', title: 'Funk The System — Chinastraat', note: 'Gent, België' },
   { date: '2025-09-23', title: 'Pannenhuis', note: 'Brugge, België' },
   { date: '2025-09-20', title: 'Rodenbachfeesten', note: 'Roeselare, België' },
-  { date: '2025-09-19', title: 'B52 — with Quantum Fantay', note: 'Ichtegem, België' },
+  { date: '2025-09-19', title: 'B52', with: 'Quantum Fantay', note: 'Ichtegem, België' },
   { date: '2025-09-09', title: 'Durango Sessions', note: 'Beringen, België' },
   { date: '2025-08-29', title: 'Vuurritueel NT Gent', note: 'Merelbeke-Melle, België' },
   { date: '2025-07-23', title: 'Gentse Feesten Streetshows', note: 'Gent, België' },
@@ -1269,10 +1275,13 @@ function renderShows() {
     .sort((a, b) => past ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date));
 
   list.innerHTML = shows.map(s => {
-    const place = s.note ? '<em class="live-place">' + esc(s.note) + '</em>' : '';
+    const meta = [];
+    if (s.with) meta.push('<span class="live-with">with ' + esc(s.with) + '</span>');
+    if (s.note) meta.push(esc(s.note));
+    const metaLine = meta.length ? '<em class="live-meta">' + meta.join(' &middot; ') + '</em>' : '';
     return '<li' + (past ? ' class="is-past"' : '') + '>' +
       '<span class="live-date">' + formatShowDate(s.date) + '</span>' +
-      '<span class="live-info"><span>' + esc(s.title) + '</span>' + place + '</span></li>';
+      '<span class="live-info"><span>' + esc(s.title) + '</span>' + metaLine + '</span></li>';
   }).join('');
 
   // Long archives scroll — always start at the top of the list.
