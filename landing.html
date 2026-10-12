@@ -384,7 +384,7 @@
 
     .music-release:last-child { margin-bottom: 0; }
 
-    .music-release:not(.music-release--soon):hover {
+    .music-release:hover {
       border-color: rgba(255,255,255,0.22);
     }
 
@@ -396,12 +396,8 @@
       cursor: none;
     }
 
-    .music-release:not(.music-release--soon) .music-release-header {
-      cursor: none;
-    }
-
     .music-release--soon {
-      opacity: 0.45;
+      opacity: 0.75;
     }
 
     .music-release-arrow {
@@ -414,13 +410,6 @@
     .music-release.open .music-release-arrow {
       transform: rotate(180deg);
       color: rgba(255,255,255,0.8);
-    }
-
-    .music-release-soon-tag {
-      font-size: clamp(9px, 0.9vw, 11px);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
     }
 
     .music-release-links {
@@ -677,13 +666,17 @@
           <a href="https://music.amazon.com/albums/B0CX56YNXJ" target="_blank">Amazon Music</a>
         </div>
       </div>
-      <div class="music-release music-release--soon">
-        <div class="music-release-header">
+      <div class="music-release music-release--soon" id="release-rituelles">
+        <div class="music-release-header" onclick="toggleRelease('rituelles')">
           <div>
             <div class="music-item-title">Rituelles</div>
-            <div class="music-item-year">Coming soon</div>
+            <div class="music-item-year">Out October 21</div>
           </div>
-          <span class="music-release-soon-tag">Soon</span>
+          <span class="music-release-arrow">&#8964;</span>
+        </div>
+        <div class="music-release-links">
+          <span class="music-stream-label">Pre-save</span>
+          <a href="https://distrokid.com/hyperfollow/tristanrio/rituelles?ref=release" target="_blank">Pre-save Rituelles</a>
         </div>
       </div>
     </div>
@@ -711,6 +704,19 @@
           <span>@tristanriomusic</span>
         </a>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- New release announcement popup -->
+<div class="popup-overlay" id="popup-announce">
+  <div class="popup-backdrop"></div>
+  <div class="popup-panel">
+    <span class="popup-close" data-close="announce">&#215;</span>
+    <div class="popup-title">New Release</div>
+    <div class="popup-body">
+      <p>New song <em>Rituelles</em> coming out on the 21st of October.</p>
+      <p><a href="https://distrokid.com/hyperfollow/tristanrio/rituelles?ref=release" target="_blank">Pre-save it here</a>.</p>
     </div>
   </div>
 </div>
@@ -1216,7 +1222,7 @@ document.addEventListener('mousemove', e => {
    Upcoming to Past automatically once their date has passed.
    `note` is optional and renders in italics. */
 const SHOWS = [
-  { date: '2026-11-21', title: 'Peace at Stadsmakers (Lying Down)', note: 'Gent, België' },
+  { date: '2026-11-21', title: 'Peace - Stadsmakers (Lying Down)', note: 'Gent, België' },
   { date: '2026-09-06', title: 'Sint-Pietersabdij — RIJP (Lying Down)', note: 'Gent, België' },
   { date: '2026-03-28', title: 'Desert Dream — Bombay Beach Biennale', note: 'Bombay Beach, Californië, Verenigde Staten' },
   { date: '2026-03-03', title: 'Painted Canyon', note: 'Mecca, Californië, Verenigde Staten' },
@@ -1336,6 +1342,12 @@ function openPopup(name) {
 }
 function closePopup(name) {
   document.getElementById('popup-' + name)?.classList.remove('open');
+}
+
+// Show the new-release announcement once per visit, after the intro settles.
+if (!sessionStorage.getItem('announce-rituelles-seen')) {
+  sessionStorage.setItem('announce-rituelles-seen', '1');
+  setTimeout(() => openPopup('announce'), 1600);
 }
 
 document.querySelectorAll('.top-nav-item[data-popup]').forEach(el => {
