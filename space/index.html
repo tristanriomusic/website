@@ -163,6 +163,8 @@
       align-items: center; justify-content: center;
       background: rgba(0,0,0,0.55);
       backdrop-filter: blur(2px);
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      padding: 3vh 0;
     }
     #truth-overlay.visible { display: flex; animation: fadeM 0.5s ease; }
 
@@ -315,6 +317,7 @@
     #truth-ui {
       width: clamp(300px, 72vw, 820px);
       display: flex; flex-direction: column; align-items: center; gap: 2vh;
+      margin: auto 0; /* keeps content reachable when scrolled, e.g. behind a mobile keyboard */
     }
     #truth-question {
       color: rgba(255,255,255,0.7);
@@ -1459,7 +1462,7 @@
 <!-- Truth writing overlay -->
 <div id="truth-overlay">
   <div id="truth-ui">
-    <div id="truth-question">What does Trüth mean to You?</div>
+    <div id="truth-question">What does Truth mean to You?</div>
     
     <!-- Sound system selection -->
     <div id="truth-sound-systems">
@@ -4807,51 +4810,62 @@ function truth_particle(el) {
 // Word boundary detection for chord system only
 let truth_currentWord = '';
 
-document.getElementById('truth-journal').addEventListener('keydown', e => {
-  if (e.key.length !== 1 && e.key !== 'Enter') return;
-  truth_initAudio();
-  
-  // Handle special keys first
-  if (truth_handleSpecialKey(e.key, ac.currentTime, 0.6, 0.15)) {
-    // Special key handled, just show particle
+function truth_processChar(ch) {
+  // Chord system: flush the accumulated word at word boundaries (space/newline)
+  // instead of treating them as silent "pause" special keys.
+  if (truth_currentSystem === 'chord' && (ch === ' ' || ch === '\n')) {
+    if (truth_currentWord) {
+      truth_noteChord(truth_currentWord, ac.currentTime, 2.5);
+      truth_currentWord = '';
+    }
     truth_particle(null);
     return;
   }
-  
+
+  // Handle special keys first (pauses, accents, glissandi, etc.)
+  if (truth_handleSpecialKey(ch, ac.currentTime, 0.6, 0.15)) {
+    truth_particle(null);
+    return;
+  }
+
   // Use current sound system for regular keys
   switch (truth_currentSystem) {
     case 'chord':
-      // For chord system, trigger chord on word boundaries
-      if (e.key === ' ') {
-        if (truth_currentWord) {
-          truth_noteChord(truth_currentWord, ac.currentTime, 2.5);
-          truth_currentWord = '';
-        }
-      } else if (e.key === 'Enter') {
-        if (truth_currentWord) {
-          truth_noteChord(truth_currentWord, ac.currentTime, 2.5);
-          truth_currentWord = '';
-        }
-      } else {
-        // Regular letters build current word
-        truth_currentWord += e.key;
-      }
+      // Regular letters build the current word
+      truth_currentWord += ch;
       break;
     case 'rhythm':
-      truth_noteRhythm(e.key, ac.currentTime, 0.3);
+      truth_noteRhythm(ch, ac.currentTime, 0.3);
       break;
     case 'ambient':
-      truth_noteAmbient(e.key, ac.currentTime, 2.0);
+      truth_noteAmbient(ch, ac.currentTime, 2.0);
       break;
     case 'sequence':
-      truth_noteSequence(e.key, ac.currentTime, 0.6);
+      truth_noteSequence(ch, ac.currentTime, 0.6);
       break;
     case 'all':
-      truth_noteAll(e.key, ac.currentTime, 0.8);
+      truth_noteAll(ch, ac.currentTime, 0.8);
       break;
   }
-  
+
   truth_particle(null);
+}
+
+// Driven by the 'input' event (not 'keydown') because mobile virtual keyboards
+// (iOS/Android autocorrect, predictive text, swipe-typing) don't reliably fire
+// keydown with a usable e.key — input/e.data is the only cross-device source
+// of truth for what text was actually inserted.
+document.getElementById('truth-journal').addEventListener('input', e => {
+  let chars = '';
+  if (e.inputType === 'insertLineBreak' || e.inputType === 'insertParagraph') {
+    chars = '\n';
+  } else if (typeof e.data === 'string' && e.data.length) {
+    chars = e.data;
+  } else {
+    return; // deletions, formatting, paste of non-text, etc. — no sound
+  }
+  truth_initAudio();
+  for (const ch of chars) truth_processChar(ch);
 });
 
 // Sound system button switching
