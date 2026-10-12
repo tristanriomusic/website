@@ -1149,7 +1149,7 @@
        MOBILE (≤768px) — everything below is phone-only.
        Desktop keeps its hover-driven behaviour untouched.
        ══════════════════════════════════════════════════════════════ */
-    #m-menu-btn, #m-sheet, #m-drawer, #m-hint { display: none; }
+    #m-sheet, #m-hint { display: none; }
 
     /* Kept in sync with MOBILE_MQ in the script below. */
     @media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
@@ -1158,24 +1158,9 @@
       #tip { display: none !important; }          /* replaced by the info sheet */
 
       /* No text selection / tap-highlight on the touch controls */
-      #m-menu-btn, #m-sheet, #m-drawer, #back, .panel-dot, .nav-arrow {
+      #m-sheet, #back, .panel-dot, .nav-arrow {
         -webkit-user-select: none; user-select: none;
         -webkit-tap-highlight-color: transparent;
-      }
-
-      /* ── Universes button ── */
-      #m-menu-btn {
-        display: block;
-        position: fixed; top: calc(12px + env(safe-area-inset-top)); left: 12px; z-index: 40;
-        border: 1px solid rgba(0,220,255,0.4);
-        border-radius: 999px;
-        background: rgba(4,8,20,0.82);
-        backdrop-filter: blur(14px);
-        color: rgba(235,247,255,0.92);
-        font-family: 'Georgia', serif; font-size: 13px;
-        letter-spacing: 0.18em; text-transform: uppercase;
-        padding: 11px 18px;
-        box-shadow: 0 0 22px rgba(0,180,255,0.22);
       }
 
       /* ── First-run hint ── */
@@ -1239,72 +1224,6 @@
         border: 1px solid rgba(255,255,255,0.16);
         background: rgba(255,255,255,0.04);
         color: rgba(255,255,255,0.55);
-      }
-
-      /* ── Universe index drawer ── */
-      #m-drawer {
-        display: block;
-        position: fixed; inset: 0; z-index: 90;
-        background: rgba(0,0,0,0.62);
-        backdrop-filter: blur(6px);
-        opacity: 0; pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-      #m-drawer.visible { opacity: 1; pointer-events: auto; }
-      #m-drawer-panel {
-        position: absolute; inset: 0;
-        display: flex; flex-direction: column;
-        padding: calc(14px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
-        background:
-          radial-gradient(circle at top, rgba(0,190,255,0.10), transparent 40%),
-          rgba(3,6,16,0.97);
-      }
-      #m-drawer-head {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0 6px 14px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        margin-bottom: 8px;
-      }
-      #m-drawer-title {
-        color: rgba(0,220,255,0.9); font-size: 14px;
-        letter-spacing: 0.24em; text-transform: uppercase;
-      }
-      #m-drawer-close {
-        border: 1px solid rgba(255,255,255,0.18);
-        border-radius: 999px;
-        background: rgba(255,255,255,0.05);
-        color: rgba(255,255,255,0.72);
-        font-family: 'Georgia', serif; font-size: 11px;
-        letter-spacing: 0.18em; text-transform: uppercase;
-        padding: 10px 16px; min-height: 40px;
-      }
-      #m-drawer-list {
-        flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-      }
-      .m-item {
-        display: flex; align-items: center; gap: 14px;
-        width: 100%; text-align: left;
-        padding: 15px 10px;
-        background: none; border: none;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        min-height: 58px;
-      }
-      .m-item-dot {
-        width: 11px; height: 11px; border-radius: 50%;
-        flex-shrink: 0;
-        box-shadow: 0 0 12px currentColor;
-        background: currentColor;
-      }
-      .m-item-text { min-width: 0; }
-      .m-item-name {
-        display: block; color: rgba(255,255,255,0.94);
-        font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase;
-        margin-bottom: 3px;
-      }
-      .m-item-desc {
-        display: block; color: rgba(255,255,255,0.45);
-        font-size: 11.5px; font-style: italic; line-height: 1.4;
       }
 
       /* ── Return: real touch target, clear of the panel dots ── */
@@ -1390,7 +1309,6 @@
 </div>
 
 <!-- ── Mobile-only navigation (hidden above 768px) ── -->
-<button id="m-menu-btn" type="button">☰ Universes</button>
 <div id="m-hint">Swipe to explore · tap a glow</div>
 
 <div id="m-sheet" aria-hidden="true">
@@ -1402,15 +1320,6 @@
   </div>
 </div>
 
-<div id="m-drawer" aria-hidden="true">
-  <div id="m-drawer-panel">
-    <div id="m-drawer-head">
-      <span id="m-drawer-title">Universes</span>
-      <button id="m-drawer-close" type="button">Close</button>
-    </div>
-    <div id="m-drawer-list"></div>
-  </div>
-</div>
 <div id="handle-layer"></div>
 <div id="edit-bar">
   <span id="edit-hint">EDIT MODE — drag handles · press E to exit</span>
@@ -6680,16 +6589,12 @@ navPrev.addEventListener('click', () => { if (isMobile()) navigateSpatial(-1); }
 navNext.addEventListener('click', () => { if (isMobile()) navigateSpatial(1); });
 
 /* ═══ MOBILE NAVIGATION UI ═══ */
-const mMenuBtn    = document.getElementById('m-menu-btn');
 const mHint       = document.getElementById('m-hint');
 const mSheet      = document.getElementById('m-sheet');
 const mSheetName  = document.getElementById('m-sheet-name');
 const mSheetDesc  = document.getElementById('m-sheet-desc');
 const mSheetEnter = document.getElementById('m-sheet-enter');
 const mSheetClose = document.getElementById('m-sheet-close');
-const mDrawer     = document.getElementById('m-drawer');
-const mDrawerClose= document.getElementById('m-drawer-close');
-const mDrawerList = document.getElementById('m-drawer-list');
 
 function dismissMobileHint() {
   if (mHint) mHint.classList.add('gone');
@@ -6742,59 +6647,6 @@ mSheetEnter.addEventListener('click', () => {
   zoomIn(zone);
 });
 mSheetClose.addEventListener('click', clearMobileSelection);
-
-/* Which pan panel best centres a given zone. */
-function panelForZone(zone) {
-  const { drawW } = imgLayout();
-  const stride = panelStridePx(drawW);
-  if (stride === 0) return panelIndex;
-  return Math.max(0, Math.min(MOBILE_PANELS - 1,
-    Math.round((zone.nx * drawW - W / 2) / stride)));
-}
-
-function buildMobileDrawer() {
-  mDrawerList.innerHTML = '';
-  // Ordered left→right across the map so the list matches the swipe order.
-  [...ZONES].sort((a, b) => a.nx - b.nx).forEach(zone => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'm-item';
-    btn.innerHTML =
-      `<span class="m-item-dot"></span>` +
-      `<span class="m-item-text"><span class="m-item-name"></span>` +
-      `<span class="m-item-desc"></span></span>`;
-    btn.querySelector('.m-item-dot').style.color = readableAccent(zone.label);
-    btn.querySelector('.m-item-name').textContent = zone.name;
-    btn.querySelector('.m-item-desc').textContent = zone.hoverText || '';
-    btn.addEventListener('click', () => {
-      closeMobileDrawer();
-      if (zoomed) {
-        // Already inside a universe — fly straight there rather than dropping back out.
-        navigateToZone(zone);
-        return;
-      }
-      setPanel(panelForZone(zone), false);
-      selectMobileZone(zone);
-    });
-    mDrawerList.appendChild(btn);
-  });
-}
-
-function openMobileDrawer() {
-  buildMobileDrawer();
-  mDrawer.classList.add('visible');
-  mDrawer.setAttribute('aria-hidden', 'false');
-  dismissMobileHint();
-}
-
-function closeMobileDrawer() {
-  mDrawer.classList.remove('visible');
-  mDrawer.setAttribute('aria-hidden', 'true');
-}
-
-mMenuBtn.addEventListener('click', openMobileDrawer);
-mDrawerClose.addEventListener('click', closeMobileDrawer);
-mDrawer.addEventListener('click', e => { if (e.target === mDrawer) closeMobileDrawer(); });
 
 /* ═══ CURSOR FX — PIRATE SHIP + WARP DRIVE + RIPPLE ═══ */
 (function() {
