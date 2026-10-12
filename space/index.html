@@ -4035,6 +4035,11 @@ const DEFAULT_MAPPING = { degree: 3, octave: 2 }; // Neutral middle note
 
 let truth_mGain = null, truth_merger = null, truth_revNode = null, truth_revWet = null, truth_delay = null, truth_delayWet = null;
 let truth_allRevNode = null, truth_allRevLowPass = null, truth_allRevHighPass = null, truth_allRevWet = null;
+// 'All' layers ~12 oscillators per note with a multi-second tail — without a polyphony
+// cap, fast typing (or an autocorrect burst) quickly stacks dozens of them and the mix
+// clips/overloads. Capping active voices keeps it lush without lagging or distorting.
+let truth_allActiveVoices = 0;
+const TRUTH_ALL_MAX_VOICES = 5;
 let truth_playing = false, truth_timers = [], truth_rafId = null;
 let truth_startAC = null, truth_startWall = null, truth_totalBars = 0;
 let truth_currentSystem = 'all'; // Default to All system
@@ -4587,7 +4592,10 @@ function truth_noteAll(ch, t, durS, vol=0.4) {
   
   const hz = truth_fixedNoteHz(ch);
   if (!hz) return; // Skip special keys
-  
+
+  if (truth_allActiveVoices >= TRUTH_ALL_MAX_VOICES) return; // already at full polyphony — skip to avoid pile-up
+  truth_allActiveVoices++;
+
   // === GET OR CREATE SHARED FILTERED REVERB FOR 'ALL' MODE ===
   if (!truth_allRevNode) {
     truth_allRevNode = ac.createConvolver();
@@ -4791,7 +4799,10 @@ function truth_noteAll(ch, t, durS, vol=0.4) {
   // Ambient stops
   ambOsc.stop(t + durS + 1.5);
   ambShimmer.stop(t + durS + 1.5);
-  
+
+  const voiceLifetime = Math.max(chordTotalDuration, durS + 1.5);
+  const releaseDelayMs = Math.max(0, (t - ac.currentTime) + voiceLifetime) * 1000;
+  setTimeout(() => { truth_allActiveVoices = Math.max(0, truth_allActiveVoices - 1); }, releaseDelayMs);
   }
 
 function truth_particle(el) {
@@ -4865,7 +4876,14 @@ document.getElementById('truth-journal').addEventListener('input', e => {
     return; // deletions, formatting, paste of non-text, etc. — no sound
   }
   truth_initAudio();
-  for (const ch of chars) truth_processChar(ch);
+  // Multi-char bursts (autocorrect, predictive-text taps) arrive as one input event —
+  // playing them all in one synchronous loop means they'd hit the exact same instant
+  // and clip together, so spread them out a little like real keystrokes instead.
+  const STAGGER_MS = 35;
+  [...chars].forEach((ch, i) => {
+    if (i === 0) truth_processChar(ch);
+    else setTimeout(() => truth_processChar(ch), i * STAGGER_MS);
+  });
 });
 
 // Sound system button switching
