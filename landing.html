@@ -147,7 +147,8 @@
     }
 
     .transitioning #logo-wrap,
-    .transitioning .nav-zone {
+    .transitioning .nav-zone,
+    .transitioning #top-nav {
       opacity: 0;
       transition: opacity 0.5s ease;
     }
@@ -1215,12 +1216,7 @@ document.addEventListener('mousemove', e => {
    Upcoming to Past automatically once their date has passed.
    `note` is optional and renders in italics. */
 const SHOWS = [
-  { date: '2026-10-17', title: "Dante's", note: 'Gent, België' },
-  { date: '2026-10-10', title: 'Nachtmakers', note: 'Gent, België' },
-  { date: '2026-09-29', title: 'Tattoo Circus', with: 'Cirque Constance', note: 'Melle, België' },
-  { date: '2026-09-19', title: '20 jaar Laweit', with: 'Cirque Constance', note: 'Gent, België' },
   { date: '2026-09-06', title: 'Sint-Pietersabdij — RIJP (Lying Down)', note: 'Gent, België' },
-  { date: '2026-08-30', title: 'Diggie', with: 'Cirque Constance', note: 'Brakel, België' },
   { date: '2026-03-28', title: 'Desert Dream — Bombay Beach Biennale', note: 'Bombay Beach, Californië, Verenigde Staten' },
   { date: '2026-03-03', title: 'Painted Canyon', note: 'Mecca, Californië, Verenigde Staten' },
   { date: '2026-02-27', title: 'Yurtsessies Terneuzen', note: 'Terneuzen, Nederland' },
