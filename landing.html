@@ -305,6 +305,20 @@
        shared bill reads as a credit, not part of the venue. */
     .live-with { color: rgba(255,255,255,0.58); }
 
+    /* Standalone note on a show — e.g. ticket links not yet open. */
+    .live-badge {
+      align-self: flex-start;
+      margin-top: 8px;
+      padding: 4px 9px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 2px;
+      font-size: 0.68em;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      white-space: nowrap;
+    }
+
     .live-tab {
       cursor: pointer;
       font-size: clamp(10px, 1vw, 12px);
@@ -1222,7 +1236,7 @@ document.addEventListener('mousemove', e => {
    Upcoming to Past automatically once their date has passed.
    `note` is optional and renders in italics. */
 const SHOWS = [
-  { date: '2026-11-21', title: 'Peace - Stadsmakers (Lying Down)', note: 'Gent, België' },
+  { date: '2026-11-21', title: 'Peace - Stadsmakers (Lying Down)', note: 'Gent, België', badge: 'Tickets and info coming soon' },
   { date: '2026-09-06', title: 'Sint-Pietersabdij — RIJP (Lying Down)', note: 'Gent, België' },
   { date: '2026-03-28', title: 'Desert Dream — Bombay Beach Biennale', note: 'Bombay Beach, Californië, Verenigde Staten' },
   { date: '2026-03-03', title: 'Painted Canyon', note: 'Mecca, Californië, Verenigde Staten' },
@@ -1308,9 +1322,10 @@ function renderShows() {
     if (s.with) meta.push('<span class="live-with">with ' + esc(s.with) + '</span>');
     if (s.note) meta.push(esc(s.note));
     const metaLine = meta.length ? '<em class="live-meta">' + meta.join(' &middot; ') + '</em>' : '';
+    const badge = s.badge ? '<span class="live-badge">' + esc(s.badge) + '</span>' : '';
     return '<li' + (past ? ' class="is-past"' : '') + '>' +
       '<span class="live-date">' + formatShowDate(s.date) + '</span>' +
-      '<span class="live-info"><span>' + esc(s.title) + '</span>' + metaLine + '</span></li>';
+      '<span class="live-info"><span>' + esc(s.title) + '</span>' + metaLine + badge + '</span></li>';
   }).join('');
 
   // Long archives scroll — always start at the top of the list.
