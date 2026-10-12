@@ -1903,6 +1903,14 @@ let zoomed = false, zoomTarget = null;
 let zoomFrom = {tx:0, ty:0, scale:1};
 let zoomCurrent = {tx:0, ty:0, scale:1};
 
+/* ═══ ARRIVAL INTRO (mobile) ═══
+   Phones land here straight out of the landing page's warp transition, so ease
+   in from a zoomed-out view with stars still streaking past instead of
+   snapping straight to the final framing. */
+const ARRIVAL_INTRO_MS = 1300;
+const ARRIVAL_INTRO_START_SCALE = 0.42;
+const introStart = isMobile() ? performance.now() : null;
+
 /* ═══ TIME ═══ */
 let t = 0;
 
@@ -2706,6 +2714,12 @@ function draw() {
   fractalViewMix += (targetFractalMix - fractalViewMix) * (fractalTouring ? 0.02 : 0.018);
   if (Math.abs(fractalViewMix) < 0.001) fractalViewMix = 0;
 
+  /* ── Arrival intro (mobile) ── */
+  const mapIntroElapsed = introStart === null ? Infinity : (performance.now() - introStart);
+  const mapIntroActive = introStart !== null && !zoomed && mapIntroElapsed < ARRIVAL_INTRO_MS;
+  const mapIntroEase = mapIntroActive ? easeInOutCubic(mapIntroElapsed / ARRIVAL_INTRO_MS) : 1;
+  const mapIntroScale = ARRIVAL_INTRO_START_SCALE + (1 - ARRIVAL_INTRO_START_SCALE) * mapIntroEase;
+
   /* ── Apply zoom transform ── */
   ctx.save();
   let baseTx = 0;
@@ -2718,6 +2732,7 @@ function draw() {
     baseScale = zoomCurrent.scale;
   } else if (isMobile()) {
     baseTx = -mobileOffsetX;
+    if (mapIntroActive) baseScale = mapIntroScale;
   }
 
   if (fractalViewMix > 0) {
@@ -2768,7 +2783,13 @@ function draw() {
     ctx.scale(z.scale, z.scale);
     ctx.translate(-W/2 + z.tx, -H/2 + z.ty);
   } else if (isMobile()) {
-    ctx.translate(-mobileOffsetX, 0);
+    if (mapIntroActive) {
+      ctx.translate(W/2, H/2);
+      ctx.scale(baseScale, baseScale);
+      ctx.translate(-W/2 + baseTx, -H/2);
+    } else {
+      ctx.translate(-mobileOffsetX, 0);
+    }
   }
 
   // Add neon vibration/distortion effect
@@ -3113,7 +3134,7 @@ function draw() {
   // Skipped on phones: the artwork fills the whole viewport there, so these 500
   // streaking trails land on top of the art rather than the empty space around it,
   // which reads as constant flashing motion over the map.
-  if (!isMobile()) drawWarpStars();
+  if (!isMobile() || mapIntroActive) drawWarpStars();
 
   /* ── Twinkling stars — slow, varied palette ── */
   ctx.globalCompositeOperation = 'screen';
