@@ -3579,9 +3579,9 @@ function openZoneContent(zone) {
   if (zone.type === 'truth') {
     window.parent?.dreamPlayer?.pause();
     document.getElementById('truth-overlay').classList.add('visible');
-    // Set 'All' button as active by default
+    // Set 'Rhythm' button as active by default — lighter voice than 'All', doesn't overload
     document.querySelectorAll('.truth-system-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector('[data-system="all"]').classList.add('active');
+    document.querySelector('[data-system="rhythm"]').classList.add('active');
     setTimeout(() => document.getElementById('truth-journal').focus(), 300);
     return;
   }
@@ -4042,7 +4042,7 @@ let truth_allActiveVoices = 0;
 const TRUTH_ALL_MAX_VOICES = 5;
 let truth_playing = false, truth_timers = [], truth_rafId = null;
 let truth_startAC = null, truth_startWall = null, truth_totalBars = 0;
-let truth_currentSystem = 'all'; // Default to All system
+let truth_currentSystem = 'rhythm'; // Default to Rhythm system — lighter voice, doesn't overload
 
 function truth_hz(degree, octave = 0) {
   const step = degree % 7;
