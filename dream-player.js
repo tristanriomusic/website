@@ -24,7 +24,10 @@
   }
 
   const saved    = loadState();
-  let userPaused = saved.userPaused === true;
+  // Default to paused on a fresh session (no autoplay on open). Once the
+  // session has an explicit userPaused flag (set by the toggle button),
+  // honor it so playback survives page-to-page navigation.
+  let userPaused = saved.userPaused !== undefined ? saved.userPaused === true : true;
   let startPos   = 0;
   if (saved.time > 0) {
     startPos = (saved.ts && !userPaused)
