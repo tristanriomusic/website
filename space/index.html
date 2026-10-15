@@ -620,6 +620,22 @@
       text-shadow: 0 0 12px rgba(180,100,255,0.4); transition: color 0.3s;
     }
     #truth-back:hover { color: rgba(255,255,255,0.8); }
+    #truth-entry-btn {
+      background: none;
+      border: 1px solid rgba(180,100,255,0.4);
+      border-radius: 3px;
+      color: rgba(220,180,255,0.7);
+      font-family: 'Georgia', serif;
+      font-size: clamp(11px, 1.1vw, 15px);
+      letter-spacing: 0.3em; text-transform: uppercase;
+      padding: 8px 22px; cursor: pointer;
+      transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    #truth-entry-btn:hover {
+      color: #e8d4ff; border-color: rgba(180,100,255,0.8);
+      box-shadow: 0 0 20px rgba(160,80,255,0.35);
+    }
+    #truth-entry-msg { color: rgba(220,180,255,0.6); font-size: clamp(10px,1vw,13px); letter-spacing:0.2em; min-height:1.5em; }
     #truth-mood-panel {
       display: flex; flex-direction: row; align-items: center;
       gap: 0.8vw; flex-wrap: wrap; justify-content: center;
@@ -1635,6 +1651,8 @@
       <button class="truth-mood-btn" data-mood="in">In</button>
       <button class="truth-mood-btn" data-mood="out">Out</button>
     </div>
+    <div id="truth-entry-msg"></div>
+    <button id="truth-entry-btn">Make Entry</button>
     <div id="truth-back">&#8592; Return</div>
   </div>
 </div>
@@ -5240,6 +5258,29 @@ function closeTruthOverlay() {
 document.getElementById('truth-btn-play').addEventListener('click', startTruthPlayback);
 document.getElementById('truth-btn-stop').addEventListener('click', stopTruthPlayback);
 document.getElementById('truth-back').addEventListener('click', closeTruthOverlay);
+
+document.getElementById('truth-entry-btn').addEventListener('click', async () => {
+  const msg = document.getElementById('truth-journal').value.trim();
+  const statusEl = document.getElementById('truth-entry-msg');
+  if (!msg) { statusEl.textContent = 'Write something first.'; return; }
+  statusEl.textContent = 'Saving…';
+  const mood = document.querySelector('.truth-mood-btn.active')?.dataset.mood || '';
+  try {
+    const form = new FormData();
+    form.append('entry', msg);
+    form.append('mood', mood);
+    form.append('sound_system', truth_currentSystem);
+    form.append('_subject', 'VibeCode Truth Entry');
+    form.append('_captcha', 'false');
+    const res = await fetch('https://formsubmit.co/ajax/contact@tristanrio.com', {
+      method: 'POST', headers: { 'Accept': 'application/json' }, body: form
+    });
+    if (res.ok) {
+      statusEl.textContent = 'Entry saved.';
+      document.getElementById('truth-journal').value = '';
+    } else { statusEl.textContent = 'Something went wrong — try again?'; }
+  } catch { statusEl.textContent = 'Something went wrong — try again?'; }
+});
 document.getElementById('truth-overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('truth-overlay')) closeTruthOverlay();
 });
