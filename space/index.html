@@ -1259,59 +1259,15 @@
     .tpl-word { display: inline; }
     .tpl-word.bar-active .tpl-letter:not(.hit):not(.decay) { color: rgba(255,255,255,0.2); }
 
-    /* ── Navigation arrows (shown when zoomed in) ── */
-    .nav-arrow {
-      display: none;
-      position: fixed; top: 0; bottom: 0; width: 100px; z-index: 66;
-      align-items: center; justify-content: center;
-      overflow: hidden; user-select: none;
-      transition: background 0.5s;
-    }
-    #nav-prev { left: 0; background: linear-gradient(to right, rgba(0,8,24,0.60), transparent); }
-    #nav-next { right: 0; background: linear-gradient(to left, rgba(0,8,24,0.60), transparent); }
-    .nav-arrow.visible { display: flex; }
-    /* countdown fill — rises from bottom over 2s on hover */
-    .nav-fill {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 0%;
-      background: linear-gradient(to top, rgba(0,220,255,0.22), transparent);
-      pointer-events: none;
-    }
-    .nav-arrow.hovering .nav-fill {
-      height: 100%;
-      transition: height 2s linear;
-    }
-    /* label */
-    .nav-label {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column; align-items: center; gap: 14px;
-      color: rgba(255,255,255,0.28);
-      transition: color 0.4s, text-shadow 0.4s;
-      pointer-events: none;
-    }
-    .nav-arrow.hovering .nav-label {
-      color: rgba(255,255,255,0.9);
-      text-shadow: 0 0 22px rgba(0,220,255,0.8);
-    }
-    .nav-symbol {
-      font-size: clamp(22px, 3vw, 40px);
-      line-height: 1;
-    }
-    .nav-text {
-      font-size: clamp(8px, 0.85vw, 11px);
-      letter-spacing: 0.35em; text-transform: uppercase;
-      writing-mode: vertical-rl;
-    }
-
     /* ── Rituelles idle UI hide ── */
-    #back, #anim-toggle, #anim-controls, #tip, #panel-dots, .nav-arrow, #modal.audio-mode {
+    #back, #anim-toggle, #anim-controls, #tip, #panel-dots, #modal.audio-mode {
       transition: opacity 0.55s ease, visibility 0.55s ease;
     }
     body.rituelles-ui-hidden #back,
     body.rituelles-ui-hidden #anim-toggle,
     body.rituelles-ui-hidden #anim-controls,
     body.rituelles-ui-hidden #tip,
-    body.rituelles-ui-hidden #panel-dots,
-    body.rituelles-ui-hidden .nav-arrow {
+    body.rituelles-ui-hidden #panel-dots {
       opacity: 0 !important;
       visibility: hidden !important;
       pointer-events: none !important;
@@ -1323,8 +1279,6 @@
     body.rituelles-ui-hidden.reveal-anim #anim-toggle,
     body.rituelles-ui-hidden.reveal-anim #anim-controls,
     body.rituelles-ui-hidden.reveal-dots #panel-dots,
-    body.rituelles-ui-hidden.reveal-nav-prev #nav-prev,
-    body.rituelles-ui-hidden.reveal-nav-next #nav-next,
     body.rituelles-ui-hidden.reveal-player #modal.audio-mode {
       opacity: 1 !important;
       visibility: visible !important;
@@ -1343,7 +1297,7 @@
       #tip { display: none !important; }          /* replaced by the info sheet */
 
       /* No text selection / tap-highlight on the touch controls */
-      #m-sheet, #back, .panel-dot, .nav-arrow {
+      #m-sheet, #back, .panel-dot {
         -webkit-user-select: none; user-select: none;
         -webkit-tap-highlight-color: transparent;
       }
@@ -1429,26 +1383,6 @@
         max-width: 88vw;
       }
 
-      /* ── Nav arrows: tap instead of hover-countdown, and moved out of the middle
-         into a bottom row flanking Return, so they never sit over modal content ── */
-      .nav-arrow {
-        top: auto; transform: none;
-        bottom: calc(28px + env(safe-area-inset-bottom));
-        width: 52px; height: 52px;
-        border-radius: 50%;
-        border: 1px solid rgba(255,255,255,0.18);
-        background: rgba(4,8,20,0.8) !important;
-        backdrop-filter: blur(12px);
-      }
-      #nav-prev { left: 14px;  right: auto; }
-      #nav-next { right: 14px; left: auto; }
-      .nav-fill { display: none; }
-      .nav-label { color: rgba(255,255,255,0.8); gap: 0; }
-      .nav-symbol { font-size: 22px; }
-      .nav-text { display: none; }
-      /* Leave room for the arrows either side of the Return pill */
-      body.m-zoomed #back { max-width: calc(100vw - 160px); }
-
       /* Close control is white-on-bright over zoomed artwork — make it a solid pill */
       body.m-zoomed #modal-close {
         background: rgba(4,8,20,0.86);
@@ -1503,10 +1437,6 @@
       #aquarium-intro-body { line-height: 1.6; margin-bottom: 20px; }
     }
 
-    .nav-arrow.disabled {
-      opacity: 0.2;
-      pointer-events: none;
-    }
   </style>
 </head>
 <body>
@@ -1552,7 +1482,7 @@
     <div id="help-title">How This Works</div>
     <div id="help-body-desktop">
       <p>Move your mouse across the sky — each glowing orb is its own universe. Hover one to see its name, then click to step inside.</p>
-      <p>Hover the arrows at the screen edges to drift to the next panel. Click <strong>Return</strong> at the bottom any time to come back.</p>
+      <p>Click <strong>Return</strong> at the bottom any time to come back.</p>
     </div>
     <div id="help-body-mobile">
       <p>Swipe to look around — each glowing orb is its own universe. Tap one to see its name, then tap <strong>Enter</strong> to step inside.</p>
@@ -1591,16 +1521,6 @@
     </div>
     <div id="anim-fx-popup-body"></div>
   </div>
-</div>
-
-<!-- Navigation arrows -->
-<div id="nav-prev" class="nav-arrow">
-  <div class="nav-fill"></div>
-  <div class="nav-label"><span class="nav-symbol">←</span><span class="nav-text">Further</span></div>
-</div>
-<div id="nav-next" class="nav-arrow">
-  <div class="nav-fill"></div>
-  <div class="nav-label"><span class="nav-symbol">→</span><span class="nav-text">Further</span></div>
 </div>
 
 <!-- Aquarium overlay -->
@@ -2379,7 +2299,6 @@ mAudio.addEventListener('play', () => {
     rituellesPreviewCapped = false;
   }
   updateAnimButtonState();
-  updateNavLockState();
 });
 
 // Add timeupdate event listener to check for 1:15 mark
@@ -2403,12 +2322,10 @@ mAudio.addEventListener('timeupdate', () => {
 mAudio.addEventListener('pause', () => {
   rituellesPlaying = false;
   updateAnimButtonState();
-  updateNavLockState();
 });
 mAudio.addEventListener('ended', () => {
   rituellesPlaying = false;
   updateAnimButtonState();
-  updateNavLockState();
 });
 
 function updateDarknessStorm(darknessActive) {
@@ -2637,14 +2554,12 @@ let lastUiActivityAt = performance.now();
 let rituellesUiHidden = false;
 const RITUELLES_REVEAL_MS = 5000;
 const RITUELLES_REVEAL_CLASSES = [
-  'reveal-back','reveal-anim','reveal-dots','reveal-nav-prev','reveal-nav-next','reveal-player'
+  'reveal-back','reveal-anim','reveal-dots','reveal-player'
 ];
 const rituellesRevealUntil = {
   back: 0,
   anim: 0,
   dots: 0,
-  navPrev: 0,
-  navNext: 0,
   player: 0,
 };
 
@@ -2668,8 +2583,6 @@ function updateRituellesHoverReveal(inRituellesUniverse) {
     rituellesRevealUntil.back = 0;
     rituellesRevealUntil.anim = 0;
     rituellesRevealUntil.dots = 0;
-    rituellesRevealUntil.navPrev = 0;
-    rituellesRevealUntil.navNext = 0;
     rituellesRevealUntil.player = 0;
     return;
   }
@@ -2677,15 +2590,11 @@ function updateRituellesHoverReveal(inRituellesUniverse) {
   if (pointInEl(mx, my, back)) rituellesRevealUntil.back = now + RITUELLES_REVEAL_MS;
   if (pointInEl(mx, my, animControls) || pointInEl(mx, my, animToggle)) rituellesRevealUntil.anim = now + RITUELLES_REVEAL_MS;
   if (pointInEl(mx, my, panelDotsWrap)) rituellesRevealUntil.dots = now + RITUELLES_REVEAL_MS;
-  if (pointInEl(mx, my, navPrev)) rituellesRevealUntil.navPrev = now + RITUELLES_REVEAL_MS;
-  if (pointInEl(mx, my, navNext)) rituellesRevealUntil.navNext = now + RITUELLES_REVEAL_MS;
   if (pointInEl(mx, my, mAudio)) rituellesRevealUntil.player = now + RITUELLES_REVEAL_MS;
 
   document.body.classList.toggle('reveal-back', rituellesRevealUntil.back > now);
   document.body.classList.toggle('reveal-anim', rituellesRevealUntil.anim > now);
   document.body.classList.toggle('reveal-dots', rituellesRevealUntil.dots > now);
-  document.body.classList.toggle('reveal-nav-prev', rituellesRevealUntil.navPrev > now);
-  document.body.classList.toggle('reveal-nav-next', rituellesRevealUntil.navNext > now);
   document.body.classList.toggle('reveal-player', rituellesRevealUntil.player > now);
 }
 
@@ -3814,7 +3723,6 @@ function zoomIn(zone) {
   const ty = H/2 - zy;
   animateZoom(zoomFrom, { tx, ty, scale: targetScale }, 650, () => {
     openZoneContent(zone);
-    showNavArrows(true);
   });
   setBackLabel(zone);
 }
@@ -3825,7 +3733,6 @@ function zoomOut() {
   closeLoveOverlay();
   closeAquarium();
   if (isMobile()) clearMobileSelection();
-  showNavArrows(false);
   animateZoom(zoomCurrent, { tx:0, ty:0, scale:1 }, 500, () => {
     zoomed = false;
     zoomTarget = null;
@@ -4014,7 +3921,6 @@ function closeModal() {
     // Return to regular Rituelles universe view after closing playback.
     rituellesPlaying = false;
     updateAnimButtonState();
-    updateNavLockState();
     setRituellesUiHidden(false);
     lastUiActivityAt = performance.now();
   }
@@ -6859,83 +6765,6 @@ aqFlow.addEventListener('input', () => {
 });
 document.getElementById('aq-pour-tea').addEventListener('click', () => resolveTeaParty('pour'));
 document.getElementById('aq-break-cup').addEventListener('click', () => resolveTeaParty('break'));
-
-/* ═══ NAVIGATION ARROWS ═══ */
-const navPrev = document.getElementById('nav-prev');
-const navNext = document.getElementById('nav-next');
-
-// Zones sorted left→right by map x-position for spatial navigation
-const ZONES_BY_X = [...ZONES].sort((a, b) => a.nx - b.nx);
-
-function showNavArrows(v) {
-  navPrev.classList.toggle('visible', v);
-  navNext.classList.toggle('visible', v);
-  if (!v) { cancelNavHover(navPrev); cancelNavHover(navNext); }
-  updateNavLockState();
-}
-
-function navLockedByPlayingRituelles() {
-  return rituellesPlaying;
-}
-
-function updateNavLockState() {
-  const locked = navLockedByPlayingRituelles();
-  navPrev.classList.toggle('disabled', locked);
-  navNext.classList.toggle('disabled', locked);
-  if (locked) {
-    cancelNavHover(navPrev, 'prev');
-    cancelNavHover(navNext, 'next');
-  }
-}
-
-function navigateToZone(newZone) {
-  modal.classList.remove('visible');
-  mFrame.src = ''; mFrame.style.display = 'none'; mPlace.style.display = 'none';
-  closeTruthOverlay();
-  closeLoveOverlay();
-  closeAquarium();
-  zoomTarget = newZone;
-  setBackLabel(newZone);
-  const { drawW, drawH, ox, oy } = imgLayout();
-  const zx = ox + newZone.nx * drawW, zy = oy + newZone.ny * drawH;
-  const tx = W/2 - zx, ty = H/2 - zy;
-  animateZoom(zoomCurrent, { tx, ty, scale: 4.0 }, 900, () => {
-    openZoneContent(newZone);
-  });
-}
-
-function navigateSpatial(dir) {
-  if (navLockedByPlayingRituelles()) return;
-  if (!zoomTarget) return;
-  const idx = ZONES_BY_X.indexOf(zoomTarget);
-  const next = ZONES_BY_X[(idx + dir + ZONES_BY_X.length) % ZONES_BY_X.length];
-  navigateToZone(next);
-}
-
-let navTimers = { prev: null, next: null };
-
-function startNavHover(el, dir, key) {
-  if (navLockedByPlayingRituelles()) return;
-  el.classList.add('hovering');
-  navTimers[key] = setTimeout(() => {
-    el.classList.remove('hovering');
-    navigateSpatial(dir);
-  }, 2000);
-}
-
-function cancelNavHover(el, key) {
-  if (key && navTimers[key]) { clearTimeout(navTimers[key]); navTimers[key] = null; }
-  if (el) el.classList.remove('hovering');
-}
-
-navPrev.addEventListener('mouseenter', () => startNavHover(navPrev, -1, 'prev'));
-navPrev.addEventListener('mouseleave', () => cancelNavHover(navPrev, 'prev'));
-navNext.addEventListener('mouseenter', () => startNavHover(navNext,  1, 'next'));
-navNext.addEventListener('mouseleave', () => cancelNavHover(navNext, 'next'));
-
-// Touch has no hover, so the 2s hover-countdown above never fires: tap navigates directly.
-navPrev.addEventListener('click', () => { if (isMobile()) navigateSpatial(-1); });
-navNext.addEventListener('click', () => { if (isMobile()) navigateSpatial(1); });
 
 /* ═══ MOBILE NAVIGATION UI ═══ */
 const mSheet      = document.getElementById('m-sheet');
