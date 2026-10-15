@@ -2650,16 +2650,12 @@ back.addEventListener('click', () => {
 mClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 
-const HELP_SEEN_KEY = 'spaceHelpSeen';
 function closeHelpOverlay() {
   helpOverlay.classList.remove('visible');
-  try { localStorage.setItem(HELP_SEEN_KEY, '1'); } catch (e) {}
 }
 helpClose.addEventListener('click', closeHelpOverlay);
 helpOverlay.addEventListener('click', e => { if (e.target === helpOverlay) closeHelpOverlay(); });
-try {
-  if (!localStorage.getItem(HELP_SEEN_KEY)) helpOverlay.classList.add('visible');
-} catch (e) {}
+helpOverlay.classList.add('visible');
 
 // Gods popup close button
 document.querySelector('.gods-close').addEventListener('click', (e) => {
