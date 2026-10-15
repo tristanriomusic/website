@@ -155,6 +155,71 @@
     }
     #modal-close:hover { color: #fff; }
 
+    /* ── First-visit help overlay ── */
+    #help-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 150;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      padding: 24px;
+    }
+    #help-overlay.visible { display: flex; animation: fadeM 0.5s ease; }
+    #help-card {
+      width: min(480px, 100%);
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 28px 26px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at top, rgba(0,190,255,0.12), transparent 40%),
+        rgba(4, 8, 20, 0.92);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 60px rgba(0,180,255,0.12);
+      color: rgba(230,245,255,0.85);
+      font-family: 'Georgia', serif;
+      text-align: center;
+    }
+    #help-title {
+      font-size: clamp(14px, 1.6vw, 19px);
+      letter-spacing: 0.24em; text-transform: uppercase;
+      color: rgba(0,220,255,0.9);
+      text-shadow: 0 0 16px rgba(0,180,255,0.5);
+      margin-bottom: 18px;
+    }
+    #help-card p {
+      font-size: clamp(12px, 1.3vw, 15px);
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+      color: rgba(230,245,255,0.72);
+      margin-bottom: 14px;
+    }
+    #help-card p strong { color: rgba(0,220,255,0.9); font-weight: normal; }
+    #help-body-mobile { display: none; }
+    /* Kept in sync with MOBILE_MQ in the script below. */
+    @media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
+      #help-body-desktop { display: none; }
+      #help-body-mobile { display: block; }
+    }
+    #help-close {
+      margin-top: 6px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: rgba(230,245,255,0.85);
+      padding: 0.6em 1.6em;
+      font-family: 'Georgia', serif;
+      font-size: clamp(10px, 1.1vw, 13px);
+      letter-spacing: 0.22em; text-transform: uppercase;
+      cursor: pointer;
+      transition: color 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    #help-close:hover {
+      color: #00eeff;
+      border-color: rgba(0,220,255,0.6);
+      box-shadow: 0 0 18px rgba(0,200,255,0.3);
+    }
 
     /* ── Truth overlay ── */
     #truth-overlay {
@@ -1497,6 +1562,21 @@
   <div id="modal-close">&#x2715; Close</div>
 </div>
 
+<div id="help-overlay">
+  <div id="help-card">
+    <div id="help-title">How This Works</div>
+    <div id="help-body-desktop">
+      <p>Move your mouse across the sky — each glowing orb is its own universe. Hover one to see its name, then click to step inside.</p>
+      <p>Hover the arrows at the screen edges to drift to the next panel. Click <strong>Return</strong> at the bottom any time to come back.</p>
+    </div>
+    <div id="help-body-mobile">
+      <p>Swipe to look around — each glowing orb is its own universe. Tap one to see its name, then tap <strong>Enter</strong> to step inside.</p>
+      <p>Swipe, or tap the dots at the bottom, to drift between panels. Tap <strong>Return</strong> any time to come back.</p>
+    </div>
+    <button id="help-close" type="button">Got It</button>
+  </div>
+</div>
+
 <div id="anim-controls">
   <div class="anim-panel-head">
     <div class="anim-panel-title">Visual FX</div>
@@ -1716,6 +1796,8 @@ const mVideo   = document.getElementById('modal-video');
 const mAudio   = document.getElementById('modal-audio');
 const mPlace   = document.getElementById('modal-placeholder');
 const mClose   = document.getElementById('modal-close');
+const helpOverlay = document.getElementById('help-overlay');
+const helpClose   = document.getElementById('help-close');
 
 // Rituelles video elements
 const rituellesVideoLayer = document.getElementById('rituelles-video-layer');
@@ -2642,6 +2724,7 @@ document.addEventListener('keydown', markUiActivity);
 canvas.addEventListener('click', e => {
   if (modal.classList.contains('visible') && !modal.classList.contains('audio-mode')) return;
   if (document.getElementById('truth-overlay').classList.contains('visible')) return;
+  if (helpOverlay.classList.contains('visible')) return;
   if (isMobile()) {
     if (dragMoved) { dragMoved = false; return; }   // that was a pan, not a tap
     if (zoomed) return;                             // leaving is the Return button's job
@@ -2672,6 +2755,17 @@ back.addEventListener('click', () => {
 });
 mClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+const HELP_SEEN_KEY = 'spaceHelpSeen';
+function closeHelpOverlay() {
+  helpOverlay.classList.remove('visible');
+  try { localStorage.setItem(HELP_SEEN_KEY, '1'); } catch (e) {}
+}
+helpClose.addEventListener('click', closeHelpOverlay);
+helpOverlay.addEventListener('click', e => { if (e.target === helpOverlay) closeHelpOverlay(); });
+try {
+  if (!localStorage.getItem(HELP_SEEN_KEY)) helpOverlay.classList.add('visible');
+} catch (e) {}
 
 // Gods popup close button
 document.querySelector('.gods-close').addEventListener('click', (e) => {
