@@ -314,6 +314,123 @@
         filter: contrast(1.2) brightness(1.1) saturate(1.3);
       }
     }
+
+    /* ---- Rituelles Presave Popup ---- */
+    #rituelles-presave-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 995;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #rituelles-presave-overlay.visible {
+      display: flex;
+      opacity: 1;
+    }
+    #rituelles-presave-overlay .rituelles-presave-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+    }
+    #rituelles-presave-overlay .rituelles-presave-panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(8,10,18,0.96);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-radius: 2px;
+      padding: clamp(32px, 5vw, 64px) clamp(28px, 5vw, 72px);
+      width: min(480px, 90vw);
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: translateY(18px);
+      transition: transform 0.4s ease;
+      text-align: center;
+    }
+    #rituelles-presave-overlay.visible .rituelles-presave-panel {
+      transform: translateY(0);
+    }
+    .rituelles-presave-close {
+      position: absolute;
+      z-index: 3;
+      top: 18px; right: 22px;
+      color: rgba(255,255,255,0.35);
+      font-size: 20px;
+      cursor: none;
+      transition: color 0.2s ease;
+      line-height: 1;
+      user-select: none;
+    }
+    .rituelles-presave-close:hover { color: rgba(255,255,255,0.85); }
+    .rituelles-presave-title {
+      font-family: 'Georgia', serif;
+      font-size: clamp(13px, 1.3vw, 17px);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: clamp(18px, 3vh, 30px);
+    }
+    .rituelles-presave-body {
+      font-family: 'Georgia', serif;
+      font-size: clamp(14px, 1.4vw, 17px);
+      line-height: 1.85;
+      color: rgba(255,255,255,0.72);
+    }
+    .rituelles-presave-body p { margin-bottom: 1.2em; }
+    .rituelles-presave-countdown {
+      display: flex;
+      justify-content: center;
+      gap: clamp(10px, 2vw, 20px);
+      margin-bottom: 1.4em;
+    }
+    .rituelles-presave-countdown .unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 44px;
+    }
+    .rituelles-presave-countdown .unit-value {
+      font-size: clamp(22px, 3vw, 30px);
+      color: #00ffcc;
+      text-shadow: 0 0 16px rgba(0,255,204,0.5);
+      font-variant-numeric: tabular-nums;
+    }
+    .rituelles-presave-countdown .unit-label {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+    .rituelles-presave-body a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .rituelles-presave-body a:hover {
+      color: #00ffcc;
+      border-color: #00ffcc;
+    }
+    @media (max-width: 768px) {
+      #rituelles-presave-overlay { align-items: flex-end; }
+      #rituelles-presave-overlay .rituelles-presave-panel {
+        width: 100%;
+        border-radius: 18px 18px 0 0;
+        border-left: none; border-right: none; border-bottom: none;
+        padding: 28px 22px 44px;
+        transform: translateY(60px);
+      }
+      #rituelles-presave-overlay.visible .rituelles-presave-panel {
+        transform: translateY(0);
+      }
+    }
+
     #truth-ui {
       width: clamp(300px, 72vw, 820px);
       display: flex; flex-direction: column; align-items: center; gap: 2vh;
@@ -1559,6 +1676,25 @@
   </div>
 </div>
 
+<!-- Rituelles Presave Popup -->
+<div id="rituelles-presave-overlay">
+  <div class="rituelles-presave-backdrop"></div>
+  <div class="rituelles-presave-panel">
+    <span class="rituelles-presave-close" id="rituelles-presave-close">&#215;</span>
+    <div class="rituelles-presave-title">Rituelles</div>
+    <div class="rituelles-presave-body">
+      <div class="rituelles-presave-countdown" id="rituelles-presave-countdown">
+        <div class="unit"><div class="unit-value" data-unit="d">0</div><div class="unit-label">Days</div></div>
+        <div class="unit"><div class="unit-value" data-unit="h">0</div><div class="unit-label">Hrs</div></div>
+        <div class="unit"><div class="unit-value" data-unit="m">0</div><div class="unit-label">Min</div></div>
+        <div class="unit"><div class="unit-value" data-unit="s">0</div><div class="unit-label">Sec</div></div>
+      </div>
+      <p>Rituelles comes out October 21st.</p>
+      <p><a href="https://distrokid.com/hyperfollow/tristanrio/rituelles?ref=release" target="_blank">Pre-save it here</a>.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 const canvas   = document.getElementById('main');
 const ctx      = canvas.getContext('2d');
@@ -1879,6 +2015,7 @@ let spaceRavePhase = 0;
 let spaceRaveAcidActive = false;
 let spaceRaveExitFrames = 0;
 let rituellesPlaying = false;
+let rituellesPreviewCapped = false;
 let fractalRampStart = null;
 let fractalViewMix = 0;
 let fractalIntroStart = null;
@@ -2172,6 +2309,7 @@ mAudio.addEventListener('play', () => {
 
     // Reset video trigger state when song starts
     rituellesVideoTriggered = false;
+    rituellesPreviewCapped = false;
   }
   updateAnimButtonState();
   updateNavLockState();
@@ -2186,6 +2324,14 @@ mAudio.addEventListener('timeupdate', () => {
   //     startRituellesVideo();
   //   }
   // }
+
+  // Cap the Rituelles preview to 30 seconds, then show the presave popup.
+  if (mAudio.src && mAudio.src.includes('Rituelles') && !rituellesPreviewCapped && mAudio.currentTime >= 30) {
+    rituellesPreviewCapped = true;
+    mAudio.pause();
+    mAudio.currentTime = 0;
+    openRituellesPresavePopup();
+  }
 });
 mAudio.addEventListener('pause', () => {
   rituellesPlaying = false;
@@ -2270,6 +2416,55 @@ function endRituellesVideo() {
 // Add video end event listener
 rituellesVideo.addEventListener('ended', () => {
   endRituellesVideo();
+});
+
+/* ---- Rituelles Presave Popup ---- */
+const RITUELLES_RELEASE_DATE = new Date('2026-10-21T00:00:00');
+const rituellesPresaveOverlay = document.getElementById('rituelles-presave-overlay');
+const rituellesPresaveClose = document.getElementById('rituelles-presave-close');
+const rituellesPresaveCountdownEls = {
+  d: document.querySelector('#rituelles-presave-countdown [data-unit="d"]'),
+  h: document.querySelector('#rituelles-presave-countdown [data-unit="h"]'),
+  m: document.querySelector('#rituelles-presave-countdown [data-unit="m"]'),
+  s: document.querySelector('#rituelles-presave-countdown [data-unit="s"]'),
+};
+let rituellesPresaveCountdownTimer = null;
+
+function updateRituellesPresaveCountdown() {
+  const diff = Math.max(0, RITUELLES_RELEASE_DATE.getTime() - Date.now());
+  const totalSeconds = Math.floor(diff / 1000);
+  const d = Math.floor(totalSeconds / 86400);
+  const h = Math.floor((totalSeconds % 86400) / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  rituellesPresaveCountdownEls.d.textContent = d;
+  rituellesPresaveCountdownEls.h.textContent = String(h).padStart(2, '0');
+  rituellesPresaveCountdownEls.m.textContent = String(m).padStart(2, '0');
+  rituellesPresaveCountdownEls.s.textContent = String(s).padStart(2, '0');
+  if (diff <= 0 && rituellesPresaveCountdownTimer) {
+    clearInterval(rituellesPresaveCountdownTimer);
+    rituellesPresaveCountdownTimer = null;
+  }
+}
+
+function openRituellesPresavePopup() {
+  rituellesPresaveOverlay.classList.add('visible');
+  updateRituellesPresaveCountdown();
+  if (rituellesPresaveCountdownTimer) clearInterval(rituellesPresaveCountdownTimer);
+  rituellesPresaveCountdownTimer = setInterval(updateRituellesPresaveCountdown, 1000);
+}
+
+function closeRituellesPresavePopup() {
+  rituellesPresaveOverlay.classList.remove('visible');
+  if (rituellesPresaveCountdownTimer) {
+    clearInterval(rituellesPresaveCountdownTimer);
+    rituellesPresaveCountdownTimer = null;
+  }
+}
+
+rituellesPresaveClose.addEventListener('click', closeRituellesPresavePopup);
+rituellesPresaveOverlay.addEventListener('click', (event) => {
+  if (event.target === rituellesPresaveOverlay) closeRituellesPresavePopup();
 });
 
 // Color shifting effect that responds to background animation colors
@@ -3736,6 +3931,7 @@ function closeModal() {
   mPlace.style.display = 'none';
   if (wasRituellesAudio) {
     endRituellesVideo();
+    closeRituellesPresavePopup();
     // Return to regular Rituelles universe view after closing playback.
     rituellesPlaying = false;
     updateAnimButtonState();
