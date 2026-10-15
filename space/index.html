@@ -620,22 +620,29 @@
       text-shadow: 0 0 12px rgba(180,100,255,0.4); transition: color 0.3s;
     }
     #truth-back:hover { color: rgba(255,255,255,0.8); }
-    #truth-entry-btn {
+    #truth-entry-msg { color: rgba(220,180,255,0.6); font-size: clamp(10px,1vw,13px); letter-spacing:0.2em; min-height:1.5em; }
+    #truth-action-row {
+      display: flex; gap: clamp(6px, 1.2vw, 16px); align-items: stretch; justify-content: center; flex-wrap: nowrap; width: 100%;
+    }
+    .truth-action-btn {
+      display: flex; align-items: center; justify-content: center;
+      flex: 0 1 auto; min-width: 0;
       background: none;
       border: 1px solid rgba(180,100,255,0.4);
       border-radius: 3px;
       color: rgba(220,180,255,0.7);
       font-family: 'Georgia', serif;
-      font-size: clamp(11px, 1.1vw, 15px);
+      font-size: clamp(8px, 1.1vw, 15px);
       letter-spacing: 0.3em; text-transform: uppercase;
-      padding: 8px 22px; cursor: pointer;
+      line-height: 1.3;
+      padding: 8px clamp(10px, 2vw, 22px); cursor: pointer;
       transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
-    #truth-entry-btn:hover {
+    #truth-entry-btn { flex: 1 1 auto; }
+    .truth-action-btn:hover {
       color: #e8d4ff; border-color: rgba(180,100,255,0.8);
       box-shadow: 0 0 20px rgba(160,80,255,0.35);
     }
-    #truth-entry-msg { color: rgba(220,180,255,0.6); font-size: clamp(10px,1vw,13px); letter-spacing:0.2em; min-height:1.5em; }
     #truth-mood-panel {
       display: flex; flex-direction: row; align-items: center;
       gap: 0.8vw; flex-wrap: wrap; justify-content: center;
@@ -1640,8 +1647,6 @@
     <div id="truth-playback-view"></div>
     <div id="truth-bar-progress"><div id="truth-bar-fill"></div></div>
     <div id="truth-controls">
-      <button class="ctrl-btn" id="truth-btn-play">&#9654; Play</button>
-      <button class="ctrl-btn" id="truth-btn-stop" style="display:none">&#9632; Stop</button>
       <span id="truth-bpm-label">90 BPM · 1 word = 1 beat</span>
     </div>
     <div id="truth-mood-panel">
@@ -1652,7 +1657,11 @@
       <button class="truth-mood-btn" data-mood="out">Out</button>
     </div>
     <div id="truth-entry-msg"></div>
-    <button id="truth-entry-btn">Make Entry</button>
+    <div id="truth-action-row">
+      <button class="truth-action-btn" id="truth-btn-play">&#9654; Play</button>
+      <button class="truth-action-btn" id="truth-btn-stop" style="display:none">&#9632; Stop</button>
+      <button class="truth-action-btn" id="truth-entry-btn">Send your truth into Space!</button>
+    </div>
     <div id="truth-back">&#8592; Return</div>
   </div>
 </div>
