@@ -1334,7 +1334,7 @@
        MOBILE (≤768px) — everything below is phone-only.
        Desktop keeps its hover-driven behaviour untouched.
        ══════════════════════════════════════════════════════════════ */
-    #m-sheet, #m-hint { display: none; }
+    #m-sheet { display: none; }
 
     /* Kept in sync with MOBILE_MQ in the script below. */
     @media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
@@ -1347,19 +1347,6 @@
         -webkit-user-select: none; user-select: none;
         -webkit-tap-highlight-color: transparent;
       }
-
-      /* ── First-run hint ── */
-      #m-hint {
-        display: block;
-        position: fixed; top: calc(60px + env(safe-area-inset-top)); left: 50%;
-        transform: translateX(-50%);
-        z-index: 39; white-space: nowrap;
-        color: rgba(180,220,255,0.5);
-        font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-        transition: opacity 0.6s ease;
-        pointer-events: none;
-      }
-      #m-hint.gone { opacity: 0; }
 
       /* ── Info sheet: name + description + explicit Enter ── */
       #m-sheet {
@@ -1536,8 +1523,6 @@
 </div>
 
 <!-- ── Mobile-only navigation (hidden above 768px) ── -->
-<div id="m-hint">Swipe to explore · tap a glow</div>
-
 <div id="m-sheet" aria-hidden="true">
   <div id="m-sheet-name"></div>
   <div id="m-sheet-desc"></div>
@@ -6953,16 +6938,11 @@ navPrev.addEventListener('click', () => { if (isMobile()) navigateSpatial(-1); }
 navNext.addEventListener('click', () => { if (isMobile()) navigateSpatial(1); });
 
 /* ═══ MOBILE NAVIGATION UI ═══ */
-const mHint       = document.getElementById('m-hint');
 const mSheet      = document.getElementById('m-sheet');
 const mSheetName  = document.getElementById('m-sheet-name');
 const mSheetDesc  = document.getElementById('m-sheet-desc');
 const mSheetEnter = document.getElementById('m-sheet-enter');
 const mSheetClose = document.getElementById('m-sheet-close');
-
-function dismissMobileHint() {
-  if (mHint) mHint.classList.add('gone');
-}
 
 /* Zone label colours are tuned to glow as orbs over artwork; a few (Darkness #3322aa,
    Peace #ff2d78) are too dark to read as text on the near-black panels. Keep the hue,
@@ -6987,7 +6967,6 @@ function readableAccent(hex) {
 
 function selectMobileZone(zone) {
   mobileSelectedZone = zone;
-  dismissMobileHint();
   mSheetName.textContent = zone.name;
   mSheetName.style.color = readableAccent(zone.label);
   mSheetName.style.textShadow = `0 0 16px ${zone.label}`;   // raw colour still drives the glow
