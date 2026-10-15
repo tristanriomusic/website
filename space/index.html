@@ -5283,7 +5283,6 @@ document.getElementById('truth-entry-btn').addEventListener('click', async () =>
     });
     if (res.ok) {
       statusEl.textContent = 'Entry saved.';
-      document.getElementById('truth-journal').value = '';
     } else { statusEl.textContent = 'Something went wrong — try again?'; }
   } catch { statusEl.textContent = 'Something went wrong — try again?'; }
 });
