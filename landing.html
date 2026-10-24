@@ -634,7 +634,7 @@
     <div class="popup-body">
       <p>Tristan Rio creates <a href="https://peace-drab.vercel.app/" target="_blank" style="font-style:italic;font-weight:bold;color:rgba(255,255,255,0.95);border-bottom:2px solid rgba(255,255,255,0.6);"><em>immersive psychedelic guitar journeys</em></a>, inspired by a lifelong love of listening to music in bed and drifting toward sleep. Missing music that could truly carry him into dreamland he began crafting his own: rich psychedelic soundscapes grounded in strong melodies and raw, emotional guitar solos.</p>
       <p>Recently this vision has led to a series of magical, immersive lying-down concerts where music and visuals invite the audience to fully surrender to the experience. Built entirely live, his performances unfold into hypnotic soundscapes that encourage audiences to dream and reconnect.</p>
-      <p>In between building dreamscapes Tristan has also played in numerous bands, the most recent one being the explosive and thought evoking folk/punk band Cirque Constance.</p>
+      <p>In between building dreamscapes Tristan has also played in numerous bands, the most recent one being the explosive and thought evoking postfolk band Cirque Constance.</p>
     </div>
   </div>
 </div>
@@ -680,17 +680,19 @@
           <a href="https://music.amazon.com/albums/B0CX56YNXJ" target="_blank">Amazon Music</a>
         </div>
       </div>
-      <div class="music-release music-release--soon" id="release-rituelles">
+      <div class="music-release" id="release-rituelles">
         <div class="music-release-header" onclick="toggleRelease('rituelles')">
           <div>
             <div class="music-item-title">Rituelles</div>
-            <div class="music-item-year">Out October 21</div>
+            <div class="music-item-year">2026 — Single</div>
           </div>
           <span class="music-release-arrow">&#8964;</span>
         </div>
         <div class="music-release-links">
-          <span class="music-stream-label">Pre-save</span>
-          <a href="https://distrokid.com/hyperfollow/tristanrio/rituelles?ref=release" target="_blank">Pre-save Rituelles</a>
+          <span class="music-stream-label">Listen on</span>
+          <a href="https://open.spotify.com/track/6H84nurgMLaGhRCOTirOsX?si=fac0b53883bd4212" target="_blank">Spotify</a>
+          <a href="https://music.apple.com/us/album/rituelles-single/6814670227?uo=4" target="_blank">Apple Music</a>
+          <a href="https://music.amazon.com/albums/B0HKK31NJR" target="_blank">Amazon Music</a>
         </div>
       </div>
     </div>
@@ -729,8 +731,8 @@
     <span class="popup-close" data-close="announce">&#215;</span>
     <div class="popup-title">New Release</div>
     <div class="popup-body">
-      <p>New song <em>Rituelles</em> coming out on the 21st of October.</p>
-      <p><a href="https://distrokid.com/hyperfollow/tristanrio/rituelles?ref=release" target="_blank">Pre-save it here</a>.</p>
+      <p>New song <em>Rituelles</em> is out now.</p>
+      <p><a href="https://open.spotify.com/track/6H84nurgMLaGhRCOTirOsX?si=fac0b53883bd4212" target="_blank">Listen on Spotify</a>.</p>
     </div>
   </div>
 </div>
@@ -984,6 +986,7 @@ const WARP_MESSAGES = {
 
 function navigate(zone) {
   if (transitioning) return;
+  document.querySelectorAll('.popup-overlay.open').forEach(p => p.classList.remove('open'));
   window.parent?.dreamPlayer?.tryUnlock?.();   // unlock AudioContext within activation window
   const dest = zone.dataset.dest;
   transitioning = true;
