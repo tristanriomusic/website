@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peace — Tristan Rio</title>
+
+  <meta property="og:title" content="Peace - A Lying Down Concert Experience" />
+  <meta property="og:description" content="Experience a unique lying down concert in an intimate setting with immersive visuals." />
+  <meta property="og:site_name" content="Peace" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://tristanrio.com/peace/assets/og-image.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="1200" />
+  <meta property="og:image:alt" content="Peace concert poster" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tristanrio.com/peace/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Brasika-Display';
+      src: url('assets/fonts/Brasika Display Regular.otf') format('opentype');
+      font-weight: 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { background: #000; width: 100%; min-height: 100%; }
+    body { overflow-x: hidden; font-family: 'Righteous', cursive; }
+
+    h1, h2, h3, p, span { transition: transform 300ms ease-out; cursor: default; }
+    h1:hover, h2:hover, h3:hover, p:hover, span:hover { transform: scale(1.05); }
+    button, button *, a, a * { cursor: pointer !important; }
+    button:hover { transform: scale(1.05); }
+    button.no-scale:hover { transform: none !important; }
+
+    /* ── Background video ── */
+    #video-wrap { position: fixed; inset: 0; width: 100%; height: 100%; }
+    #bg-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    #video-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 10%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.8) 90%);
+    }
+
+    /* ── Content ── */
+    #content {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 2rem;
+      text-align: center;
+      pointer-events: none;
+    }
+    @media (min-width: 640px) { #content { padding: 2rem 3rem; } }
+
+    .fade {
+      opacity: 0;
+      transform: translateY(2rem);
+      transition: opacity 2s ease-out, transform 2s ease-out;
+    }
+    body.loaded .fade { opacity: 1; transform: translateY(0); }
+    .fade.d1 { transition-delay: 0s; }
+    .fade.d2 { transition-delay: 0.7s; }
+    .fade.d3 { transition-delay: 1.3s; }
+    .fade.d4 { transition-delay: 2s; }
+    .fade.d5 { transition-delay: 3s; }
+
+    h1.title {
+      margin: 5rem 0 4rem;
+      font-family: 'Brasika-Display', cursive;
+      font-size: clamp(3.5rem, 14vw, 10rem);
+      letter-spacing: 0.03em;
+      color: #fff;
+      text-shadow: 0 0 14px rgba(0,0,0,0.6), 0 0 28px rgba(0,0,0,0.4), 0 0 42px rgba(0,0,0,0.3), 0 0 56px rgba(0,0,0,0.2);
+    }
+
+    .divider { width: 3rem; height: 1px; margin: 4rem auto; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); }
+
+    .subtitle-block { margin-bottom: 5rem; text-align: center; }
+    .subtitle {
+      margin-bottom: 2rem;
+      font-size: clamp(1.25rem, 3vw, 1.875rem);
+      font-weight: 300;
+      color: rgba(219,234,254,1);
+      letter-spacing: 0.02em;
+      line-height: 1.6;
+      cursor: pointer;
+      display: inline-block;
+      transition: transform 300ms ease-out;
+      pointer-events: auto;
+    }
+    .by {
+      margin-bottom: 3rem;
+      font-size: clamp(1.125rem, 2vw, 1.25rem);
+      font-weight: 300;
+      color: rgba(254,243,199,0.7);
+      letter-spacing: 0.02em;
+    }
+    .logo { display: block; width: clamp(4.5rem, 10vw, 6.5rem); height: clamp(4.5rem, 10vw, 6.5rem); margin: 0.5rem auto 2rem; border-radius: 50%; object-fit: cover; box-shadow: 0 0 24px rgba(0,0,0,0.5); }
+    .visuals-by { font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 300; color: rgba(243,232,255,0.6); letter-spacing: 0.02em; }
+
+    .description { max-width: 42rem; margin: 0 auto; color: rgba(255,255,255,0.9); line-height: 1.7; }
+    .description .lie-down { margin-bottom: 2rem; font-size: clamp(1.125rem, 2vw, 1.25rem); font-weight: 300; font-style: italic; color: rgba(254,243,199,0.7); }
+    .description p { font-size: clamp(1rem, 1.6vw, 1.125rem); font-weight: 300; color: rgba(241,245,249,0.8); }
+
+    .event-details { margin: 6rem auto 0; max-width: 42rem; color: rgba(255,255,255,0.8); }
+    .taglines { margin-bottom: 3rem; }
+    .taglines p { margin-bottom: 0.75rem; font-size: clamp(0.875rem, 1.4vw, 1rem); font-weight: 300; letter-spacing: 0.02em; color: rgba(237,233,254,0.7); }
+
+    .next-edition { margin-bottom: 4rem; }
+    .next-edition p { margin-bottom: 1rem; }
+    .next-edition .label { font-size: clamp(0.75rem, 1.2vw, 0.875rem); font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(254,243,199,0.7); }
+    .next-edition .venue { font-size: clamp(1.25rem, 2.4vw, 1.5rem); font-weight: 300; color: #fff; }
+    .next-edition .address { font-size: clamp(0.875rem, 1.4vw, 1rem); font-weight: 300; color: rgba(255,255,255,0.6); letter-spacing: 0.02em; }
+
+    .pill-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.85rem 2.4rem;
+      font-size: clamp(0.85rem, 1.2vw, 1rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(254,243,199,0.8);
+      text-decoration: none;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 9999px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: all 500ms ease;
+      pointer-events: auto;
+    }
+    .pill-btn:hover { color: #fffbeb; border-color: rgba(253,230,138,0.4); background: rgba(255,255,255,0.05); }
+
+    .more-soon { margin-bottom: 16rem; }
+    .more-soon p { font-size: clamp(0.875rem, 1.4vw, 1rem); font-weight: 300; letter-spacing: 0.02em; color: rgba(237,233,254,0.7); }
+
+    .ambient-dot { position: absolute; width: 4px; height: 4px; border-radius: 50%; animation: pulse 2.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.9; } }
+
+    /* ── Top nav ── */
+    #top-nav {
+      position: fixed; top: 2rem; left: 0; right: 0; z-index: 30;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 2rem;
+      pointer-events: none;
+    }
+    #mute-btn { padding: 0.75rem; color: rgba(255,255,255,0.7); background: none; border: none; pointer-events: auto; transition: color 300ms; }
+    #mute-btn:hover { color: #fff; }
+    #mute-btn svg { width: 2rem; height: 2rem; }
+
+    @keyframes unmuteHint {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+      25% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(255,255,255,0.2); }
+      50% { transform: scale(1); box-shadow: 0 0 0 12px rgba(255,255,255,0.1); }
+      75% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(255,255,255,0.15); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+    @keyframes subtlePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+      50% { box-shadow: 0 0 0 4px rgba(255,255,255,0.1); }
+    }
+    #mute-btn.unmute-hint { animation: unmuteHint 2s ease-out; border-radius: 50%; }
+    #mute-btn.unmute-subtle-pulse { animation: subtlePulse 3s ease-in-out infinite; border-radius: 50%; }
+
+    #vibes-btn {
+      padding: 0.85rem 2.4rem;
+      font-size: clamp(0.85rem, 1.2vw, 1rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(254,243,199,0.8);
+      background: none;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 9999px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: all 500ms ease;
+      pointer-events: auto;
+    }
+    #vibes-btn:hover { color: #fffbeb; border-color: rgba(253,230,138,0.4); background: rgba(255,255,255,0.05); }
+
+    /* ── Vibes modal ── */
+    #vibes-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      flex-direction: column;
+    }
+    #vibes-modal.open { display: flex; }
+    .vibes-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; }
+    .vibes-header h2 { font-size: 1.5rem; color: #fff; letter-spacing: 0.05em; }
+    .vibes-close { padding: 0.5rem; color: rgba(255,255,255,0.7); background: none; border: none; transition: color 300ms; }
+    .vibes-close:hover { color: #fff; }
+    .vibes-close svg { width: 1.5rem; height: 1.5rem; }
+
+    .vibes-grid { flex: 1; overflow-y: auto; padding: 0 1.5rem 1.5rem; display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+    @media (min-width: 768px) { .vibes-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1024px) { .vibes-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .vibes-item { position: relative; aspect-ratio: 1 / 1; background: rgba(255,255,255,0.05); border-radius: 0.5rem; overflow: hidden; cursor: pointer; transition: background 300ms; }
+    .vibes-item:hover { background: rgba(255,255,255,0.1); }
+    .vibes-item img, .vibes-item video { width: 100%; height: 100%; object-fit: cover; transition: transform 300ms; }
+    .vibes-item:hover img, .vibes-item:hover video { transform: scale(1.05); }
+    .play-badge { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .play-badge span { width: 3rem; height: 3rem; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; }
+    .play-badge svg { width: 1.5rem; height: 1.5rem; color: #fff; margin-left: 2px; }
+
+    #lightbox { display: none; position: fixed; inset: 0; z-index: 60; background: #000; align-items: center; justify-content: center; }
+    #lightbox.open { display: flex; }
+    .lb-close, .lb-nav { position: absolute; z-index: 90; padding: 0.75rem; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); border: none; border-radius: 50%; transition: all 200ms; }
+    .lb-close { top: 1.5rem; right: 1.5rem; }
+    .lb-close:hover, .lb-nav:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .lb-nav { top: 50%; transform: translateY(-50%); width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; }
+    #lb-prev { left: 1.5rem; }
+    #lb-next { right: 1.5rem; }
+    .lb-nav svg, .lb-close svg { width: 1.5rem; height: 1.5rem; }
+    #lb-media-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    #lb-media-wrap img, #lb-media-wrap video { max-width: 100%; max-height: 100%; object-fit: contain; }
+    #lb-counter { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%); padding: 0.25rem 0.75rem; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border-radius: 9999px; color: rgba(255,255,255,0.7); font-size: 0.875rem; z-index: 90; }
+  </style>
+</head>
+<body>
+  <div id="video-wrap">
+    <video id="bg-video" autoplay loop muted playsinline preload="auto">
+      <source src="assets/videos/new_banner_compressed.mp4" type="video/mp4" />
+    </video>
+    <div id="video-overlay"></div>
+  </div>
+
+  <div id="content">
+    <h1 class="title fade d1"><span class="peace-gradient">Peace</span></h1>
+
+    <div class="divider fade d1"></div>
+
+    <div class="fade d2">
+      <div class="subtitle-block">
+        <div class="subtitle" id="parallax-subtitle">
+          A lying-down concert experience<br />with immersive visuals.
+        </div>
+        <p class="by">Music by</p>
+        <img class="logo" src="assets/logo.png.jpeg" alt="Tristan Rio" />
+        <p class="visuals-by">Visuals by Xander Steenbrugge</p>
+      </div>
+    </div>
+
+    <div class="fade d3">
+      <div class="description">
+        <div class="divider"></div>
+        <p class="lie-down">Lie down. Let go.</p>
+        <p>
+          Some spaces invite you to dream. Here, time moves slowly.<br /><br />
+          Guitar tones fold over each other in warm, endless waves, as colours and shapes bloom across the ceiling above you.<br /><br />
+          Drift away until thoughts<br />no longer exist...
+        </p>
+
+        <div class="next-edition">
+          <p class="label">Next Edition</p>
+          <p class="venue">Stadsmakers</p>
+          <p class="address">Wiedauwkaai 51, 9000 Gent</p>
+          <a class="pill-btn" href="https://tickets.example.com/peace-stadsmakers" target="_blank" rel="noopener noreferrer">Get Tickets</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="fade d4">
+      <div class="event-details">
+        <div class="divider"></div>
+
+        <div class="taglines">
+          <p>COME COSY, COME DREAMY</p>
+          <p>SURRENDER TO THE EXPERIENCE</p>
+          <p>FIND YOUR PEACE</p>
+        </div>
+
+        <div class="more-soon">
+          <p>MORE SOON...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ambient-dot" style="top:25%; left:1rem; background:rgba(255,255,255,0.2);"></div>
+    <div class="ambient-dot" style="bottom:33%; right:2rem; background:rgba(147,197,253,0.3); animation-delay:1s;"></div>
+    <div class="ambient-dot" style="top:50%; right:25%; background:rgba(216,180,254,0.2); animation-delay:2s;"></div>
+  </div>
+
+  <div id="top-nav">
+    <div class="fade d5">
+      <button id="mute-btn" aria-label="Unmute audio">
+        <svg id="mute-icon" fill="currentColor" viewBox="0 0 22 20">
+          <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.828 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.828l3.555-3.793A1 1 0 019.383 3.076zM8 5.414L5.172 7.586A1 1 0 004.586 8H2v4h2.586a1 1 0 01.586.414L8 14.586V5.414zM15.293 7.293a1 1 0 011.414 0L18 8.586l1.293-1.293a1 1 0 111.414 1.414L19.414 10l1.293 1.293a1 1 0 01-1.414 1.414L18 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L16.586 10l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+    <div class="fade d5">
+      <button id="vibes-btn" aria-label="View vibes gallery">vibes</button>
+    </div>
+  </div>
+
+  <div id="vibes-modal">
+    <div class="vibes-header">
+      <h2>vibes</h2>
+      <button class="vibes-close" id="vibes-close" aria-label="Close vibes gallery">
+        <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+      </button>
+    </div>
+    <div class="vibes-grid" id="vibes-grid"></div>
+  </div>
+
+  <div id="lightbox">
+    <button class="lb-close" id="lb-close" aria-label="Close">
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+    </button>
+    <button class="lb-nav" id="lb-prev" aria-label="Previous">
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+    </button>
+    <button class="lb-nav" id="lb-next" aria-label="Next">
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+    </button>
+    <div id="lb-media-wrap"></div>
+    <div id="lb-counter"></div>
+  </div>
+
+  <script>
+    const MEDIA = [
+      { src: 'assets/videos/new_banner_compressed.mp4', type: 'video' },
+      { src: 'assets/images/_100000.jpg', type: 'image' },
+      { src: 'assets/images/_100001.jpg', type: 'image' },
+      { src: 'assets/images/_100002.jpg', type: 'image' },
+      { src: 'assets/images/_100003.jpg', type: 'image' },
+      { src: 'assets/images/_100004.jpg', type: 'image' },
+      { src: 'assets/images/_100005.jpg', type: 'image' },
+      { src: 'assets/images/_100006.jpg', type: 'image' },
+      { src: 'assets/images/_100007.jpg', type: 'image' },
+      { src: 'assets/images/_100008.jpg', type: 'image' },
+      { src: 'assets/images/_100009.jpg', type: 'image' },
+    ];
+
+    const bgVideo = document.getElementById('bg-video');
+    const muteBtn = document.getElementById('mute-btn');
+    const muteIcon = document.getElementById('mute-icon');
+    const vibesBtn = document.getElementById('vibes-btn');
+    const vibesModal = document.getElementById('vibes-modal');
+    const vibesClose = document.getElementById('vibes-close');
+    const vibesGrid = document.getElementById('vibes-grid');
+    const lightbox = document.getElementById('lightbox');
+    const lbMediaWrap = document.getElementById('lb-media-wrap');
+    const lbCounter = document.getElementById('lb-counter');
+    const lbClose = document.getElementById('lb-close');
+    const lbPrev = document.getElementById('lb-prev');
+    const lbNext = document.getElementById('lb-next');
+
+    const ICON_MUTED = muteIcon.innerHTML;
+    const ICON_PLAYING = '<path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.828 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.828l3.555-3.793A1 1 0 019.383 3.076zM8 5.414L5.172 7.586A1 1 0 004.586 8H2v4h2.586a1 1 0 01.586.414L8 14.586V5.414z" clip-rule="evenodd" /><path d="M11.5 8.5c.5 0 1 .67 1 1.5s-.5 1.5-1 1.5" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M13 7c.8 0 1.5 1.34 1.5 3s-.7 3-1.5 3" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M14.5 5.5c1.1 0 2 2.01 2 4.5s-.9 4.5-2 4.5" stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round"/>';
+
+    let preferredMuted = true;
+    let galleryVideoPlaying = false;
+    let hasInteracted = false;
+    let selectedIndex = -1;
+
+    function effectiveMuted() { return galleryVideoPlaying || preferredMuted; }
+
+    function syncVideoState() {
+      const muted = effectiveMuted();
+      bgVideo.muted = muted;
+      muteIcon.innerHTML = muted ? ICON_MUTED : ICON_PLAYING;
+      muteBtn.setAttribute('aria-label', muted ? 'Unmute audio' : 'Mute audio');
+      if (!muted) {
+        bgVideo.volume = 1;
+        if (bgVideo.paused) bgVideo.play().catch(() => {});
+      }
+    }
+
+    function ensurePlaysMuted() {
+      bgVideo.setAttribute('playsinline', 'true');
+      bgVideo.muted = true;
+      bgVideo.play().catch(() => {});
+    }
+
+    bgVideo.addEventListener('loadeddata', ensurePlaysMuted);
+    bgVideo.addEventListener('ended', () => {
+      bgVideo.currentTime = 0;
+      bgVideo.play().catch(() => {});
+    });
+    bgVideo.addEventListener('pause', () => {
+      if (!galleryVideoPlaying) bgVideo.play().catch(() => {});
+    });
+    if (bgVideo.readyState >= 2) ensurePlaysMuted();
+
+    function handleFirstGesture() {
+      if (hasInteracted) return;
+      hasInteracted = true;
+      if (bgVideo.paused) {
+        if (bgVideo.muted) ensurePlaysMuted();
+        else bgVideo.play().catch(() => {});
+      }
+    }
+    document.addEventListener('click', handleFirstGesture, { once: true });
+    document.addEventListener('touchend', handleFirstGesture, { once: true });
+
+    muteBtn.addEventListener('click', () => {
+      preferredMuted = !preferredMuted;
+      muteBtn.classList.remove('unmute-hint', 'unmute-subtle-pulse');
+      syncVideoState();
+      if (!effectiveMuted()) bgVideo.play().catch(() => {});
+    });
+
+    syncVideoState();
+
+    // Staggered fade-in + unmute hint, mirroring the original timings
+    window.setTimeout(() => {
+      document.body.classList.add('loaded');
+      window.setTimeout(() => {
+        if (effectiveMuted()) muteBtn.classList.add('unmute-hint');
+      }, 1000);
+    }, 500);
+    muteBtn.addEventListener('animationend', () => {
+      if (muteBtn.classList.contains('unmute-hint')) {
+        muteBtn.classList.remove('unmute-hint');
+        if (effectiveMuted()) muteBtn.classList.add('unmute-subtle-pulse');
+      }
+    });
+
+    // Parallax subtitle
+    const subtitle = document.getElementById('parallax-subtitle');
+    subtitle.addEventListener('mousemove', (e) => {
+      const rect = subtitle.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      subtitle.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px) scale(1.05)`;
+    });
+    subtitle.addEventListener('mouseleave', () => { subtitle.style.transform = 'translate(0px, 0px) scale(1)'; });
+
+    // Build vibes grid
+    MEDIA.forEach((item, index) => {
+      const cell = document.createElement('div');
+      cell.className = 'vibes-item';
+      if (item.type === 'image') {
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.loading = 'lazy';
+        img.alt = 'Vibe ' + (index + 1);
+        cell.appendChild(img);
+      } else {
+        const vid = document.createElement('video');
+        vid.src = item.src;
+        vid.muted = true;
+        vid.preload = 'metadata';
+        cell.appendChild(vid);
+        const badge = document.createElement('div');
+        badge.className = 'play-badge';
+        badge.innerHTML = '<span><svg fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" /></svg></span>';
+        cell.appendChild(badge);
+      }
+      cell.addEventListener('click', () => openLightbox(index));
+      vibesGrid.appendChild(cell);
+    });
+
+    function openVibes() {
+      vibesModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeVibes() {
+      vibesModal.classList.remove('open');
+      if (selectedIndex === -1) document.body.style.overflow = '';
+    }
+    vibesBtn.addEventListener('click', openVibes);
+    vibesClose.addEventListener('click', closeVibes);
+
+    function renderLightbox() {
+      const item = MEDIA[selectedIndex];
+      lbMediaWrap.innerHTML = '';
+      if (item.type === 'image') {
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.alt = 'Full size view';
+        img.style.userSelect = 'none';
+        lbMediaWrap.appendChild(img);
+      } else {
+        const vid = document.createElement('video');
+        vid.src = item.src;
+        vid.controls = true;
+        vid.autoplay = true;
+        vid.addEventListener('play', () => { galleryVideoPlaying = true; syncVideoState(); });
+        vid.addEventListener('pause', () => { galleryVideoPlaying = false; syncVideoState(); });
+        vid.addEventListener('ended', () => { galleryVideoPlaying = false; syncVideoState(); });
+        lbMediaWrap.appendChild(vid);
+      }
+      lbCounter.textContent = (selectedIndex + 1) + ' / ' + MEDIA.length;
+    }
+
+    function openLightbox(index) {
+      selectedIndex = index;
+      renderLightbox();
+      lightbox.classList.add('open');
+    }
+    function closeLightbox() {
+      lbMediaWrap.innerHTML = '';
+      selectedIndex = -1;
+      lightbox.classList.remove('open');
+      galleryVideoPlaying = false;
+      syncVideoState();
+      if (!vibesModal.classList.contains('open')) document.body.style.overflow = '';
+    }
+    function navigate(direction) {
+      if (selectedIndex === -1) return;
+      selectedIndex = direction === 'next'
+        ? (selectedIndex + 1) % MEDIA.length
+        : (selectedIndex === 0 ? MEDIA.length - 1 : selectedIndex - 1);
+      renderLightbox();
+    }
+
+    lbClose.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
+    lbPrev.addEventListener('click', (e) => { e.stopPropagation(); navigate('prev'); });
+    lbNext.addEventListener('click', (e) => { e.stopPropagation(); navigate('next'); });
+    lightbox.addEventListener('click', closeLightbox);
+    lbMediaWrap.addEventListener('click', (e) => e.stopPropagation());
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (selectedIndex !== -1) closeLightbox();
+        else if (vibesModal.classList.contains('open')) closeVibes();
+      } else if (selectedIndex !== -1) {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); navigate('prev'); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); navigate('next'); }
+      }
+    });
+
+    let touchStart = null;
+    lightbox.addEventListener('touchstart', (e) => {
+      touchStart = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
+    });
+    lightbox.addEventListener('touchend', (e) => {
+      if (!touchStart) return;
+      const t = e.changedTouches[0];
+      const dx = touchStart.x - t.clientX;
+      const dy = touchStart.y - t.clientY;
+      if (Math.abs(dy) < Math.abs(dx)) {
+        if (dx > 50) navigate('next');
+        else if (dx < -50) navigate('prev');
+      }
+      touchStart = null;
+    });
+  </script>
+</body>
+</html>
