@@ -144,13 +144,17 @@
     @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.9; } }
 
     /* ── Top nav ── */
-    #top-nav {
-      position: fixed; top: 2rem; left: 0; right: 0; z-index: 30;
+    #bottom-nav {
+      position: fixed; bottom: 2rem; left: 0; right: 0; z-index: 30;
       display: flex; justify-content: space-between; align-items: center;
       padding: 0 2rem;
       pointer-events: none;
+      opacity: 0;
+      transition: opacity 400ms ease;
     }
-    #mute-btn { padding: 0.75rem; color: rgba(255,255,255,0.7); background: none; border: none; pointer-events: auto; transition: color 300ms; }
+    #bottom-nav.visible { opacity: 1; }
+    #mute-btn { padding: 0.75rem; color: rgba(255,255,255,0.7); background: none; border: none; pointer-events: none; transition: color 300ms; }
+    #bottom-nav.visible #mute-btn, #bottom-nav.visible #vibes-btn { pointer-events: auto; }
     #mute-btn:hover { color: #fff; }
     #mute-btn svg { width: 2rem; height: 2rem; }
 
@@ -180,7 +184,7 @@
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
       transition: all 500ms ease;
-      pointer-events: auto;
+      pointer-events: none;
     }
     #vibes-btn:hover { color: #fffbeb; border-color: rgba(253,230,138,0.4); background: rgba(255,255,255,0.05); }
 
@@ -289,7 +293,7 @@
     <div class="ambient-dot" style="top:50%; right:25%; background:rgba(216,180,254,0.2); animation-delay:2s;"></div>
   </div>
 
-  <div id="top-nav">
+  <div id="bottom-nav">
     <div class="fade d5">
       <button id="mute-btn" aria-label="Unmute audio">
         <svg id="mute-icon" fill="currentColor" viewBox="0 0 22 20">
@@ -411,6 +415,16 @@
     });
 
     syncVideoState();
+
+    // Show the bottom nav (mute + vibes) only once the user has scrolled to the end of the page
+    const bottomNav = document.getElementById('bottom-nav');
+    function updateBottomNavVisibility() {
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      bottomNav.classList.toggle('visible', atBottom);
+    }
+    window.addEventListener('scroll', updateBottomNavVisibility, { passive: true });
+    window.addEventListener('resize', updateBottomNavVisibility);
+    updateBottomNavVisibility();
 
     // Staggered fade-in + unmute hint, mirroring the original timings
     window.setTimeout(() => {
