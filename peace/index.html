@@ -102,7 +102,7 @@
       color: rgba(254,243,199,0.7);
       letter-spacing: 0.02em;
     }
-    .by strong { display: block; font-size: clamp(1.5rem, 3vw, 1.875rem); font-weight: 700; color: #fff; }
+    .logo { display: block; width: clamp(9rem, 22vw, 13rem); margin: 0.5rem auto 0; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
     .visuals-by { font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 300; color: rgba(243,232,255,0.6); letter-spacing: 0.02em; }
 
     .description { max-width: 42rem; margin: 0 auto; color: rgba(255,255,255,0.9); line-height: 1.7; }
@@ -112,7 +112,7 @@
 
     .event-details { margin: 3rem auto 0; max-width: 42rem; color: rgba(255,255,255,0.8); }
     .event-details .divider { margin: 2rem auto; }
-    .taglines { margin-bottom: 3rem; }
+    .taglines { margin-bottom: 16rem; }
     .taglines p { margin-bottom: 0.75rem; font-size: clamp(0.875rem, 1.4vw, 1rem); font-weight: 300; letter-spacing: 0.02em; color: rgba(237,233,254,0.7); }
 
     .next-edition { margin-top: 0; margin-bottom: 2rem; }
@@ -138,9 +138,6 @@
       pointer-events: auto;
     }
     .pill-btn:hover { color: #fffbeb; border-color: rgba(253,230,138,0.4); background: rgba(255,255,255,0.05); }
-
-    .more-soon { margin-bottom: 16rem; }
-    .more-soon p { font-size: clamp(0.875rem, 1.4vw, 1rem); font-weight: 300; letter-spacing: 0.02em; color: rgba(237,233,254,0.7); }
 
     .ambient-dot { position: absolute; width: 4px; height: 4px; border-radius: 50%; animation: pulse 2.5s ease-in-out infinite; }
     @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.9; } }
@@ -246,7 +243,8 @@
         <div class="subtitle" id="parallax-subtitle">
           A lying-down concert experience<br />with immersive visuals.
         </div>
-        <p class="by">Music by <br /><strong>Tristan Rio</strong></p>
+        <p class="by">Music by</p>
+        <img class="logo" src="assets/logo-white.png" alt="Tristan Rio" />
         <p class="visuals-by">Visuals by Xander Steenbrugge</p>
       </div>
     </div>
@@ -280,10 +278,6 @@
           <p>COME COSY, COME DREAMY</p>
           <p>SURRENDER TO THE EXPERIENCE</p>
           <p>FIND YOUR PEACE</p>
-        </div>
-
-        <div class="more-soon">
-          <p>MORE SOON...</p>
         </div>
       </div>
     </div>
