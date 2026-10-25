@@ -95,6 +95,10 @@
       transition: transform 300ms ease-out;
       pointer-events: auto;
     }
+    .mobile-break { display: none; }
+    @media (max-width: 480px) {
+      .mobile-break { display: inline; }
+    }
     .by {
       margin-bottom: 0.5rem;
       font-size: clamp(1.125rem, 2vw, 1.25rem);
@@ -237,7 +241,7 @@
     <div class="fade d2">
       <div class="subtitle-block">
         <div class="subtitle" id="parallax-subtitle">
-          A lying-down concert experience<br />with immersive visuals.
+          A lying-down<br class="mobile-break" /> concert experience<br />with immersive visuals.
         </div>
         <p class="by">Music by</p>
         <img class="logo" src="assets/logo-white-horizontal.png" alt="Tristan Rio" />
