@@ -69,7 +69,6 @@
     .fade.d2 { transition-delay: 0.7s; }
     .fade.d3 { transition-delay: 1.3s; }
     .fade.d4 { transition-delay: 2s; }
-    .fade.d5 { transition-delay: 3s; }
 
     h1.title {
       margin: 5rem 0 1rem;
@@ -113,8 +112,10 @@
 
     .event-details { margin: 3rem auto 0; max-width: 42rem; color: rgba(255,255,255,0.8); }
     .event-details .divider { margin: 2rem auto; }
-    .taglines { margin-bottom: 16rem; }
+    .taglines { margin-bottom: 3rem; }
     .taglines p { margin-bottom: 0.75rem; font-size: clamp(0.875rem, 1.4vw, 1rem); font-weight: 300; letter-spacing: 0.02em; color: rgba(237,233,254,0.7); }
+
+    .action-buttons { display: flex; justify-content: center; align-items: center; gap: 2rem; margin-bottom: 8rem; }
 
     .next-edition { margin-top: 0; margin-bottom: 2rem; }
     .next-edition p { margin-bottom: 1rem; }
@@ -144,17 +145,7 @@
     @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.9; } }
 
     /* ── Top nav ── */
-    #bottom-nav {
-      position: fixed; bottom: 2rem; left: 0; right: 0; z-index: 30;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 0 2rem;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 400ms ease;
-    }
-    #bottom-nav.visible { opacity: 1; }
-    #mute-btn { padding: 0.75rem; color: rgba(255,255,255,0.7); background: none; border: none; pointer-events: none; transition: color 300ms; }
-    #bottom-nav.visible #mute-btn, #bottom-nav.visible #vibes-btn { pointer-events: auto; }
+    #mute-btn { padding: 0.75rem; color: rgba(255,255,255,0.7); background: none; border: none; pointer-events: auto; transition: color 300ms; }
     #mute-btn:hover { color: #fff; }
     #mute-btn svg { width: 2rem; height: 2rem; }
 
@@ -184,7 +175,7 @@
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
       transition: all 500ms ease;
-      pointer-events: none;
+      pointer-events: auto;
     }
     #vibes-btn:hover { color: #fffbeb; border-color: rgba(253,230,138,0.4); background: rgba(255,255,255,0.05); }
 
@@ -285,25 +276,21 @@
           <p>SURRENDER TO THE EXPERIENCE</p>
           <p>FIND YOUR PEACE</p>
         </div>
+
+        <div class="action-buttons">
+          <button id="mute-btn" aria-label="Unmute audio">
+            <svg id="mute-icon" fill="currentColor" viewBox="0 0 22 20">
+              <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.828 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.828l3.555-3.793A1 1 0 019.383 3.076zM8 5.414L5.172 7.586A1 1 0 004.586 8H2v4h2.586a1 1 0 01.586.414L8 14.586V5.414zM15.293 7.293a1 1 0 011.414 0L18 8.586l1.293-1.293a1 1 0 111.414 1.414L19.414 10l1.293 1.293a1 1 0 01-1.414 1.414L18 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L16.586 10l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <button id="vibes-btn" aria-label="View vibes gallery">vibes</button>
+        </div>
       </div>
     </div>
 
     <div class="ambient-dot" style="top:25%; left:1rem; background:rgba(255,255,255,0.2);"></div>
     <div class="ambient-dot" style="bottom:33%; right:2rem; background:rgba(147,197,253,0.3); animation-delay:1s;"></div>
     <div class="ambient-dot" style="top:50%; right:25%; background:rgba(216,180,254,0.2); animation-delay:2s;"></div>
-  </div>
-
-  <div id="bottom-nav">
-    <div class="fade d5">
-      <button id="mute-btn" aria-label="Unmute audio">
-        <svg id="mute-icon" fill="currentColor" viewBox="0 0 22 20">
-          <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.617.793L4.828 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.828l3.555-3.793A1 1 0 019.383 3.076zM8 5.414L5.172 7.586A1 1 0 004.586 8H2v4h2.586a1 1 0 01.586.414L8 14.586V5.414zM15.293 7.293a1 1 0 011.414 0L18 8.586l1.293-1.293a1 1 0 111.414 1.414L19.414 10l1.293 1.293a1 1 0 01-1.414 1.414L18 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L16.586 10l-1.293-1.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
-      </button>
-    </div>
-    <div class="fade d5">
-      <button id="vibes-btn" aria-label="View vibes gallery">vibes</button>
-    </div>
   </div>
 
   <div id="vibes-modal">
@@ -415,16 +402,6 @@
     });
 
     syncVideoState();
-
-    // Show the bottom nav (mute + vibes) only once the user has scrolled to the end of the page
-    const bottomNav = document.getElementById('bottom-nav');
-    function updateBottomNavVisibility() {
-      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-      bottomNav.classList.toggle('visible', atBottom);
-    }
-    window.addEventListener('scroll', updateBottomNavVisibility, { passive: true });
-    window.addEventListener('resize', updateBottomNavVisibility);
-    updateBottomNavVisibility();
 
     // Staggered fade-in + unmute hint, mirroring the original timings
     window.setTimeout(() => {
