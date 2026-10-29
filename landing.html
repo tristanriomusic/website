@@ -302,6 +302,18 @@
       gap: 3px;
     }
 
+    .live-info a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.22);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .live-info a:hover {
+      color: rgba(255,255,255,0.95);
+      border-color: rgba(255,255,255,0.6);
+    }
+
     .live-meta {
       font-size: 0.82em;
       color: rgba(255,255,255,0.38);
@@ -323,6 +335,17 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.6);
       white-space: nowrap;
+    }
+
+    a.live-badge {
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.18);
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    a.live-badge:hover {
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.06);
     }
 
     .live-tab {
@@ -727,6 +750,21 @@
           <span>@tristanriomusic</span>
         </a>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Peace concert promo popup -->
+<div class="popup-overlay" id="popup-concert">
+  <div class="popup-backdrop"></div>
+  <div class="popup-panel">
+    <span class="popup-close" data-close="concert">&#215;</span>
+    <div class="popup-title">Peace — Lying Down Concert</div>
+    <div class="popup-body">
+      <p>Join me for <em>Peace</em>, a lying-down concert at Stadsmakers in Gent on <strong>21 November</strong>. Lie down, let go, and drift through warm guitar soundscapes and immersive visuals.</p>
+      <p class="announce-links">
+        <a href="https://tristanrio.com/peace/" target="_blank">See info &amp; get tickets</a>
+      </p>
     </div>
   </div>
 </div>
@@ -1251,7 +1289,7 @@ document.addEventListener('mousemove', e => {
    Upcoming to Past automatically once their date has passed.
    `note` is optional and renders in italics. */
 const SHOWS = [
-  { date: '2026-11-21', title: 'Peace - Stadsmakers (Lying Down)', note: 'Gent, België', badge: 'Tickets and info coming soon' },
+  { date: '2026-11-21', title: 'Peace - Stadsmakers (Lying Down)', note: 'Gent, België', badge: 'Info & tickets', url: 'https://tristanrio.com/peace/' },
   { date: '2026-09-06', title: 'Sint-Pietersabdij — RIJP (Lying Down)', note: 'Gent, België' },
   { date: '2026-03-28', title: 'Desert Dream — Bombay Beach Biennale', note: 'Bombay Beach, Californië, Verenigde Staten' },
   { date: '2026-03-03', title: 'Painted Canyon', note: 'Mecca, Californië, Verenigde Staten' },
@@ -1337,10 +1375,17 @@ function renderShows() {
     if (s.with) meta.push('<span class="live-with">with ' + esc(s.with) + '</span>');
     if (s.note) meta.push(esc(s.note));
     const metaLine = meta.length ? '<em class="live-meta">' + meta.join(' &middot; ') + '</em>' : '';
-    const badge = s.badge ? '<span class="live-badge">' + esc(s.badge) + '</span>' : '';
+    const badge = s.badge
+      ? (s.url
+          ? '<a class="live-badge" href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.badge) + '</a>'
+          : '<span class="live-badge">' + esc(s.badge) + '</span>')
+      : '';
+    const titleEl = s.url
+      ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.title) + '</a>'
+      : '<span>' + esc(s.title) + '</span>';
     return '<li' + (past ? ' class="is-past"' : '') + '>' +
       '<span class="live-date">' + formatShowDate(s.date) + '</span>' +
-      '<span class="live-info"><span>' + esc(s.title) + '</span>' + metaLine + badge + '</span></li>';
+      '<span class="live-info">' + titleEl + metaLine + badge + '</span></li>';
   }).join('');
 
   // Long archives scroll — always start at the top of the list.
@@ -1372,12 +1417,23 @@ function openPopup(name) {
 }
 function closePopup(name) {
   document.getElementById('popup-' + name)?.classList.remove('open');
+  // Once the Peace concert promo is dismissed, follow up with the release announcement.
+  if (name === 'concert') maybeShowRituelles();
 }
 
-// Show the new-release announcement once per visit, after the intro settles.
-if (!sessionStorage.getItem('announce-rituelles-seen')) {
+function maybeShowRituelles() {
+  if (sessionStorage.getItem('announce-rituelles-seen')) return;
   sessionStorage.setItem('announce-rituelles-seen', '1');
-  setTimeout(() => openPopup('announce'), 1600);
+  setTimeout(() => openPopup('announce'), 500);
+}
+
+// Show the Peace concert promo once per visit, after the intro settles;
+// the new-release announcement follows once that one is closed (see closePopup above).
+if (!sessionStorage.getItem('announce-concert-seen')) {
+  sessionStorage.setItem('announce-concert-seen', '1');
+  setTimeout(() => openPopup('concert'), 1600);
+} else {
+  setTimeout(maybeShowRituelles, 1600);
 }
 
 document.querySelectorAll('.top-nav-item[data-popup]').forEach(el => {
@@ -1388,11 +1444,14 @@ document.querySelectorAll('.popup-close[data-close]').forEach(el => {
 });
 document.querySelectorAll('.popup-backdrop').forEach(el => {
   el.addEventListener('click', () => {
-    el.closest('.popup-overlay')?.classList.remove('open');
+    const overlay = el.closest('.popup-overlay');
+    if (overlay) closePopup(overlay.id.replace('popup-', ''));
   });
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.querySelectorAll('.popup-overlay.open').forEach(p => p.classList.remove('open'));
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.popup-overlay.open').forEach(p => closePopup(p.id.replace('popup-', '')));
+  }
 });
 
 // Touch
