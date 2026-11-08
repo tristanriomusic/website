@@ -2029,7 +2029,6 @@ let spaceRavePhase = 0;
 let spaceRaveAcidActive = false;
 let spaceRaveExitFrames = 0;
 let rituellesPlaying = false;
-let rituellesPreviewCapped = false;
 let fractalRampStart = null;
 let fractalViewMix = 0;
 let fractalIntroStart = null;
@@ -2323,7 +2322,6 @@ mAudio.addEventListener('play', () => {
 
     // Reset video trigger state when song starts
     rituellesVideoTriggered = false;
-    rituellesPreviewCapped = false;
   }
   updateAnimButtonState();
 });
@@ -2338,13 +2336,6 @@ mAudio.addEventListener('timeupdate', () => {
   //   }
   // }
 
-  // Cap the Rituelles preview to 30 seconds, then show the presave popup.
-  if (mAudio.src && mAudio.src.includes('Rituelles') && !rituellesPreviewCapped && mAudio.currentTime >= 30) {
-    rituellesPreviewCapped = true;
-    mAudio.pause();
-    mAudio.currentTime = 0;
-    openRituellesPresavePopup();
-  }
 });
 mAudio.addEventListener('pause', () => {
   rituellesPlaying = false;
